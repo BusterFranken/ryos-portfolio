@@ -11,7 +11,6 @@ const APP_ALIASES: Record<string, AppId> = {
   ie: "internet-explorer",
   browser: "internet-explorer",
   explorer: "internet-explorer",
-  chat: "chats",
   text: "textedit",
   edit: "textedit",
   editor: "textedit",

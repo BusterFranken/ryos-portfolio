@@ -41,7 +41,6 @@ const collectAppHookFiles = (): string[] => {
 
 // Logic hooks that live outside a hooks/ directory but were migrated too.
 const EXTRA_MIGRATED_FILES = [
-  "src/apps/chats/components/chats-app/useChatsAppController.tsx",
   "src/apps/textedit/components/DialogManager.tsx",
 ];
 

@@ -5,7 +5,6 @@ export type AppId =
   | "finder"
   | "soundboard"
   | "internet-explorer"
-  | "chats"
   | "textedit"
   | "paint"
   | "photo-booth"
@@ -137,7 +136,6 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     finder: ["browseNavigate", "fileManagement", "viewSort", "quickAccess", "storageInfo", "trash"],
     soundboard: ["recordSlot", "keyboardPlay", "waveformView", "customizeSlot", "multipleBoards", "importExport"],
     "internet-explorer": ["browseWeb", "travelThroughTime", "historyReimagined", "saveFavorites", "exploreTimeNodes", "shareJourney"],
-    chats: ["chatWithRyo", "createEditFiles", "controlApps", "joinChatRooms", "pushToTalk", "nudgeDjMode"],
     textedit: ["richEditing", "formatting", "listsTasks", "fileManagement", "voiceDictation", "slashCommands"],
     paint: ["drawingTools", "colors", "undo", "saving", "patterns", "filters"],
     "photo-booth": ["takingPhoto", "quickSnaps", "applyingEffects", "viewingPhotos", "downloadingPhotos", "switchingCameras"],

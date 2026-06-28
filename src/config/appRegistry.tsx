@@ -55,11 +55,6 @@ const LazyInternetExplorerApp = createLazyComponent<InternetExplorerInitialData>
   "internet-explorer"
 );
 
-const LazyChatsApp = createLazyComponent<unknown>(
-  () => import("@/apps/chats/components/chats-app/ChatsAppComponent").then(m => ({ default: m.ChatsAppComponent })),
-  "chats"
-);
-
 const LazyControlPanelsApp = createLazyComponent<ControlPanelsInitialData>(
   () => import("@/apps/control-panels/components/control-panels-app/ControlPanelsAppComponent").then(m => ({ default: m.ControlPanelsAppComponent })),
   "control-panels"
@@ -168,7 +163,6 @@ const LazyBooksApp = createLazyComponent<BooksInitialData>(
 import { appMetadata as finderMetadata, helpItems as finderHelpItems } from "@/apps/finder/metadata";
 import { appMetadata as soundboardMetadata, helpItems as soundboardHelpItems } from "@/apps/soundboard/metadata";
 import { appMetadata as internetExplorerMetadata, helpItems as internetExplorerHelpItems } from "@/apps/internet-explorer/metadata";
-import { appMetadata as chatsMetadata, helpItems as chatsHelpItems } from "@/apps/chats/metadata";
 import { appMetadata as texteditMetadata, helpItems as texteditHelpItems } from "@/apps/textedit/metadata";
 import { appMetadata as paintMetadata, helpItems as paintHelpItems } from "@/apps/paint";
 import { appMetadata as photoboothMetadata, helpItems as photoboothHelpItems } from "@/apps/photo-booth/metadata";
@@ -243,19 +237,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 300 },
     } as WindowConstraints,
   } as BaseApp<InternetExplorerInitialData> & { windowConfig: WindowConstraints },
-  ["chats"]: {
-    id: "chats",
-    name: "Chats",
-    icon: { type: "image", src: chatsMetadata.icon },
-    description: "Chat with AI",
-    component: LazyChatsApp,
-    helpItems: chatsHelpItems,
-    metadata: chatsMetadata,
-    windowConfig: {
-      defaultSize: { width: 560, height: 360 },
-      minSize: { width: 300, height: 320 },
-    } as WindowConstraints,
-  },
   ["textedit"]: {
     id: "textedit",
     name: "TextEdit",

@@ -555,7 +555,6 @@ const THEMES_WITH_SPARSE_DEFAULT_DESKTOP_SHORTCUTS: OsThemeId[] = [
 
 /** Extra desktop icons on System 7 only (after iPod); still hidden on macosx / Windows themes. */
 const SYSTEM7_PROMINENT_DESKTOP_APP_IDS: readonly string[] = [
-  "chats",
   "internet-explorer",
   "karaoke",
 ];

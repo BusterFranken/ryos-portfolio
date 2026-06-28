@@ -17,9 +17,7 @@ describe("client analytics wiring", () => {
       "src/main.tsx",
       "src/utils/analytics.ts",
       "src/stores/useAppStore.ts",
-      "src/apps/chats/components/ChatInput.tsx",
       "src/apps/terminal/hooks/useTerminalLogic.ts",
-      "src/apps/terminal/commands/ai.ts",
     ];
 
     for (const file of files) {
@@ -44,15 +42,9 @@ describe("client analytics wiring", () => {
     }
   });
 
-  test("does not send raw chat messages or terminal prompts", () => {
-    expect(readSource("src/apps/chats/components/ChatInput.tsx")).not.toContain(
-      "message: input"
-    );
+  test("does not send raw terminal prompts", () => {
     expect(readSource("src/apps/terminal/hooks/useTerminalLogic.ts")).not.toContain(
       "prompt: command"
-    );
-    expect(readSource("src/apps/terminal/commands/ai.ts")).not.toContain(
-      "track(TERMINAL_ANALYTICS.AI_COMMAND, { prompt:"
     );
   });
 });

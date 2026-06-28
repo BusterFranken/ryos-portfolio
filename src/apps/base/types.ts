@@ -23,7 +23,6 @@ export interface BaseApp<TInitialData = unknown> {
   id:
     | "soundboard"
     | "internet-explorer"
-    | "chats"
     | "textedit"
     | "control-panels"
     | "minesweeper"
@@ -122,12 +121,6 @@ export interface TerminalInitialData {
   prefillCommand?: string;
 }
 
-export interface ChatsInitialData {
-  prefillMessage?: string;
-  autoSend?: boolean;
-  prefillRequestId?: string;
-}
-
 // Union type for all possible app configurations
 export type AnyApp =
   | BaseApp<ControlPanelsInitialData>
@@ -139,7 +132,6 @@ export type AnyApp =
   | BaseApp<BooksInitialData>
   | BaseApp<AppletViewerInitialData>
   | BaseApp<TerminalInitialData>
-  | BaseApp<ChatsInitialData>
   | BaseApp<unknown>; // For apps without specific initialData
 
 // Type for the initialData that could be any of the specific types
@@ -154,7 +146,6 @@ export type AnyInitialData =
   | FinderInitialData
   | AppletViewerInitialData
   | TerminalInitialData
-  | ChatsInitialData
   | unknown;
 
 // Theme-aware menu bar pattern:

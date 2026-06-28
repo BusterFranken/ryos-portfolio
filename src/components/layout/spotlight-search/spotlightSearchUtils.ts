@@ -56,8 +56,6 @@ export function getSpotlightPrefetchAppId(
       return "control-panels";
     case "command":
       return "terminal";
-    case "ai":
-      return "chats";
     default:
       return null;
   }

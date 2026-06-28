@@ -28,14 +28,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "exploreTimeNodes",
     "shareJourney",
   ],
-  chats: [
-    "chatWithRyo",
-    "createEditFiles",
-    "controlApps",
-    "joinChatRooms",
-    "pushToTalk",
-    "nudgeDjMode",
-  ],
   textedit: [
     "slashCommands",
     "formatting",
