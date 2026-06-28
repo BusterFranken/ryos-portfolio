@@ -120,11 +120,6 @@ const LazyAppletViewerApp = createLazyComponent<AppletViewerInitialData>(
   "applet-viewer"
 );
 
-const LazyAdminApp = createLazyComponent<unknown>(
-  () => import("@/apps/admin/components/admin-app/AdminAppComponent").then(m => ({ default: m.AdminAppComponent })),
-  "admin"
-);
-
 const LazyStickiesApp = createLazyComponent<unknown>(
   () => import("@/apps/stickies/components/StickiesAppComponent").then(m => ({ default: m.StickiesAppComponent })),
   "stickies"
@@ -191,7 +186,6 @@ import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/app
 import { appMetadata as terminalMetadata, helpItems as terminalHelpItems } from "@/apps/terminal";
 import { appMetadata as appletViewerMetadata, helpItems as appletViewerHelpItems } from "@/apps/applet-viewer";
 import { appMetadata as controlPanelsMetadata, helpItems as controlPanelsHelpItems } from "@/apps/control-panels";
-import { appMetadata as adminMetadata, helpItems as adminHelpItems } from "@/apps/admin/metadata";
 import { appMetadata as stickiesMetadata, helpItems as stickiesHelpItems } from "@/apps/stickies";
 import {
   appMetadata as infiniteMacMetadata,
@@ -429,20 +423,6 @@ export const appRegistry = {
       maxSize: { width: 560, height: 600 },
     } as WindowConstraints,
   } as BaseApp<ControlPanelsInitialData> & { windowConfig: WindowConstraints },
-  ["admin"]: {
-    id: "admin",
-    name: "Admin",
-    icon: { type: "image", src: adminMetadata.icon },
-    description: "System administration panel",
-    component: LazyAdminApp,
-    helpItems: adminHelpItems,
-    metadata: adminMetadata,
-    adminOnly: true, // Only visible to admin user (ryo)
-    windowConfig: {
-      defaultSize: { width: 800, height: 500 },
-      minSize: { width: 600, height: 400 },
-    } as WindowConstraints,
-  },
   ["stickies"]: {
     id: "stickies",
     name: "Stickies",

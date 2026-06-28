@@ -18,7 +18,6 @@ export type AppId =
   | "terminal"
   | "applet-viewer"
   | "control-panels"
-  | "admin"
   | "stickies"
   | "infinite-mac"
   | "pc"
@@ -152,7 +151,6 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     terminal: ["basicCommands", "navigation", "commandHistory", "aiAssistant", "fileEditing", "terminalSounds"],
     "applet-viewer": ["appletStore", "createWithRyosChat", "viewApplets", "shareApplets", "openFromFinder", "keepUpdated"],
     "control-panels": ["appearance", "sounds", "aiModel", "shaderEffects", "backupRestore", "system"],
-    admin: ["adminAccess", "userManagement", "roomManagement", "statistics"],
     stickies: ["createNote", "colors", "deleteNote", "autoSave"],
     "infinite-mac": ["classicMacEmulator", "selectSystem", "pauseResume", "backToSystems"],
     pc: [

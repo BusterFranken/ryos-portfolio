@@ -132,14 +132,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "sync",
     "backupRestore",
   ],
-  admin: [
-    "adminAccess",
-    "userManagement",
-    "roomManagement",
-    "songLibrary",
-    "searchFilter",
-    "statistics",
-  ],
   stickies: [
     "createNote",
     "colors",

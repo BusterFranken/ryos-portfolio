@@ -37,7 +37,6 @@ export interface BaseApp<TInitialData = unknown> {
     | "karaoke"
     | "terminal"
     | "applet-viewer"
-    | "admin"
     | "stickies"
     | "infinite-mac"
     | "pc"
