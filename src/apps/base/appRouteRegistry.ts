@@ -60,20 +60,6 @@ export function resolveInitialRoute(
       ? new URLSearchParams(search.startsWith("?") ? search.slice(1) : search)
       : null;
 
-  if (pathname === "/applet-viewer") {
-    return createLaunchAction(
-      { appId: "applet-viewer" },
-      {
-        delayMs: 100,
-        toast: {
-          type: "translation",
-          message: "common.loading.openingAppletStore",
-        },
-        urlCleanupTiming: "after-dispatch",
-      },
-    );
-  }
-
   const internetExplorerMatch = pathname.match(/^\/internet-explorer\/([^/]+)$/);
   if (internetExplorerMatch) {
     return createLaunchAction(
@@ -88,30 +74,6 @@ export function resolveInitialRoute(
         toast: {
           type: "translation",
           message: "common.loading.openingSharedIELink",
-        },
-        urlCleanupTiming: "immediate",
-      },
-    );
-  }
-
-  const appletViewerShareMatch = pathname.match(/^\/applet-viewer\/([^/]+)$/);
-  if (appletViewerShareMatch) {
-    return createLaunchAction(
-      {
-        appId: "applet-viewer",
-        initialData: {
-          shareCode: appletViewerShareMatch[1],
-          path: "",
-          content: "",
-          icon: undefined,
-          name: undefined,
-        },
-      },
-      {
-        delayMs: 0,
-        toast: {
-          type: "translation",
-          message: "common.loading.openingSharedApplet",
         },
         urlCleanupTiming: "immediate",
       },
@@ -206,7 +168,6 @@ export function resolveInitialRoute(
 
   if (
     pathname.startsWith("/internet-explorer/") ||
-    pathname.startsWith("/applet-viewer/") ||
     pathname.startsWith("/ipod/") ||
     pathname.startsWith("/listen/") ||
     pathname.startsWith("/karaoke/") ||

@@ -14,7 +14,6 @@ type IndexedEntry = {
 
 type SpotlightIndex = {
   documents: IndexedEntry[];
-  applets: IndexedEntry[];
   music: IndexedEntry[];
   sites: IndexedEntry[];
   videos: IndexedEntry[];
@@ -24,7 +23,6 @@ type SpotlightIndex = {
 
 const emptyIndex = (): SpotlightIndex => ({
   documents: [],
-  applets: [],
   music: [],
   sites: [],
   videos: [],
@@ -90,36 +88,6 @@ const buildIndex = (snapshot: SpotlightSearchSnapshot): SpotlightIndex => {
     });
     return acc;
   }, []);
-
-  const applets = items.reduce<IndexedEntry[]>((acc, item) => {
-    if (
-      item.status !== "active" ||
-      item.isDirectory ||
-      !item.path.startsWith("/Applets/")
-    ) {
-      return acc;
-    }
-
-      const rawIcon = item.icon;
-      const isEmoji =
-        !!rawIcon &&
-        !rawIcon.startsWith("/") &&
-        !rawIcon.startsWith("http") &&
-        rawIcon.length <= 10;
-
-      acc.push({
-        searchText: normalizeText(item.name, item.path),
-        result: {
-          id: `applet-${item.path}`,
-          type: "applet",
-          title: item.name.replace(/\.(html|app)$/i, ""),
-          path: item.path,
-          icon: rawIcon,
-          isEmoji,
-        },
-      });
-      return acc;
-    }, []);
 
   const music = snapshot.tracks.map<IndexedEntry>((track) => {
     const thumbnail = track.cover
@@ -217,7 +185,6 @@ const buildIndex = (snapshot: SpotlightSearchSnapshot): SpotlightIndex => {
 
   return {
     documents,
-    applets,
     music,
     sites,
     videos,
@@ -240,7 +207,6 @@ const queryIndex = (query: string): SpotlightWorkerResultPayload[] => {
 
   return [
     ...collectMatches(currentIndex.documents),
-    ...collectMatches(currentIndex.applets),
     ...collectMatches(currentIndex.calendarEvents),
     ...collectMatches(currentIndex.contacts),
     ...collectMatches(currentIndex.music),

@@ -94,17 +94,6 @@ export async function openDesktopAlias(
         initialData: { path: targetFile.path, content: contentToUse },
         launchOrigin,
       });
-    } else if (
-      targetFile.path.startsWith("/Applets/") &&
-      (targetFile.path.endsWith(".app") || targetFile.path.endsWith(".html"))
-    ) {
-      launchApp("applet-viewer", {
-        initialData: {
-          path: targetFile.path,
-          content: contentAsString ?? "",
-        },
-        launchOrigin,
-      });
     }
   } catch (err) {
     console.error(`[Desktop] Error opening alias target:`, err);

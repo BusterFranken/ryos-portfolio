@@ -21,8 +21,6 @@ const APP_ALIASES: Record<string, AppId> = {
   settings: "control-panels",
   preferences: "control-panels",
   prefs: "control-panels",
-  applets: "applet-viewer",
-  store: "applet-viewer",
   vm: "pc",
   virtualpc: "pc",
   pc: "pc",
@@ -234,38 +232,6 @@ async function openFile(
     context.playCommandSound();
     return {
       output: i18n.t("apps.terminal.output.openedFile", { file: name }),
-      isError: false,
-    };
-  }
-
-  // Handle applets
-  if (path.startsWith("/Applets/") && (path.endsWith(".app") || path.endsWith(".html"))) {
-    let content = "";
-    
-    if (fileMetadata?.uuid) {
-      try {
-        const contentData = await dbOperations.get<DocumentContent>(
-          STORES.APPLETS,
-          fileMetadata.uuid
-        );
-        if (contentData?.content) {
-          if (contentData.content instanceof Blob) {
-            content = await contentData.content.text();
-          } else if (typeof contentData.content === "string") {
-            content = contentData.content;
-          }
-        }
-      } catch (error) {
-        console.error("[open] Error reading applet:", error);
-      }
-    }
-    
-    context.launchApp("applet-viewer", {
-      initialData: { path, content },
-    });
-    context.playCommandSound();
-    return {
-      output: i18n.t("apps.terminal.output.openedApplet", { applet: name.replace(/\.(app|html)$/i, "") }),
       isError: false,
     };
   }

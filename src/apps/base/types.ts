@@ -1,5 +1,3 @@
-import type { AppletViewerInitialData } from "@/apps/applet-viewer";
-
 export interface AppProps<TInitialData = unknown> {
   isWindowOpen: boolean;
   onClose: () => void;
@@ -34,7 +32,6 @@ export interface BaseApp<TInitialData = unknown> {
     | "ipod"
     | "karaoke"
     | "terminal"
-    | "applet-viewer"
     | "stickies"
     | "infinite-mac"
     | "pc"
@@ -130,7 +127,6 @@ export type AnyApp =
   | BaseApp<PaintInitialData>
   | BaseApp<VideosInitialData>
   | BaseApp<BooksInitialData>
-  | BaseApp<AppletViewerInitialData>
   | BaseApp<TerminalInitialData>
   | BaseApp<unknown>; // For apps without specific initialData
 
@@ -144,7 +140,6 @@ export type AnyInitialData =
   | VideosInitialData
   | BooksInitialData
   | FinderInitialData
-  | AppletViewerInitialData
   | TerminalInitialData
   | unknown;
 

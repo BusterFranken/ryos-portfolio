@@ -30,10 +30,6 @@ export function prefetchDesktopShortcutIntent(
   }
   if (target.startsWith("/Images/")) {
     prefetchAppChunk("paint");
-    return;
-  }
-  if (target.startsWith("/Applets/")) {
-    prefetchAppChunk("applet-viewer");
   }
 }
 

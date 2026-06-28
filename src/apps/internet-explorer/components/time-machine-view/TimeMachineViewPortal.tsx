@@ -237,9 +237,6 @@ export function TimeMachineViewPortal({ vm, isOpen }: { vm: TimeMachineViewVm; i
                                               maxHeight="100%"
                                               minHeight="100%"
                                               className="border-none rounded-none"
-                                              // AI-generated archive preview;
-                                              // trusted "ryo" authorship.
-                                              appletCreatedBy="ryo"
                                             />
                                           </motion.div>
                                         )}

@@ -10,7 +10,6 @@ import { PROTECTED_DOCK_ITEMS } from "@/stores/useDockStore";
 import { DOCK_MULTI_WINDOW_APPS } from "./dockConstants";
 import { toggleExposeView } from "@/utils/appEventBus";
 import { requestCloseWindow } from "@/utils/windowUtils";
-import { getDockAppletInfo } from "./dockAppletInfo";
 import type { FileSystemItem } from "@/stores/useFilesStore";
 import type { LaunchOriginRect } from "@/stores/useAppStore";
 import type { LaunchAppOptions } from "@/hooks/useLaunchApp";
@@ -65,7 +64,6 @@ export function getAppContextMenuItems(
     foregroundInstanceId,
     finderInstances,
     pinnedItems,
-    getFileItem,
     launchApp,
     restoreInstance,
     bringInstanceToForeground,
@@ -110,60 +108,6 @@ export function getAppContextMenuItems(
     }
 
     return items;
-  }
-
-  if (appId === "applet-viewer" && specificInstanceId) {
-    const instance = instances[specificInstanceId];
-    if (instance) {
-      const { label } = getDockAppletInfo(instance, getFileItem, t);
-      const isForeground =
-        instance.instanceId === foregroundInstanceId && !instance.isMinimized;
-      items.push({
-        type: "checkbox",
-        label: `${label}${instance.isMinimized ? ` ${t("common.dock.minimized")}` : ""}`,
-        checked: isForeground,
-        onSelect: () => {
-          if (instance.isMinimized) {
-            restoreInstance(specificInstanceId);
-          }
-          bringInstanceToForeground(specificInstanceId);
-        },
-      });
-
-      items.push({ type: "separator" });
-
-      items.push({
-        type: "item",
-        label: t("common.dock.showAllWindows"),
-        onSelect: () => {
-          toggleExposeView();
-        },
-      });
-
-      items.push({
-        type: "item",
-        label: t("common.dock.hide"),
-        onSelect: () => {
-          playZoomMinimize();
-          minimizeInstance(specificInstanceId);
-        },
-        disabled: instance.isMinimized,
-      });
-
-      items.push({
-        type: "item",
-        label: t("common.dock.quit"),
-        onSelect: () => {
-          if (instance.isMinimized) {
-            closeAppInstance(specificInstanceId);
-          } else {
-            requestCloseWindow(specificInstanceId);
-          }
-        },
-      });
-
-      return items;
-    }
   }
 
   if (appInstances.length > 0) {

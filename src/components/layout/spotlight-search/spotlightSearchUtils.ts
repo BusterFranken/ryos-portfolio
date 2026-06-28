@@ -40,8 +40,6 @@ export function getSpotlightPrefetchAppId(
       return result.id.startsWith("app-") ? result.id.slice(4) : null;
     case "document":
       return "textedit";
-    case "applet":
-      return "applet-viewer";
     case "music":
       return "ipod";
     case "site":

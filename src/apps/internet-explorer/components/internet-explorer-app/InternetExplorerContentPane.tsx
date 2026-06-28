@@ -118,7 +118,6 @@ export function InternetExplorerContentPane({
               playDingSound={playDingSound}
               baseUrlForAiContent={url}
               mode={mode}
-              appletCreatedBy="ryo"
             />
           </div>
         ) : (

@@ -188,21 +188,6 @@ const mapWorkerResultToSpotlightResult = (
         action: () =>
           launchApp("textedit", { initialData: { path: result.path } }),
       };
-    case "applet":
-      return {
-        id: result.id,
-        type: "applet",
-        title: result.title,
-        subtitle: "Applets",
-        icon: result.icon && !result.icon.startsWith("/") && !result.icon.startsWith("http")
-          ? result.icon
-          : "applets.png",
-        isEmoji: result.isEmoji,
-        action: () =>
-          launchApp("applet-viewer", {
-            initialData: { path: result.path },
-          }),
-      };
     case "music":
       return {
         id: result.id,

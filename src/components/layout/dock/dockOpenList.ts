@@ -2,10 +2,6 @@ import type { AppId } from "@/config/appRegistry";
 import type { AppInstance } from "@/stores/useAppStore";
 import type { DockOpenItem } from "./dockTypes";
 
-// The applet host app renders one dock slot per open instance instead of a
-// single grouped slot like every other app.
-const APPLET_VIEWER_APP_ID = "applet-viewer";
-
 /**
  * Compute the list of non-pinned open apps/applets shown after the pinned
  * divider in the dock.
@@ -41,23 +37,6 @@ export function computeDockOpenItems(
   }
 
   for (const [appId, instancesList] of Object.entries(openByApp)) {
-    if (appId === APPLET_VIEWER_APP_ID) {
-      // One slot per applet instance — skip any instance missing an id since it
-      // could not be matched back to a live window and would render empty.
-      for (const inst of instancesList) {
-        if (!inst.instanceId) {
-          continue;
-        }
-        items.push({
-          type: "applet",
-          appId: inst.appId as AppId,
-          instanceId: inst.instanceId,
-          sortKey: inst.createdAt || 0,
-        });
-      }
-      continue;
-    }
-
     // Single slot per app — drop unknown/stale ids that have no registry entry
     // (these previously threw in getAppIconPath / rendered a broken slot).
     if (!isValidAppId(appId as AppId)) {

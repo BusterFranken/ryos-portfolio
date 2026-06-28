@@ -54,19 +54,6 @@ export function generateAppShareUrl(appId: string): string {
   return `${window.location.origin}/${appId}`;
 }
 
-/**
- * Generates a shareable URL for an applet using its share ID.
- * @param id The share ID of the applet.
- * @returns The full shareable URL (e.g., 'https://hostname.com/applet-viewer/{id}').
- */
-export function generateAppletShareUrl(id: string): string {
-  if (typeof window === 'undefined') {
-    console.warn('Cannot generate applet share URL: window object is not available.');
-    return '';
-  }
-  return `${window.location.origin}/applet-viewer/${id}`;
-}
-
 function normalizeAppleMusicStorefront(
   storefrontId: string | null | undefined
 ): string {

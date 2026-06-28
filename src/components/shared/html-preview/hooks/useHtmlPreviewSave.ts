@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useFilesStore } from "@/stores/useFilesStore";
 import { useFileSystem } from "@/apps/finder/hooks/useFileSystem";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useLaunchApp } from "@/hooks/useLaunchApp";
 import { emitFileUpdated } from "@/utils/appEventBus";
 import { saveBlobToDevice } from "@/utils/nativeFileDialogs";
 
@@ -29,7 +28,6 @@ export function useHtmlPreviewSave(
 ) {
   const { t } = useTranslation();
   const { saveFile } = useFileSystem("/", { skipLoad: true });
-  const launchApp = useLaunchApp();
   const username = useAuthStore((state) => state.username);
   const [isSaveAppletDialogOpen, setIsSaveAppletDialogOpen] = useState(false);
   const [appletFileName, setAppletFileName] = useState("");
@@ -81,17 +79,6 @@ export function useHtmlPreviewSave(
 
       toast.success(t("common.htmlPreview.toastSaved"), {
         description: nameWithExtension,
-        action: {
-          label: t("common.htmlPreview.toastOpenAction"),
-          onClick: () => {
-            launchApp("applet-viewer", {
-              initialData: {
-                path: appletPath,
-                content: processedHtmlContentForSave,
-              },
-            });
-          },
-        },
         duration: 5000,
       });
     } catch (err) {

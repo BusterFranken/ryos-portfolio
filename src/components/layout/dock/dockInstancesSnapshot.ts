@@ -20,24 +20,6 @@ export type DockInstanceSnapshot = Pick<
   | "title"
 >;
 
-function getAppletInitialDataSignature(initialData: unknown): string {
-  if (!initialData || typeof initialData !== "object") return "";
-  const data = initialData as {
-    icon?: unknown;
-    name?: unknown;
-    path?: unknown;
-    shareCode?: unknown;
-  };
-  return [
-    data.path,
-    data.shareCode,
-    data.icon,
-    data.name,
-  ]
-    .map((value) => (typeof value === "string" ? value : ""))
-    .join("\u001f");
-}
-
 export function getDockInstancesSignature(
   instances: Record<string, AppInstance>
 ) {
@@ -52,9 +34,6 @@ export function getDockInstancesSignature(
         inst.createdAt,
         inst.title ?? "",
         inst.displayTitle ?? "",
-        inst.appId === "applet-viewer"
-          ? getAppletInitialDataSignature(inst.initialData)
-          : "",
       ].join("\u001f")
     )
     .join("\u001e");

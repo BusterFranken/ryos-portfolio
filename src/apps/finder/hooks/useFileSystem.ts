@@ -16,7 +16,6 @@ import { useIpodStoreShallow } from "@/stores/useIpodStore";
 import { useVideoStoreShallow } from "@/stores/useVideoStore";
 import { formatKugouImageUrl } from "@/utils/coverArt";
 import { listVirtualMusicOrVideosPath } from "@/services/vfs/virtualTrees";
-import { abortableFetch } from "@/utils/abortableFetch";
 import { getStoreForFile, type StoredContent } from "@/utils/indexedDBOperations";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { FINDER_ANALYTICS, track } from "@/utils/analytics";
@@ -276,7 +275,6 @@ export function useFileSystem(
   const {
     getItem: getFileItem,
     getItemsInPath,
-    updateItemMetadata,
     addItem: addFileItem,
     moveItem: moveFileItem,
     renameItem: renameFileItem,
@@ -287,7 +285,6 @@ export function useFileSystem(
   } = useFilesStoreShallow((state) => ({
     getItem: state.getItem,
     getItemsInPath: state.getItemsInPath,
-    updateItemMetadata: state.updateItemMetadata,
     addItem: state.addItem,
     moveItem: state.moveItem,
     renameItem: state.renameItem,
@@ -333,79 +330,6 @@ export function useFileSystem(
       return ensureFileContentLoaded(filePath, uuid);
     },
     []
-  );
-
-  const fetchAppletContentFromShare = useCallback(
-    async (
-      filePath: string,
-      fileMetadata: FileSystemItem
-    ): Promise<string | null> => {
-      const { shareId, uuid, name } = fileMetadata;
-      if (!shareId || !uuid) {
-        console.warn(
-          `[useFileSystem] Cannot fetch applet content for ${filePath}: missing shareId or uuid`
-        );
-        return null;
-      }
-
-      try {
-        const response = await abortableFetch(
-          `/api/share-applet?id=${encodeURIComponent(shareId)}`,
-          {
-            timeout: 15000,
-            retry: { maxAttempts: 2, initialDelayMs: 500 },
-          }
-        );
-
-        const data = await response.json();
-        const content =
-          typeof data.content === "string" ? data.content : "";
-
-        await dbOperations.put<DocumentContent>(
-          STORES.APPLETS,
-          {
-            name: name || filePath.split("/").pop() || shareId,
-            content,
-          },
-          uuid
-        );
-
-        const metadataUpdates: Partial<FileSystemItem> = {};
-
-        if (typeof data.icon === "string" && data.icon !== fileMetadata.icon) {
-          metadataUpdates.icon = data.icon;
-        }
-        if (
-          typeof data.createdBy === "string" &&
-          data.createdBy !== fileMetadata.createdBy
-        ) {
-          metadataUpdates.createdBy = data.createdBy;
-        }
-        if (
-          typeof data.windowWidth === "number" &&
-          typeof data.windowHeight === "number"
-        ) {
-          metadataUpdates.windowWidth = data.windowWidth;
-          metadataUpdates.windowHeight = data.windowHeight;
-        }
-        if (typeof data.createdAt === "number") {
-          metadataUpdates.storeCreatedAt = data.createdAt;
-        }
-
-        if (Object.keys(metadataUpdates).length > 0) {
-          updateItemMetadata(filePath, metadataUpdates);
-        }
-
-        return content;
-      } catch (error) {
-        console.error(
-          `[useFileSystem] Error fetching shared applet content for ${shareId}:`,
-          error
-        );
-        return null;
-      }
-    },
-    [updateItemMetadata]
   );
 
   // --- REORDERED useCallback DEFINITIONS --- //
@@ -814,31 +738,22 @@ export function useFileSystem(
               console.warn(
                 `[useFileSystem] Content not found in IndexedDB for ${file.path} (UUID: ${fileMetadata.uuid})`
               );
-              // For applets, fetch content from the share service on first load
-              if (storeName === STORES.APPLETS) {
-                const fetchedContent = await fetchAppletContentFromShare(
-                  file.path,
-                  fileMetadata
-                );
-                contentToUse = fetchedContent ?? "";
-              } else {
-                // Try to load default content lazily for Documents/Images
-                const hasDefaultContent = await ensureDefaultContent(
-                  file.path,
+              // Try to load default content lazily for Documents/Images
+              const hasDefaultContent = await ensureDefaultContent(
+                file.path,
+                fileMetadata.uuid
+              );
+              if (hasDefaultContent) {
+                // Try fetching again after loading default content
+                const retryData = await dbOperations.get<DocumentContent>(
+                  storeName,
                   fileMetadata.uuid
                 );
-                if (hasDefaultContent) {
-                  // Try fetching again after loading default content
-                  const retryData = await dbOperations.get<DocumentContent>(
-                    storeName,
-                    fileMetadata.uuid
+                if (retryData) {
+                  contentToUse = retryData.content;
+                  console.log(
+                    `[useFileSystem] Successfully loaded default content for ${file.path}`
                   );
-                  if (retryData) {
-                    contentToUse = retryData.content;
-                    console.log(
-                      `[useFileSystem] Successfully loaded default content for ${file.path}`
-                    );
-                  }
                 }
               }
             }
@@ -935,32 +850,6 @@ export function useFileSystem(
             initialData: { path: file.path },
             launchOrigin,
           });
-        } else if (
-          storeName === STORES.APPLETS &&
-          (file.path.endsWith(".app") || file.path.endsWith(".html"))
-        ) {
-          // Open HTML applets with applet-viewer
-          console.log("[useFileSystem] Opening applet:", {
-            path: file.path,
-            contentLength: contentAsString?.length || 0,
-            hasContent: !!contentAsString,
-          });
-
-          // Launch applet viewer - duplicate detection is handled by useLaunchApp
-          try {
-            launchApp("applet-viewer", {
-              initialData: {
-                path: file.path,
-                content: contentAsString ?? "",
-              },
-              launchOrigin,
-            });
-          } catch (e) {
-            console.warn(
-              "[useFileSystem] Failed opening applet:",
-              e
-            );
-          }
         } else if (file.appId === "ipod" && file.data?.songId) {
           // iPod uses song ID directly
           setIpodSongId(file.data.songId);
@@ -999,7 +888,6 @@ export function useFileSystem(
       setVideoIndex,
       setVideoPlaying,
       ensureDefaultContent,
-      fetchAppletContentFromShare,
       getFileItem,
     ]
   );

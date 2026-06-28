@@ -730,9 +730,7 @@ export function MacDock() {
   const allVisibleIds = useMemo(() => {
     const ids = [
       ...sanitizedPinnedItems.map(item => item.id),
-      ...openItems.map((item) =>
-        item.type === "applet" ? item.instanceId! : item.appId
-      ),
+      ...openItems.map((item) => item.appId),
       "__applications__",
       "__trash__",
     ];

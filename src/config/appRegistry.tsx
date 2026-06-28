@@ -9,7 +9,6 @@ import type {
   VideosInitialData,
   BooksInitialData,
 } from "@/apps/base/types";
-import type { AppletViewerInitialData } from "@/apps/applet-viewer";
 import { createLazyComponent } from "./lazyAppComponent";
 
 export type { AppId };
@@ -105,10 +104,6 @@ const LazyTerminalApp = createLazyComponent<unknown>(
   "terminal"
 );
 
-const LazyAppletViewerApp = createLazyComponent<AppletViewerInitialData>(
-  () => import("@/apps/applet-viewer/components/AppletViewerAppComponent").then(m => ({ default: m.AppletViewerAppComponent })),
-  "applet-viewer"
-);
 
 const LazyStickiesApp = createLazyComponent<unknown>(
   () => import("@/apps/stickies/components/StickiesAppComponent").then(m => ({ default: m.StickiesAppComponent })),
@@ -172,7 +167,6 @@ import { appMetadata as ipodMetadata, helpItems as ipodHelpItems } from "@/apps/
 import { appMetadata as karaokeMetadata, helpItems as karaokeHelpItems } from "@/apps/karaoke/metadata";
 import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/apps/synth/metadata";
 import { appMetadata as terminalMetadata, helpItems as terminalHelpItems } from "@/apps/terminal";
-import { appMetadata as appletViewerMetadata, helpItems as appletViewerHelpItems } from "@/apps/applet-viewer";
 import { appMetadata as controlPanelsMetadata, helpItems as controlPanelsHelpItems } from "@/apps/control-panels";
 import { appMetadata as stickiesMetadata, helpItems as stickiesHelpItems } from "@/apps/stickies";
 import {
@@ -358,19 +352,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 300 },
     } as WindowConstraints,
   },
-  ["applet-viewer"]: {
-    id: "applet-viewer",
-    name: "Applet Store",
-    icon: { type: "image", src: appletViewerMetadata.icon },
-    description: "View and run applets",
-    component: LazyAppletViewerApp,
-    helpItems: appletViewerHelpItems,
-    metadata: appletViewerMetadata,
-    windowConfig: {
-      defaultSize: { width: 320, height: 450 },
-      minSize: { width: 300, height: 200 },
-    } as WindowConstraints,
-  } as BaseApp<AppletViewerInitialData> & { windowConfig: WindowConstraints },
   ["control-panels"]: {
     id: "control-panels",
     name: "Control Panels",

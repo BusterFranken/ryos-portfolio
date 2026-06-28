@@ -370,8 +370,7 @@ export function useDesktop({
     .filter(
       (app) =>
         app.id !== "finder" &&
-        app.id !== "control-panels" &&
-        app.id !== "applet-viewer"
+        app.id !== "control-panels"
     )
     .sort((a, b) => {
       switch (sortType) {
@@ -386,9 +385,7 @@ export function useDesktop({
 
   const displayedApps =
     isMacOSTheme
-      ? sortedApps.filter(
-          (app) => app.id === "ipod" || app.id === "applet-viewer"
-        )
+      ? sortedApps.filter((app) => app.id === "ipod")
       : sortedApps;
 
   const desktopItemsInOrder = useMemo<DesktopItemDefinition[]>(() => {

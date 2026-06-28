@@ -4,7 +4,6 @@ export const DEFAULT_SHORTCUT_ORDER: AppId[] = [
   "ipod",
   "internet-explorer",
   "karaoke",
-  "applet-viewer",
   "textedit",
   "photo-booth",
   "videos",

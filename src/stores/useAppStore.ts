@@ -4,7 +4,6 @@ import { persist } from "zustand/middleware";
 import { AppId, getWindowConfig, getMobileWindowSize } from "@/config/appRegistry";
 import { prefetchAppChunk } from "@/config/lazyAppComponent";
 import { resolveAppId } from "@/config/appRegistryData";
-import { useAppletStore } from "@/stores/useAppletStore";
 import { AppState } from "@/apps/base/types";
 import { AIModel } from "@/types/aiModels";
 import { APP_ANALYTICS, track } from "@/utils/analytics";
@@ -302,24 +301,9 @@ const createUseAppStore = () =>
               : 40 + openInstances * 20,
           };
           const cfg = getWindowConfig(appId);
-          let size = isMobile
+          const size = isMobile
             ? getMobileWindowSize(appId)
             : cfg.defaultSize;
-
-          // If creating an Applet Viewer window and we have a path, prefer saved size
-          if (appId === "applet-viewer") {
-            try {
-              const path = (initialData as { path?: string } | undefined)?.path;
-              if (path) {
-                const saved = useAppletStore
-                  .getState()
-                  .getAppletWindowSize(path);
-                if (saved) size = saved;
-              }
-            } catch {
-              // ignore and fall back to default size
-            }
-          }
 
           // All app components are chunk-loaded so the shell can paint first.
           const isLazy = true;
@@ -686,8 +670,7 @@ const createUseAppStore = () =>
         const supportsMultiWindow =
           multiWindow ||
           appId === "textedit" ||
-          appId === "finder" ||
-          appId === "applet-viewer";
+          appId === "finder";
         if (!supportsMultiWindow) {
           const existing = Object.values(state.instances).find(
             (i) => i.appId === appId && i.isOpen
@@ -769,18 +752,6 @@ const createUseAppStore = () =>
                 ...instWithoutRuntimeState
               } = inst;
               
-              // For applet-viewer, exclude content from initialData to prevent localStorage storage
-              if (inst.appId === "applet-viewer" && inst.initialData) {
-                const appletData = inst.initialData as { path?: string; content?: string; shareCode?: string; icon?: string; name?: string };
-                acc.push([id, {
-                  ...instWithoutRuntimeState,
-                  initialData: {
-                    ...appletData,
-                    content: "", // Exclude content - it should be loaded from IndexedDB
-                  },
-                } as AppInstance]);
-                return acc;
-              }
               acc.push([id, instWithoutRuntimeState as AppInstance]);
               return acc;
             }, [])

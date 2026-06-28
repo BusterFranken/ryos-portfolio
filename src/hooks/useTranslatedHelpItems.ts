@@ -99,14 +99,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "commandHistory",
     "terminalSounds",
   ],
-  "applet-viewer": [
-    "appletStore",
-    "createWithRyosChat",
-    "viewApplets",
-    "shareApplets",
-    "openFromFinder",
-    "keepUpdated",
-  ],
   "control-panels": [
     "appearance",
     "shaderEffects",

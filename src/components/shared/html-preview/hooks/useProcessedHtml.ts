@@ -8,7 +8,6 @@ type BaseOptions = Omit<GenerateProcessedHtmlOptions, "useFallbackFonts">;
 export function useProcessedHtml(
   htmlContent: string,
   normalizedBaseUrl: string | null,
-  isTrustedApplet: boolean,
   isStreaming: boolean = false
 ) {
   const contentTimestamp = useRef(Date.now());
@@ -20,9 +19,8 @@ export function useProcessedHtml(
       contentTimestamp: contentTimestamp.current,
       normalizedBaseUrl,
       isMacOsXTheme,
-      isTrustedApplet,
     }),
-    [htmlContent, normalizedBaseUrl, isMacOsXTheme, isTrustedApplet]
+    [htmlContent, normalizedBaseUrl, isMacOsXTheme]
   );
 
   // While streaming, the iframe is not rendered and the preview uses the

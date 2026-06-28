@@ -14,7 +14,6 @@ export type AppId =
   | "karaoke"
   | "synth"
   | "terminal"
-  | "applet-viewer"
   | "control-panels"
   | "stickies"
   | "infinite-mac"
@@ -145,7 +144,6 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     karaoke: ["addSearchSongs", "syncLyricsTiming", "styleLayout", "syncedWithIpod", "worksWithChats", "keyboardShortcuts"],
     synth: ["virtualKeyboard", "controlsPanel", "presets", "waveform3d", "effects", "midiInput"],
     terminal: ["basicCommands", "navigation", "commandHistory", "aiAssistant", "fileEditing", "terminalSounds"],
-    "applet-viewer": ["appletStore", "createWithRyosChat", "viewApplets", "shareApplets", "openFromFinder", "keepUpdated"],
     "control-panels": ["appearance", "sounds", "aiModel", "shaderEffects", "backupRestore", "system"],
     stickies: ["createNote", "colors", "deleteNote", "autoSave"],
     "infinite-mac": ["classicMacEmulator", "selectSystem", "pauseResume", "backToSystems"],

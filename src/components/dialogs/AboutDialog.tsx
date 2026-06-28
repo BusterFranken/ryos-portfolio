@@ -14,7 +14,6 @@ import { useAppStore } from "@/stores/useAppStore";
 
 const APP_DOC_NAMES: Partial<Record<AppId, string>> = {
   pc: "virtual-pc",
-  "applet-viewer": "applet-store",
 };
 
 interface AboutDialogProps {

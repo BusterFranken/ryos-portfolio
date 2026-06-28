@@ -23,7 +23,6 @@ import { getDocsBaseUrl } from "@/utils/runtimeConfig";
 // Map appId to doc URL path (most are same, but some have different names)
 const APP_DOC_NAMES: Partial<Record<AppId, string>> = {
   pc: "virtual-pc",
-  "applet-viewer": "applet-store",
 };
 
 interface HelpCardProps {
