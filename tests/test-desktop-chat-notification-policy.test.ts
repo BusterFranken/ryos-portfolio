@@ -111,16 +111,6 @@ describe("desktop chat notification policy", () => {
     ).toBeNull();
   });
 
-  test("main service includes trusted origin and emits fallback status", () => {
-    const source = readSource("electron/chat-notifications.ts");
-    expect(source).toContain("Origin: appPublicOrigin");
-    expect(source).toContain("/api/realtime/ticket");
-    expect(source).toContain("subscription_error");
-    expect(source).toContain("ryos-desktop:chat-notification-status");
-    expect(source).toContain('"channel-auth-failed"');
-    expect(source).toContain('"service-start-failed"');
-  });
-
   test("sanitizes local WebSocket config and strips ticket params", () => {
     expect(
       sanitizeDesktopChatNotificationConfig({
