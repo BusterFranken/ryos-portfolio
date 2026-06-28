@@ -9,14 +9,6 @@ const paintSource = readFileSync(
   "src/apps/paint/hooks/usePaintLogic.ts",
   "utf8"
 );
-const appletSource = readFileSync(
-  "src/apps/applet-viewer/hooks/useAppletViewerLogic.ts",
-  "utf8"
-);
-const appletActionsSource = readFileSync(
-  "src/apps/applet-viewer/utils/appletActions.ts",
-  "utf8"
-);
 const fileMetadataServiceSource = readFileSync(
   "src/services/vfs/FileMetadataService.ts",
   "utf8"
@@ -41,14 +33,6 @@ describe("VFS service wiring", () => {
     expect(paintSource).not.toContain("@/utils/indexedDB");
   });
 
-  test("Applet Viewer uses VFS services for metadata/content I/O", () => {
-    expect(appletSource).toContain("@/services/vfs/useVfsFileOperations");
-    expect(appletSource).toContain("@/services/vfs/FileMetadataService");
-    expect(appletSource).toContain("@/services/vfs/FileContentRepository");
-    expect(appletSource).not.toContain("@/apps/finder/hooks/useFileSystem");
-    expect(appletSource).not.toContain("dbOperations.");
-  });
-
   test("VFS metadata path selector caches derived arrays", () => {
     expect(fileMetadataServiceSource).toContain(
       'import { useShallow } from "zustand/react/shallow";'
@@ -61,11 +45,7 @@ describe("VFS service wiring", () => {
     );
   });
 
-  test("Applet Store actions avoid Finder file-loading effects", () => {
-    expect(appletActionsSource).toContain("@/services/vfs/useVfsFileOperations");
-    expect(appletActionsSource).toContain("@/services/vfs/FileMetadataService");
-    expect(appletActionsSource).toContain("@/services/vfs/FileContentRepository");
-    expect(appletActionsSource).not.toContain("@/apps/finder/hooks/useFileSystem");
+  test("VFS file operations hook uses skipLoad to avoid Finder file-loading effects", () => {
     expect(vfsFileOperationsSource).toContain(
       "useFileSystem(basePath, { skipLoad: true })"
     );

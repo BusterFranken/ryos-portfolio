@@ -420,144 +420,6 @@
         "user": "пользователь"
       }
     },
-    "applet-viewer": {
-      "description": "Просмотр и запуск апплетов",
-      "dialogs": {
-        "addedToFeatured": "Добавлено в избранное",
-        "allAppletsUpToDate": "Все апплеты обновлены",
-        "appletAlreadyShared": "Апплет уже опубликован",
-        "appletDeleted": "Апплет удален",
-        "appletExported": "Апплет экспортирован!",
-        "appletExportedDescription": "{{fileName}}.app успешно экспортирован.",
-        "appletImported": "Апплет импортирован!",
-        "appletImportedDescription": "{{fileName}} сохранен в /Applets{{iconText}}",
-        "appletImportedIconSuffix": " с иконкой {{icon}}",
-        "appletNotFound": "Апплет не найден",
-        "appletNotFoundDescription": "Общий апплет, возможно, был удален, или ссылка недействительна.",
-        "appletSaved": "Апплет сохранен",
-        "appletSavedDescription": "Сохранено в /Applets/{{fileName}}",
-        "appletShared": "Апплет опубликован!",
-        "appletStore": "Магазин апплетов",
-        "appletUpdateAvailable": "Доступно обновление апплета",
-        "appletUpdateAvailableDescription": "Для {{appletName}} доступно обновление.",
-        "appletUpdated": "Апплет обновлен",
-        "appletUpdatedShare": "Апплет обновлен!",
-        "appletsUpdated": "{{count}} апплетов обновлено",
-        "areYouSureDeleteApplet": "Вы уверены, что хотите удалить этот апплет?",
-        "couldNotCompressAppletFile": "Не удалось сжать файл апплета.",
-        "couldNotImportFile": "Не удалось импортировать файл.",
-        "exportFailed": "Экспорт не удался",
-        "failedToDeleteApplet": "Не удалось удалить апплет",
-        "failedToFetchSharedApplet": "Не удалось получить общий апплет",
-        "failedToLoadSharedApplet": "Не удалось загрузить общий апплет",
-        "failedToSaveApplet": "Не удалось сохранить апплет",
-        "failedToShareApplet": "Не удалось поделиться апплетом",
-        "failedToUpdateApplet": "Не удалось обновить апплет",
-        "failedToUpdateApplets": "Не удалось обновить апплеты",
-        "failedToUpdateFeaturedStatus": "Не удалось обновить статус избранного",
-        "importFailed": "Импорт не удался",
-        "loading": "Загрузка...",
-        "loginRequired": "Требуется вход",
-        "mustBeLoggedInToShare": "Вам необходимо войти в систему, чтобы поделиться апплетами.",
-        "newAppletUpdates": "{{count}} новое обновление апплета",
-        "newAppletUpdatesPlural": "{{count}} новых обновлений апплета",
-        "noAppletToShare": "Нет апплета для совместного использования",
-        "noAppletsAvailable": "В данный момент апплеты недоступны.",
-        "noAppletsFound": "Не найдено апплетов по запросу \"{{query}}\".",
-        "pleaseCheckConnection": "Проверьте соединение и повторите попытку.",
-        "pleaseOpenAppletFirst": "Сначала откройте апплет.",
-        "pleaseTryAgainLater": "Повторите попытку позже.",
-        "removedFromFeatured": "Удалено из рекомендованного",
-        "shareLinkGeneratedSuccessfully": "Ссылка для обмена успешно сгенерирована.",
-        "shareLinkUpdatedSuccessfully": "Ссылка для обмена успешно обновлена.",
-        "sharedApplet": "Общий апплет",
-        "sharedAppletLoaded": "Общий апплет загружен",
-        "showingExistingShareLink": "Отображается существующая ссылка для обмена.",
-        "untitled": "Без названия",
-        "untitledApplet": "Апплет без названия",
-        "updatingApplet": "Обновление апплета...",
-        "updatingAppletSingle": "Обновление 1 апплета...",
-        "updatingApplets": "Обновление {{count}} апплетов...",
-        "updatingAppletsPlural": "Обновление {{count}} апплетов..."
-      },
-      "help": {
-        "appletStore": {
-          "description": "Откройте вкладку «Магазин», чтобы найти приложения от сообщества и установить их в один клик",
-          "title": "Обзор магазина"
-        },
-        "createWithRyosChat": {
-          "description": "Попросите Ryo в чате создать кастомный апплет — и мгновенно получите рабочее HTML-приложение",
-          "title": "Создание через чаты"
-        },
-        "keepUpdated": {
-          "description": "«Магазин» ▸ «Проверить наличие обновлений» загружает последние версии установленных апплетов",
-          "title": "Автопроверка обновлений"
-        },
-        "openFromFinder": {
-          "description": "Перетащите пакеты апплетов .app или .gz в Finder, и они появятся в /Applets",
-          "title": "Открыть из Finder"
-        },
-        "shareApplets": {
-          "description": "Используйте Файл ▸ Поделиться апплетом, чтобы скопировать ссылку или короткий код для вставки другими пользователями",
-          "title": "Поделиться кодом"
-        },
-        "viewApplets": {
-          "description": "Изолированная среда безопасно запускает любой HTML-апплет, сохраненный в вашей системе",
-          "title": "Запуск чего угодно"
-        }
-      },
-      "labels": {
-        "addToFeatured": "Добавить в рекомендуемые",
-        "deleteApplet": "Удалить апплет",
-        "discover": "Обзор",
-        "removeFromFeatured": "Удалить из рекомендуемых",
-        "searchApplets": "Поиск апплетов",
-        "showAll": "Показать все"
-      },
-      "menu": {
-        "aboutApplets": "Об апплетах",
-        "appletStore": "Магазин апплетов",
-        "appletsHelp": "Справка по апплетам",
-        "checkForUpdates": "Проверить обновления",
-        "createAccount": "Создать учетную запись...",
-        "exportAs": "Экспортировать как...",
-        "html": "HTML",
-        "importFromDevice": "Импортировать с устройства...",
-        "logOut": "Выйти",
-        "login": "Войти...",
-        "noAppletsOpen": "Нет открытых апплетов",
-        "open": "Открыть...",
-        "openAppletStore": "Открыть Магазин апплетов",
-        "ryosApp": "Приложение ryOS",
-        "shareApplet": "Поделиться апплетом...",
-        "store": "Магазин",
-        "untitled": "Без названия",
-        "updateApplets": "Обновить {{count}} апплет",
-        "updateAppletsPlural": "Обновить {{count}} апплетов",
-        "window": "Окно"
-      },
-      "name": "Магазин апплетов",
-      "sections": {
-        "featured": "Рекомендуемые",
-        "installed": "Установленные",
-        "newApplets": "Новые апплеты",
-        "updatesAvailable": "Доступны обновления"
-      },
-      "status": {
-        "get": "Получить",
-        "open": "Открыть",
-        "save": "Сохранить",
-        "update": "Обновить",
-        "updatedDaysAgo": "Обновлено {{days}} дн. назад",
-        "updatedHoursAgo": "Обновлено {{hours}} ч. назад",
-        "updatedJustNow": "Обновлено только что",
-        "updatedMinutesAgo": "Обновлено {{minutes}} мин. назад",
-        "updatedMonthsAgo": "Обновлено {{months}} мес. назад",
-        "updatedWeeksAgo": "Обновлено {{weeks}} нед. назад",
-        "updatedYearsAgo": "Обновлено {{years}} г. назад",
-        "updatedYesterday": "Обновлено вчера"
-      }
-    },
     "books": {
       "columns": {
         "auto": "Авто",
@@ -2086,7 +1948,6 @@
         "file": "Файл",
         "folder": "Папка",
         "gifImage": "Изображение GIF",
-        "htmlApplet": "Апплет HTML",
         "internetShortcut": "Интернет-ярлык",
         "jpegImage": "Изображение JPEG",
         "mp3Audio": "Аудио MP3",
@@ -4479,7 +4340,6 @@
     "noResults": "Ничего не найдено",
     "placeholder": "Поиск в ryOS",
     "sections": {
-      "applets": "Апплеты",
       "apps": "Приложения",
       "calendar": "Календарь",
       "commands": "Команды",

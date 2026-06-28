@@ -21,7 +21,6 @@ export interface SpotlightResult {
   type:
     | "app"
     | "document"
-    | "applet"
     | "music"
     | "site"
     | "video"

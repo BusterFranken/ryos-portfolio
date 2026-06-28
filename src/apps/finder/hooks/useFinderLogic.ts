@@ -45,7 +45,6 @@ const SIDEBAR_HIDDEN_FOLDERS = new Set(["/Trash", "/Sites"]);
 // natural order, appended after these.
 const SIDEBAR_FOLDER_ORDER = [
   "/Applications",
-  "/Applets",
   "/Documents",
   "/Images",
   "/Music",
@@ -110,7 +109,7 @@ const getFileType = (
     case "mov":
       return t("apps.finder.fileTypes.quicktimeMovie");
     case "html":
-      return t("apps.finder.fileTypes.htmlApplet");
+      return t("apps.finder.fileTypes.document");
     case "epub":
       return t("apps.finder.fileTypes.book");
     default:
@@ -1003,7 +1002,7 @@ export function useFinderLogic({
     const desktopItems = getItemsInPath("/Desktop");
     let aliasExists = false;
 
-    // Determine if this is an app or a file/applet
+    // Determine if this is an app or a file
     if (file.path.startsWith("/Applications/") && file.appId) {
       // Check if alias already exists for this app
       const existingShortcut = desktopItems.find(
@@ -1039,7 +1038,7 @@ export function useFinderLogic({
       );
 
       if (!aliasExists) {
-        // It's a file or applet
+        // It's a file
         createAlias(file.path, file.name, "file");
       }
     }
@@ -1251,9 +1250,7 @@ export function useFinderLogic({
           ? STORES.DOCUMENTS
           : filePath.startsWith("/Images")
             ? STORES.IMAGES
-            : filePath.startsWith("/Applets")
-              ? STORES.APPLETS
-              : null;
+            : null;
         if (storeName) {
           const doc = await dbOperations.get<DocumentContent>(
             storeName,

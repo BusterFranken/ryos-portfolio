@@ -76,7 +76,7 @@ export const openCommand: Command = {
   ): Promise<CommandResult> => {
     if (args.length === 0) {
       return {
-        output: `usage: open <app|file|path>\n\n${i18n.t("apps.terminal.output.openExamples")}:\n  open finder\n  open textedit\n  open myfile.txt\n  open /Applets/my-applet.app`,
+        output: `usage: open <app|file|path>\n\n${i18n.t("apps.terminal.output.openExamples")}:\n  open finder\n  open textedit\n  open myfile.txt`,
         isError: true,
       };
     }

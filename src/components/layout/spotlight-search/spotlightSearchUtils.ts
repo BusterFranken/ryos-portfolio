@@ -3,7 +3,6 @@ import type { SpotlightResult } from "@/hooks/useSpotlightSearch";
 export const SECTION_TYPE_ORDER: SpotlightResult["type"][] = [
   "app",
   "document",
-  "applet",
   "calendar",
   "contact",
   "music",
@@ -18,7 +17,6 @@ export function getSectionKey(type: SpotlightResult["type"]): string {
   const map: Record<SpotlightResult["type"], string> = {
     app: "spotlight.sections.apps",
     document: "spotlight.sections.documents",
-    applet: "spotlight.sections.applets",
     calendar: "spotlight.sections.calendar",
     contact: "spotlight.sections.contacts",
     music: "spotlight.sections.music",
