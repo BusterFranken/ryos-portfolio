@@ -3,7 +3,7 @@ import {
   APPLET_AUTH_MESSAGE_TYPE,
   isTrustedAppletAuthor,
 } from "@/utils/appletAuthBridge";
-import { useChatsStore } from "@/stores/useChatsStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useEventListener } from "@/hooks/useEventListener";
 
 export function useAppletAuthMessaging(
@@ -12,7 +12,7 @@ export function useAppletAuthMessaging(
   fullscreenIframeRef: React.RefObject<HTMLIFrameElement | null>
 ) {
   const isTrustedApplet = isTrustedAppletAuthor(appletCreatedBy);
-  const username = useChatsStore((state) => state.username);
+  const username = useAuthStore((state) => state.username);
 
   const sendAuthPayload = useCallback(
     (target: Window | null | undefined) => {

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useChatsStoreShallow } from "@/stores/useChatsStore";
+import { useAuthStoreShallow } from "@/stores/useAuthStore";
 
 interface DeleteAccountDialogProps {
   isOpen: boolean;
@@ -30,7 +30,7 @@ export function DeleteAccountDialog({
 }: DeleteAccountDialogProps) {
   const { t } = useTranslation();
   const { isWindowsTheme, isMacOSTheme } = useThemeFlags();
-  const { username, deleteAccount } = useChatsStoreShallow((s) => ({
+  const { username, deleteAccount } = useAuthStoreShallow((s) => ({
     username: s.username,
     deleteAccount: s.deleteAccount,
   }));

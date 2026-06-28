@@ -34,7 +34,7 @@ import {
   emitFileUpdated,
 } from "@/utils/appEventBus";
 import { useAirDropStore } from "@/stores/useAirDropStore";
-import { useChatsStore } from "@/stores/useChatsStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type FinderUndoAction =
   | { type: "moveToTrash"; fileName: string; originalPath: string }
@@ -1249,8 +1249,8 @@ export function useFinderLogic({
 
   // AirDrop state
   const [isAirDropView, setIsAirDropView] = useState(false);
-  const isAuthenticated = useChatsStore((s) => s.isAuthenticated);
-  const chatUsername = useChatsStore((s) => s.username);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const chatUsername = useAuthStore((s) => s.username);
   const nearbyUsers = useAirDropStore((s) => s.nearbyUsers);
   const isDiscovering = useAirDropStore((s) => s.isDiscovering);
   const fetchNearbyUsers = useAirDropStore((s) => s.fetchNearbyUsers);

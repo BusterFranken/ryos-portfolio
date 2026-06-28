@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { APP_ANALYTICS } from "@/utils/analytics";
 import { track } from "@/utils/analytics";
-import { useChatsStoreShallow } from "@/stores/useChatsStore";
+import { useAuthStoreShallow } from "@/stores/useAuthStore";
 import { loginWithPassword, verifyAuthToken } from "@/api/auth";
 
 export function useAuth() {
@@ -16,7 +16,7 @@ export function useAuth() {
     logout,
     checkHasPassword: storeCheckHasPassword,
     setPassword: storeSetPassword,
-  } = useChatsStoreShallow((state) => ({
+  } = useAuthStoreShallow((state) => ({
     username: state.username,
     isAuthenticated: state.isAuthenticated,
     hasPassword: state.hasPassword,

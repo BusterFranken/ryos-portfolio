@@ -23,7 +23,7 @@ import {
   patchSongMetadata,
 } from "@/api/songs";
 import i18n from "@/lib/i18n";
-import { useChatsStore } from "./useChatsStore";
+import { useAuthStore } from "./useAuthStore";
 import {
   fetchYouTubeOembed,
   parseYouTubeTitle,
@@ -945,7 +945,7 @@ async function saveLyricOffsetToServer(
   lyricOffset: number
 ): Promise<boolean> {
   // Get auth state from chats store
-  const { username, isAuthenticated } = useChatsStore.getState();
+  const { username, isAuthenticated } = useAuthStore.getState();
   
   // Skip if not authenticated
   if (!username || !isAuthenticated) {
@@ -1043,7 +1043,7 @@ async function saveLyricsSourceToServer(
   lyricsSource: LyricsSource | null
 ): Promise<void> {
   // Get auth state from chats store
-  const { username, isAuthenticated } = useChatsStore.getState();
+  const { username, isAuthenticated } = useAuthStore.getState();
   
   // Skip if not authenticated
   if (!username || !isAuthenticated) {
