@@ -36,7 +36,6 @@ import { RecoveryEmailDialog } from "@/components/dialogs/RecoveryEmailDialog";
 import type { EmailStatusResponse } from "@/shared/contracts/auth";
 import { SecurityPaneContent } from "./SecurityPaneContent";
 import { useControlPanelsTabClasses } from "./useControlPanelsTabClasses";
-import type { ControlPanelPaneId } from "./controlPanelsCategories";
 
 export type AccountsPaneContentProps = {
   t: (key: string, opts?: Record<string, unknown>) => string;
@@ -80,7 +79,6 @@ export type AccountsPaneContentProps = {
   handleShowBootScreen: () => void;
   handleTriggerAppCrashTest: () => void;
   handleTriggerDesktopCrashTest: () => void;
-  onNavigateToPane?: (paneId: ControlPanelPaneId) => void;
 };
 
 type AccountsPaneTab = "accounts" | "security" | "debug";
@@ -126,7 +124,6 @@ export function AccountsPaneContent({
   handleShowBootScreen,
   handleTriggerAppCrashTest,
   handleTriggerDesktopCrashTest,
-  onNavigateToPane,
 }: AccountsPaneContentProps) {
   const [accountsTab, setAccountsTab] = useState<AccountsPaneTab>("accounts");
   const [isRecoveryEmailOpen, setIsRecoveryEmailOpen] = useState(false);
@@ -322,37 +319,6 @@ export function AccountsPaneContent({
                   {telegramLinkedAccount
                     ? t("apps.control-panels.telegram.manage")
                     : t("apps.control-panels.telegram.link")}
-                </Button>
-              </div>
-
-              <div
-                className={cn(
-                  "flex items-center justify-between gap-3",
-                  !username && "opacity-50"
-                )}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <ThemedIcon
-                    name="cloud-sync.png"
-                    alt=""
-                    className={cn(controlPanelItemIconShell, "object-contain")}
-                  />
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[13px] font-geneva-12 font-medium">
-                      {t("apps.control-panels.panes.dotMac")}
-                    </span>
-                    <span className="text-[11px] text-neutral-600 font-geneva-12">
-                      {t("apps.control-panels.cloudSync.accountDescription")}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  variant="retro"
-                  onClick={() => onNavigateToPane?.("dot-mac")}
-                  disabled={!username || !onNavigateToPane}
-                  className="h-7"
-                >
-                  {t("apps.control-panels.setup")}
                 </Button>
               </div>
             </div>

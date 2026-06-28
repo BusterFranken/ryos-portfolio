@@ -4,7 +4,6 @@ import {
   type MenuDescriptor,
 } from "@/components/shared/menubar/AppMenuBarMenus";
 import { useAppMenuBarChrome } from "@/hooks/useAppMenuBarChrome";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 import { useTranslation } from "react-i18next";
 import { StickyColor } from "@/stores/useStickiesStore";
 
@@ -63,14 +62,6 @@ export function StickiesMenuBar({
           type: "action",
           label: t("apps.stickies.menu.clearAll"),
           onClick: onClearAll,
-        },
-        { type: "separator" },
-        {
-          type: "action",
-          label: t("apps.stickies.menu.syncStickies", {
-            defaultValue: "Sync Stickies",
-          }),
-          onClick: () => requestCloudSyncDomainCheck("stickies"),
         },
         { type: "separator" },
         {

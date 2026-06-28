@@ -103,9 +103,6 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(getControlPanelsMacWindowTitle("sound", mockT, defaultTitle)).toBe(
       "apps.control-panels.panes.sound"
     );
-    expect(
-      getControlPanelsMacWindowTitle("dot-mac", mockT, defaultTitle)
-    ).toBe("apps.control-panels.panes.dotMac");
   });
 
   test("mac layout animates body height with WindowFrame resize transition", () => {
@@ -198,7 +195,7 @@ describe("Control Panels macOS 10.3 layout", () => {
       ...categoriesSource.matchAll(/icon:\s*"([^"]+)"/g),
     ].map((match) => match[1]);
 
-    expect(iconMatches.length).toBe(10);
+    expect(iconMatches.length).toBe(9);
     for (const icon of iconMatches) {
       expect(macosxIcons.has(icon)).toBe(true);
     }
@@ -212,9 +209,7 @@ describe("Control Panels macOS 10.3 layout", () => {
     );
     expect(categoriesSource.includes("sound.png")).toBe(true);
     expect(getControlPanelCategory("sound")?.icon).toBe("sound.png");
-    expect(categoriesSource.includes("cloud-sync.png")).toBe(true);
     expect(categoriesSource.includes("software-update.png")).toBe(true);
-    expect(getControlPanelCategory("dot-mac")?.icon).toBe("cloud-sync.png");
     expect(getControlPanelCategory("software-update")?.icon).toBe(
       "software-update.png"
     );
@@ -232,53 +227,25 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(categoriesSource.includes("control-panels/displays.png")).toBe(true);
   });
 
-  test("Cloud Sync pane uses Sync and Backup tabs with cloud backup UI", () => {
-    const dotMacSource = readSource(
-      "src/apps/control-panels/components/control-panels-app/DotMacPaneContent.tsx"
-    );
+  test("Cloud Sync pane and dot-mac references are removed (backend strip)", () => {
     const sharingSource = readSource(
       "src/apps/control-panels/components/control-panels-app/SharingPaneContent.tsx"
     );
     const rendererSource = readSource(
       "src/apps/control-panels/components/control-panels-app/ControlPanelsMacPaneRenderer.tsx"
     );
-
-    expect(dotMacSource.includes("control-panels-pref-form-tabbed")).toBe(true);
-    expect(dotMacSource.includes("control-panels-pref-tab-bar")).toBe(true);
-    expect(dotMacSource.includes("cloudSyncTabs.sync")).toBe(true);
-    expect(dotMacSource.includes("cloudSyncTabs.backup")).toBe(true);
-    expect(dotMacSource.includes("control-panels-pref-tab-panel")).toBe(true);
-    expect(dotMacSource.includes("handleCloudBackup")).toBe(true);
-    expect(dotMacSource.includes("setIsConfirmForceUploadOpen")).toBe(true);
-    expect(dotMacSource.includes("forceSyncDescription")).toBe(true);
-    expect(dotMacSource.includes("sharingDescription")).toBe(false);
-
-    const syncTabPanel = dotMacSource.slice(
-      dotMacSource.indexOf('hidden={dotMacTab !== "sync"}'),
-      dotMacSource.indexOf('hidden={dotMacTab !== "backup"}')
+    const categoriesSource = readSource(
+      "src/apps/control-panels/components/control-panels-app/controlPanelsCategories.ts"
     );
-    const backupTabPanel = dotMacSource.slice(
-      dotMacSource.indexOf('hidden={dotMacTab !== "backup"}'),
-      dotMacSource.indexOf("</div>\n      </div>\n    </div>\n  );")
-    );
-    expect(syncTabPanel.includes("setIsConfirmForceUploadOpen")).toBe(true);
-    expect(syncTabPanel.includes("setIsConfirmForceDownloadOpen")).toBe(true);
-    expect(syncTabPanel.includes("handleCloudBackup")).toBe(false);
-    expect(backupTabPanel.includes("handleCloudBackup")).toBe(true);
-    expect(backupTabPanel.includes("setIsConfirmForceUploadOpen")).toBe(false);
-    expect(backupTabPanel.includes("setIsConfirmForceDownloadOpen")).toBe(false);
 
-    expect(sharingSource.includes("handleCloudBackup")).toBe(false);
-    expect(sharingSource.includes("control-panels-pref-divider")).toBe(false);
-    expect(sharingSource.includes("sharingDescription")).toBe(false);
+    // The .mac / Cloud Sync pane is gone entirely.
+    expect(rendererSource.includes('case "dot-mac":')).toBe(false);
+    expect(rendererSource.includes("DotMacPaneContent")).toBe(false);
+    expect(rendererSource.includes("cloudSyncStatus")).toBe(false);
+    expect(categoriesSource.includes("dot-mac")).toBe(false);
+
+    // Local backup/restore via the Sharing pane is retained.
     expect(sharingSource.includes("backupRestoreDescription")).toBe(true);
-
-    const dotMacCase = rendererSource.slice(
-      rendererSource.indexOf('case "dot-mac":'),
-      rendererSource.indexOf('case "sharing":')
-    );
-    expect(dotMacCase.includes("handleCloudBackup")).toBe(true);
-    expect(dotMacCase.includes("cloudSyncStatus")).toBe(true);
 
     const sharingCase = rendererSource.slice(
       rendererSource.indexOf('case "sharing":'),
@@ -290,7 +257,7 @@ describe("Control Panels macOS 10.3 layout", () => {
 
   test("legacy defaultTab values normalize to macOS pane ids", () => {
     expect(normalizeControlPanelPaneId("system")).toBe("international");
-    expect(normalizeControlPanelPaneId("sync")).toBe("dot-mac");
+    expect(normalizeControlPanelPaneId("sync")).toBeUndefined();
     expect(normalizeControlPanelPaneId("sound")).toBe("sound");
     expect(normalizeControlPanelPaneId("appearance")).toBe("appearance");
     expect(normalizeControlPanelPaneId("wallpaper")).toBe("desktop-screen-saver");
@@ -305,7 +272,7 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(normalizeControlPanelClassicTabId("wallpaper")).toBe("appearance");
     expect(normalizeControlPanelClassicTabId("screensaver")).toBe("appearance");
     expect(normalizeControlPanelClassicTabId("system")).toBe("system");
-    expect(normalizeControlPanelClassicTabId("sync")).toBe("sync");
+    expect(normalizeControlPanelClassicTabId("sync")).toBe("appearance");
     expect(normalizeControlPanelClassicTabId(undefined)).toBe("appearance");
   });
 
@@ -409,11 +376,8 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(accountsSource.includes("apps.control-panels.email.title")).toBe(true);
     expect(accountsSource.includes("ThemedIcon")).toBe(true);
     expect(accountsSource.includes("mail.png")).toBe(true);
-    expect(accountsSource.includes("cloud-sync.png")).toBe(true);
-    expect(accountsSource.includes("panes.dotMac")).toBe(true);
-    expect(accountsSource.includes("cloudSync.accountDescription")).toBe(true);
-    expect(accountsSource.includes("apps.control-panels.setup")).toBe(true);
-    expect(accountsSource.includes('onNavigateToPane?.("dot-mac")')).toBe(true);
+    expect(accountsSource.includes("cloud-sync.png")).toBe(false);
+    expect(accountsSource.includes("panes.dotMac")).toBe(false);
     expect(accountsSource.includes("setDebugMode")).toBe(true);
     expect(accountsSource.includes("shaderEffectEnabled")).toBe(false);
     expect(accountsSource.includes("setAiModel")).toBe(true);
@@ -441,10 +405,8 @@ describe("Control Panels macOS 10.3 layout", () => {
     );
     const emailRowIndex = accountsTabPanel.indexOf("apps.control-panels.email.title");
     const telegramRowIndex = accountsTabPanel.indexOf("apps.control-panels.telegram.title");
-    const cloudSyncRowIndex = accountsTabPanel.indexOf("panes.dotMac");
     expect(emailRowIndex).toBeGreaterThan(-1);
     expect(telegramRowIndex).toBeGreaterThan(emailRowIndex);
-    expect(cloudSyncRowIndex).toBeGreaterThan(telegramRowIndex);
 
     const securityTabPanel = accountsSource.slice(
       accountsSource.indexOf('hidden={accountsTab !== "security"}'),
@@ -476,7 +438,6 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(accountsCase.includes("logout")).toBe(true);
     expect(accountsCase.includes("handleLogoutAllDevices")).toBe(true);
     expect(accountsCase.includes("isAdmin")).toBe(true);
-    expect(accountsCase.includes("onNavigateToPane")).toBe(true);
 
     const appSource = readSource(
       "src/apps/control-panels/components/control-panels-app/ControlPanelsAppComponent.tsx"
@@ -499,11 +460,6 @@ describe("Control Panels macOS 10.3 layout", () => {
       readSource(
         "src/apps/control-panels/components/control-panels-app/InternationalPaneContent.tsx"
       ).includes("InternationalPaneContent")
-    ).toBe(true);
-    expect(
-      readSource(
-        "src/apps/control-panels/components/control-panels-app/DotMacPaneContent.tsx"
-      ).includes("DotMacPaneContent")
     ).toBe(true);
     expect(
       readSource(
@@ -616,7 +572,7 @@ describe("Control Panels macOS 10.3 layout", () => {
     ]);
 
     const allPaneIds = CONTROL_PANEL_SECTIONS.flatMap((section) => section.paneIds);
-    expect(allPaneIds).toHaveLength(10);
+    expect(allPaneIds).toHaveLength(9);
     expect(allPaneIds).toEqual([
       "appearance",
       "desktop-screen-saver",
@@ -625,7 +581,6 @@ describe("Control Panels macOS 10.3 layout", () => {
       "sound",
       "accounts",
       "security",
-      "dot-mac",
       "sharing",
       "software-update",
     ]);

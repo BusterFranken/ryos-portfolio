@@ -5,13 +5,12 @@ export type ControlPanelPaneId =
   | "security"
   | "displays"
   | "sound"
-  | "dot-mac"
   | "sharing"
   | "accounts"
   | "software-update";
 
 /** Legacy tab IDs used by Windows/System7 layout and deep links. */
-export type ControlPanelLegacyTabId = "appearance" | "sound" | "sync" | "system";
+export type ControlPanelLegacyTabId = "appearance" | "sound" | "system";
 
 /** Deep-link-only aliases (Spotlight) that map differently per layout. */
 export type ControlPanelDeepLinkAlias = "wallpaper" | "screensaver";
@@ -65,11 +64,6 @@ export const CONTROL_PANEL_CATEGORIES: ControlPanelCategory[] = [
     icon: "sound.png",
   },
   {
-    id: "dot-mac",
-    labelKey: "apps.control-panels.panes.dotMac",
-    icon: "cloud-sync.png",
-  },
-  {
     id: "sharing",
     labelKey: "apps.control-panels.panes.sharing",
     icon: "control-panels/backup-restore.png",
@@ -101,7 +95,7 @@ export const CONTROL_PANEL_SECTIONS: ControlPanelSection[] = [
   {
     id: "internet-network",
     labelKey: "apps.control-panels.sections.internetNetwork",
-    paneIds: ["dot-mac", "sharing", "software-update"],
+    paneIds: ["sharing", "software-update"],
   },
 ];
 
@@ -113,7 +107,6 @@ export const CONTROL_PANEL_PINNED_PANES: ControlPanelPaneId[] = [
 ];
 
 const LEGACY_PANE_ALIASES: Record<string, ControlPanelPaneId> = {
-  sync: "dot-mac",
   system: "international",
   wallpaper: "desktop-screen-saver",
   screensaver: "desktop-screen-saver",
@@ -177,7 +170,6 @@ export function isControlPanelLegacyTabId(
   return (
     value === "appearance" ||
     value === "sound" ||
-    value === "sync" ||
     value === "system"
   );
 }

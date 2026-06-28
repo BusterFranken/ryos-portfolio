@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 import {
   calendarEventOccursOnDate,
   calendarEventOverlapsDateRange,
@@ -131,33 +130,11 @@ export const useCalendarStore = create<CalendarStoreState>()(
         },
 
         removeCalendar: (id) => {
-          const state = get();
-          const deletedEventIds = state.events.reduce<string[]>((acc, event) => {
-            if (event.calendarId === id) {
-              acc.push(event.id);
-            }
-            return acc;
-          }, []);
-          const deletedTodoIds = state.todos.reduce<string[]>((acc, todo) => {
-            if (todo.calendarId === id) {
-              acc.push(todo.id);
-            }
-            return acc;
-          }, []);
-
           set((state) => ({
             calendars: state.calendars.filter((c) => c.id !== id),
             events: state.events.filter((e) => e.calendarId !== id),
             todos: state.todos.filter((t) => t.calendarId !== id),
           }));
-
-          useCloudSyncStore.getState().markDeletedKeys("calendarIds", [id]);
-          useCloudSyncStore
-            .getState()
-            .markDeletedKeys("calendarEventIds", deletedEventIds);
-          useCloudSyncStore
-            .getState()
-            .markDeletedKeys("calendarTodoIds", deletedTodoIds);
         },
 
         addEvent: (eventData) => {
@@ -200,7 +177,6 @@ export const useCalendarStore = create<CalendarStoreState>()(
           set((state) => ({
             events: state.events.filter((ev) => ev.id !== id),
           }));
-          useCloudSyncStore.getState().markDeletedKeys("calendarEventIds", [id]);
         },
 
         addTodo: (title, calendarId, dueDate) => {
@@ -238,7 +214,6 @@ export const useCalendarStore = create<CalendarStoreState>()(
           set((state) => ({
             todos: state.todos.filter((t) => t.id !== id),
           }));
-          useCloudSyncStore.getState().markDeletedKeys("calendarTodoIds", [id]);
         },
 
         setShowTodoSidebar: (show) => set({ showTodoSidebar: show }),

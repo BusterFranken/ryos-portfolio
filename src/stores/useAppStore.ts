@@ -8,8 +8,6 @@ import { useAppletStore } from "@/stores/useAppletStore";
 import { AppState } from "@/apps/base/types";
 import { AIModel } from "@/types/aiModels";
 import { APP_ANALYTICS, track } from "@/utils/analytics";
-import { requestCloudSyncCheck } from "@/utils/cloudSyncEvents";
-import { shouldRequestCloudSyncOnAppLaunch } from "@/utils/cloudSyncLaunch";
 export type { AIModel } from "@/types/aiModels";
 
 // ---------------- Types ---------------------------------------------------------
@@ -640,10 +638,7 @@ const createUseAppStore = () =>
         prefetchAppChunk(appId);
 
         const state = get();
-        if (shouldRequestCloudSyncOnAppLaunch(appId)) {
-          requestCloudSyncCheck();
-        }
-        
+
         // Check if all instances of this app are minimized
         // If so, restore them instead of creating a new instance
         const appInstances = Object.values(state.instances).filter(

@@ -5,12 +5,7 @@ import { ShaderType } from "@/types/shader";
 import { DisplayMode } from "@/utils/displayMode";
 import { getPerformanceTier } from "@/utils/performanceTier";
 import { ensureIndexedDBInitialized } from "@/utils/indexedDB";
-import {
-  emitCloudSyncDomainChange,
-  requestCloudSyncDomainCheck,
-} from "@/utils/cloudSyncEvents";
 import { convertImageFileToWallpaperJpeg } from "@/utils/customWallpaperProcessing";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 import { SETTINGS_ANALYTICS, track } from "@/utils/analytics";
 import { buildShuffleDescriptor } from "@/utils/dynamicWallpaper";
 
@@ -191,11 +186,6 @@ export const useDisplaySettingsStore = create<DisplaySettingsState>()(
         } else {
           wall = path;
         }
-        if (wall.startsWith(INDEXEDDB_PREFIX)) {
-          useCloudSyncStore.getState().clearDeletedKeys("customWallpaperKeys", [
-            wall.substring(INDEXEDDB_PREFIX.length),
-          ]);
-        }
         if (!wall.startsWith(INDEXEDDB_PREFIX)) {
           set({ currentWallpaper: wall, wallpaperSource: wall });
         } else {
@@ -205,9 +195,6 @@ export const useDisplaySettingsStore = create<DisplaySettingsState>()(
             currentWallpaper: wall,
             wallpaperSource: data || fallbackSource,
           });
-          if (!data) {
-            requestCloudSyncDomainCheck("custom-wallpapers");
-          }
         }
         window.dispatchEvent(
           new CustomEvent("wallpaperChange", { detail: wall })
@@ -240,7 +227,6 @@ export const useDisplaySettingsStore = create<DisplaySettingsState>()(
         const id = reference.startsWith(INDEXEDDB_PREFIX)
           ? reference.substring(INDEXEDDB_PREFIX.length)
           : reference;
-        useCloudSyncStore.getState().markDeletedKeys("customWallpaperKeys", [id]);
         try {
           const db = await ensureIndexedDBInitialized();
           const tx = db.transaction(CUSTOM_WALLPAPERS_STORE, "readwrite");
@@ -262,7 +248,6 @@ export const useDisplaySettingsStore = create<DisplaySettingsState>()(
             });
           }
           get().bumpCustomWallpapersRevision();
-          emitCloudSyncDomainChange("custom-wallpapers");
         } catch (e) {
           console.error("deleteCustomWallpaper", e);
         }

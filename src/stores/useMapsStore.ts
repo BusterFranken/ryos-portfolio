@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { SavedPlace } from "@/apps/maps/utils/types";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 
 export type { SavedPlace } from "@/apps/maps/utils/types";
 
@@ -60,9 +59,6 @@ export const useMapsStore = create<MapsStoreState>()(
       addFavorite: (place) =>
         set((state) => {
           const filtered = state.favorites.filter((p) => p.id !== place.id);
-          useCloudSyncStore
-            .getState()
-            .clearDeletedKeys("mapsFavoriteIds", [place.id]);
           return {
             favorites: [place, ...filtered],
             updatedAt: Date.now(),
@@ -71,7 +67,6 @@ export const useMapsStore = create<MapsStoreState>()(
 
       removeFavorite: (id) =>
         set((state) => {
-          useCloudSyncStore.getState().markDeletedKeys("mapsFavoriteIds", [id]);
           return {
             favorites: state.favorites.filter((p) => p.id !== id),
             updatedAt: Date.now(),

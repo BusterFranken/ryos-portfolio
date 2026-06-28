@@ -61,15 +61,6 @@ export type ControlPanelsDialogsProps = {
   isLogoutConfirmDialogOpen: boolean;
   setIsLogoutConfirmDialogOpen: (open: boolean) => void;
   confirmLogout: () => void;
-  isConfirmCloudRestoreOpen: boolean;
-  setIsConfirmCloudRestoreOpen: (open: boolean) => void;
-  handleCloudRestore: () => void;
-  isConfirmForceUploadOpen: boolean;
-  setIsConfirmForceUploadOpen: (open: boolean) => void;
-  handleCloudForceUpload: () => void;
-  isConfirmForceDownloadOpen: boolean;
-  setIsConfirmForceDownloadOpen: (open: boolean) => void;
-  handleCloudForceDownload: () => void;
   isTelegramDialogOpen: boolean;
   setIsTelegramDialogOpen: (open: boolean) => void;
   telegramLinkedAccount: TelegramLinkedAccount | null;
@@ -128,15 +119,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
     isLogoutConfirmDialogOpen,
     setIsLogoutConfirmDialogOpen,
     confirmLogout,
-    isConfirmCloudRestoreOpen,
-    setIsConfirmCloudRestoreOpen,
-    handleCloudRestore,
-    isConfirmForceUploadOpen,
-    setIsConfirmForceUploadOpen,
-    handleCloudForceUpload,
-    isConfirmForceDownloadOpen,
-    setIsConfirmForceDownloadOpen,
-    handleCloudForceDownload,
     isTelegramDialogOpen,
     setIsTelegramDialogOpen,
     telegramLinkedAccount,
@@ -247,36 +229,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
           setPasswordError(null);
           setIsPasswordDialogOpen(true);
         }}
-      />
-      <ConfirmDialog
-        isOpen={isConfirmCloudRestoreOpen}
-        onOpenChange={setIsConfirmCloudRestoreOpen}
-        onConfirm={() => {
-          setIsConfirmCloudRestoreOpen(false);
-          handleCloudRestore();
-        }}
-        title={t("apps.control-panels.cloudSync.confirmRestore")}
-        description={t("apps.control-panels.cloudSync.confirmRestoreDesc")}
-      />
-      <ConfirmDialog
-        isOpen={isConfirmForceUploadOpen}
-        onOpenChange={setIsConfirmForceUploadOpen}
-        onConfirm={() => {
-          setIsConfirmForceUploadOpen(false);
-          handleCloudForceUpload();
-        }}
-        title={t("apps.control-panels.cloudSync.confirmForceUpload")}
-        description={t("apps.control-panels.cloudSync.confirmForceUploadDesc")}
-      />
-      <ConfirmDialog
-        isOpen={isConfirmForceDownloadOpen}
-        onOpenChange={setIsConfirmForceDownloadOpen}
-        onConfirm={() => {
-          setIsConfirmForceDownloadOpen(false);
-          handleCloudForceDownload();
-        }}
-        title={t("apps.control-panels.cloudSync.confirmForceDownload")}
-        description={t("apps.control-panels.cloudSync.confirmForceDownloadDesc")}
       />
       <TelegramLinkDialog
         isOpen={isTelegramDialogOpen}

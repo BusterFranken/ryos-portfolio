@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { ensureIndexedDBInitialized, STORES, dbOperations } from "@/utils/indexedDB";
+import { STORES, dbOperations } from "@/utils/indexedDB";
 import { getNonFinderApps, AppId, getAppIconPath } from "@/config/appRegistry";
 import { useIsRyoAdmin } from "@/hooks/useIsRyoAdmin";
 import { useLaunchApp } from "@/hooks/useLaunchApp";
@@ -18,11 +18,6 @@ import { formatKugouImageUrl } from "@/utils/coverArt";
 import { listVirtualMusicOrVideosPath } from "@/services/vfs/virtualTrees";
 import { abortableFetch } from "@/utils/abortableFetch";
 import { getStoreForFile, type StoredContent } from "@/utils/indexedDBOperations";
-import {
-  emitCloudSyncDomainChange,
-  emitCloudSyncDomainChanges,
-} from "@/utils/cloudSyncEvents";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { FINDER_ANALYTICS, track } from "@/utils/analytics";
 import {
@@ -32,8 +27,6 @@ import {
   getFinderSizeBucket,
   arePathArraysEqual,
   DEFAULT_FILE_PATHS,
-  getCloudSyncDomainForContentStore,
-  getCloudSyncDeletionBucketForContentStore,
   getFileTypeFromExtension,
   BOOK_FILE_ICON_PATH,
   isEpubFile,
@@ -56,21 +49,6 @@ const trackFinderFileOperation = (
     ...getFinderAnalyticsPathInfo(path, type),
     ...extra,
   });
-};
-
-const getIndexedDbStoreKeys = async (storeName: string): Promise<string[]> => {
-  const db = await ensureIndexedDBInitialized();
-  try {
-    return await new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, "readonly");
-      const store = tx.objectStore(storeName);
-      const request = store.getAllKeys();
-      request.onsuccess = () => resolve(request.result as string[]);
-      request.onerror = () => reject(request.error);
-    });
-  } finally {
-    db.close();
-  }
 };
 
 // --- Helper Functions --- //
@@ -391,7 +369,6 @@ export function useFileSystem(
           },
           uuid
         );
-        emitCloudSyncDomainChange("files-applets");
 
         const metadataUpdates: Partial<FileSystemItem> = {};
 
@@ -1050,25 +1027,6 @@ export function useFileSystem(
   }, [loadFiles, options.skipLoad]);
 
   useEffect(() => {
-    if (options.skipLoad) return;
-
-    const unsubscribe = useCloudSyncStore.subscribe((state, prevState) => {
-      const nextApplied = state.categoryStatus.files.lastAppliedRemoteAt;
-      const prevApplied = prevState.categoryStatus.files.lastAppliedRemoteAt;
-
-      if (
-        nextApplied &&
-        nextApplied !== prevApplied &&
-        (currentPath === "/Images" || currentPath.startsWith("/Images/"))
-      ) {
-        loadFiles();
-      }
-    });
-
-    return unsubscribe;
-  }, [currentPath, loadFiles, options.skipLoad]);
-
-  useEffect(() => {
     const filesByPath = new Map(files.map((file) => [file.path, file]));
     const nextSelectedFiles = selectedFiles.filter((path) => filesByPath.has(path));
     const nextPrimaryPath =
@@ -1261,10 +1219,6 @@ export function useFileSystem(
               contentToStore,
               savedItem.uuid
             );
-            const syncDomain = getCloudSyncDomainForContentStore(storeName);
-            if (syncDomain) {
-              emitCloudSyncDomainChange(syncDomain);
-            }
             console.log(
               `[useFileSystem:saveFile] Content saved to IndexedDB with UUID: ${savedItem.uuid}`
             );
@@ -1362,14 +1316,6 @@ export function useFileSystem(
             );
             // Delete from source store
             await dbOperations.delete(sourceStoreName, sourceFile.uuid);
-            emitCloudSyncDomainChanges(
-              [
-                getCloudSyncDomainForContentStore(sourceStoreName),
-                getCloudSyncDomainForContentStore(targetStoreName),
-              ].filter(Boolean) as Array<
-                "files-metadata" | "files-images" | "files-trash" | "files-applets"
-              >
-            );
           }
         }
 
@@ -1444,10 +1390,6 @@ export function useFileSystem(
                 },
                 itemToRename.uuid
               ); // Keep same UUID
-              const syncDomain = getCloudSyncDomainForContentStore(storeName);
-              if (syncDomain) {
-                emitCloudSyncDomainChange(syncDomain);
-              }
             } else {
               console.warn(
                 "Warning: Content not found in IndexedDB for renaming"
@@ -1530,20 +1472,6 @@ export function useFileSystem(
               fileMetadata.uuid
             );
             await dbOperations.delete(storeName, fileMetadata.uuid);
-            const deletionBucket = getCloudSyncDeletionBucketForContentStore(storeName);
-            if (deletionBucket) {
-              useCloudSyncStore
-                .getState()
-                .markDeletedKeys(deletionBucket, [fileMetadata.uuid]);
-            }
-            emitCloudSyncDomainChanges(
-              [
-                getCloudSyncDomainForContentStore(storeName),
-                "files-trash",
-              ].filter(Boolean) as Array<
-                "files-metadata" | "files-images" | "files-trash" | "files-applets"
-              >
-            );
             console.log(
               `[useFileSystem] Moved content for ${fileMetadata.name} from ${storeName} to Trash DB with UUID ${fileMetadata.uuid}.`
             );
@@ -1608,17 +1536,6 @@ export function useFileSystem(
               fileMetadata.uuid
             );
             await dbOperations.delete(STORES.TRASH, fileMetadata.uuid); // Delete content from trash store
-            useCloudSyncStore
-              .getState()
-              .markDeletedKeys("fileTrashKeys", [fileMetadata.uuid]);
-            emitCloudSyncDomainChanges(
-              [
-                getCloudSyncDomainForContentStore(targetStoreName),
-                "files-trash",
-              ].filter(Boolean) as Array<
-                "files-metadata" | "files-images" | "files-trash" | "files-applets"
-              >
-            );
             console.log(
               `[useFileSystem] Restored content for ${fileMetadata.name} from Trash DB to ${targetStoreName} with UUID ${fileMetadata.uuid}.`
             );
@@ -1656,12 +1573,6 @@ export function useFileSystem(
       for (const uuid of contentUUIDsToDelete) {
         await dbOperations.delete(STORES.TRASH, uuid);
       }
-      if (contentUUIDsToDelete.length > 0) {
-        useCloudSyncStore
-          .getState()
-          .markDeletedKeys("fileTrashKeys", contentUUIDsToDelete);
-        emitCloudSyncDomainChange("files-trash");
-      }
       console.log("[useFileSystem] Cleared trash content from IndexedDB.");
       track(FINDER_ANALYTICS.EMPTY_TRASH, {
         appId: "finder",
@@ -1676,27 +1587,12 @@ export function useFileSystem(
   // --- Format File System (Refactored) --- //
   const formatFileSystem = useCallback(async () => {
     try {
-      const [imageKeys, trashKeys, customWallpaperKeys] = await Promise.all([
-        getIndexedDbStoreKeys(STORES.IMAGES),
-        getIndexedDbStoreKeys(STORES.TRASH),
-        getIndexedDbStoreKeys(STORES.CUSTOM_WALLPAPERS),
-      ]);
-      const syncStore = useCloudSyncStore.getState();
-      syncStore.markDeletedKeys("fileImageKeys", imageKeys);
-      syncStore.markDeletedKeys("fileTrashKeys", trashKeys);
-      syncStore.markDeletedKeys("customWallpaperKeys", customWallpaperKeys);
       await Promise.all([
         dbOperations.clear(STORES.IMAGES),
         dbOperations.clear(STORES.TRASH),
         dbOperations.clear(STORES.CUSTOM_WALLPAPERS),
       ]);
       await dbOperations.clear(STORES.DOCUMENTS);
-      emitCloudSyncDomainChanges([
-        "files-metadata",
-        "files-images",
-        "files-trash",
-        "custom-wallpapers",
-      ]);
 
       // Clear the size/timestamp sync flag so it will run again after reset
       localStorage.removeItem("ryos:file-size-timestamp-sync-v1");

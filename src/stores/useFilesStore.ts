@@ -9,7 +9,6 @@ import type { StoredContent } from "@/utils/indexedDBOperations";
 import type { OsThemeId } from "@/themes/types";
 import { getAppBasicInfoList } from "@/config/appRegistryData";
 import { abortableFetch } from "@/utils/abortableFetch";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 
 // Define the structure for a file system item (metadata)
 export interface FileSystemItem {
@@ -729,9 +728,6 @@ export const useFilesStore = create<FilesStoreState>()(
           createdAt: itemData.createdAt || now,
           modifiedAt: itemData.modifiedAt || now,
         };
-        useCloudSyncStore
-          .getState()
-          .clearDeletedKeys("fileMetadataPaths", [newItem.path]);
         debug(`[FilesStore:addItem] Attempting to add:`, newItem); // Log item being added
         set((state) => {
           const parentPath = getParentPath(newItem.path);
@@ -860,7 +856,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       restoreItem: (path) => {
-        useCloudSyncStore.getState().clearDeletedKeys("fileMetadataPaths", [path]);
         set((state) => {
           const itemToRestore = state.items[path];
           if (!itemToRestore || itemToRestore.status !== "trashed") {
@@ -916,12 +911,6 @@ export const useFilesStore = create<FilesStoreState>()(
 
       emptyTrash: () => {
         const trashedItems = get().getTrashItems();
-        useCloudSyncStore
-          .getState()
-          .markDeletedKeys(
-            "fileMetadataPaths",
-            trashedItems.map((item) => item.path)
-          );
         const contentUUIDsToDelete: string[] = [];
         trashedItems.forEach((item) => {
           get().removeItem(item.path, true); // Call internal remove with permanent flag
@@ -933,7 +922,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       renameItem: (oldPath, newPath, newName) => {
-        useCloudSyncStore.getState().clearDeletedKeys("fileMetadataPaths", [newPath]);
         set((state) => {
           const itemToRename = state.items[oldPath];
           // Only allow renaming active items
@@ -981,9 +969,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       moveItem: (sourcePath, destinationPath) => {
-        useCloudSyncStore
-          .getState()
-          .clearDeletedKeys("fileMetadataPaths", [destinationPath]);
         let success = false;
         set((state) => {
           const sourceItem = state.items[sourcePath];

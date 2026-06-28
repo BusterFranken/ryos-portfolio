@@ -2,7 +2,6 @@ import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { AppProps } from "@/apps/base/types";
 import { AppWindowShell } from "@/components/shared/AppWindowShell";
 import { CalendarMenuBar } from "../CalendarMenuBar";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 import { AppHelpAboutDialogs } from "@/components/shared/AppHelpAboutDialogs";
 import { appMetadata } from "../../metadata";
 import { useCalendarLogic } from "../../hooks/useCalendarLogic";
@@ -10,8 +9,6 @@ import { DEFAULT_TIME_GRID_HOUR_HEIGHT } from "../../hooks/useTimeScaleGestures"
 import { useRegisterUndoRedo } from "@/hooks/useUndoRedo";
 import { cn } from "@/lib/utils";
 import { useCalendarStore } from "@/stores/useCalendarStore";
-import { useChatsStore } from "@/stores/useChatsStore";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 import { useResizeObserverWithRef } from "@/hooks/useResizeObserver";
 import { AppDrawer } from "@/components/shared/AppDrawer";
 import { useSound, Sounds } from "@/hooks/useSound";
@@ -28,20 +25,6 @@ import { isKeyboardDeleteTargetEditable } from "./calendarAppUtils";
 export function CalendarAppComponent({
   isWindowOpen, onClose, isForeground, skipInitialSound, instanceId, onNavigateNext, onNavigatePrevious,
 }: AppProps) {
-  const username = useChatsStore((s) => s.username);
-  const isAuthenticated = useChatsStore((s) => s.isAuthenticated);
-  const calendarSyncReady = useCloudSyncStore(
-    (s) => s.autoSyncEnabled && s.syncCalendar
-  );
-  const canSyncCalendar = Boolean(
-    username && isAuthenticated && calendarSyncReady
-  );
-  useEffect(() => {
-    if (canSyncCalendar) {
-      requestCloudSyncDomainCheck("calendar");
-    }
-  }, [canSyncCalendar]);
-
   const logic = useCalendarLogic();
   const {
     t, translatedHelpItems,

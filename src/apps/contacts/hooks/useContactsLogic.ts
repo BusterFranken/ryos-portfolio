@@ -9,7 +9,6 @@ import { useContactsStore } from "@/stores/useContactsStore";
 import type { Contact, ContactDraft } from "@/utils/contacts";
 import { contactMatchesQuery, parseVCardText, sortContacts } from "@/utils/contacts";
 import { resizeImageToBase64 } from "@/utils/imageResize";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 import { CONTACTS_ANALYTICS, track } from "@/utils/analytics";
 import { helpItems } from "..";
 
@@ -121,10 +120,6 @@ export function useContactsLogic() {
       null,
     [filteredContacts, selectedContactId]
   );
-
-  useEffect(() => {
-    requestCloudSyncDomainCheck("contacts");
-  }, []);
 
   useEffect(() => {
     const hasSelectedContact = filteredContacts.some(

@@ -166,7 +166,7 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     ],
     winamp: ["playMusic", "equalizer", "playlist", "skins", "shuffleRepeat", "controls"],
     calendar: ["navigateMonths", "createEvents", "dayView", "colorCoding", "deleteEvents", "autoSave"],
-    contacts: ["browseContacts", "createContacts", "editDetails", "importVCards", "useWithRyo", "cloudSync"],
+    contacts: ["browseContacts", "createContacts", "editDetails", "importVCards", "useWithRyo"],
     dashboard: ["openDashboard", "clockWidget", "calendarWidget", "weatherWidget", "moveWidgets", "closeDashboard"],
     maps: ["searchPlaces", "dropPins", "locateMe", "mapTypes", "poweredByApple", "switchMapStyle"],
     books: ["bookshelf", "import", "pageTurn", "progress", "fonts", "darkMode"],

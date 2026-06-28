@@ -15,7 +15,6 @@ import { DefaultMenuItems } from "./DefaultMenuItems";
 import { Clock } from "./MenuBarClock";
 import { VolumeControl } from "./VolumeControl";
 import { OfflineIndicator } from "./OfflineIndicator";
-import { CloudSyncIndicator } from "./CloudSyncIndicator";
 import { ExposeButton } from "./ExposeButton";
 import { SpotlightMenuBarButton } from "./SpotlightMenuBarButton";
 import { useDesktopFullscreen } from "./useDesktopFullscreen";
@@ -134,7 +133,6 @@ export function MacTopMenuBar({ children }: MacTopMenuBarProps) {
         style={noDragRegionStyle}
       >
         <OfflineIndicator />
-        <CloudSyncIndicator />
         <ExposeButton />
         <VolumeControl />
         <Clock enableCalendarOpen />

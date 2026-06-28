@@ -1,6 +1,4 @@
 import { FileItem as DisplayFileItem } from "../components/FileList";
-import { STORES } from "@/utils/indexedDB";
-import { type CloudSyncDeletionBucket } from "@/stores/useCloudSyncStore";
 
 // Type for items displayed in the UI (might include contentUrl)
 export interface ExtendedDisplayFileItem
@@ -64,48 +62,6 @@ export function isEpubFile(fileName: string, type?: string): boolean {
     type === "application/epub+zip"
   );
 }
-
-export const getCloudSyncDomainForContentStore = (
-  storeName: string
-):
-  | "files-metadata"
-  | "files-images"
-  | "files-books"
-  | "files-trash"
-  | "files-applets"
-  | null => {
-  switch (storeName) {
-    case STORES.DOCUMENTS:
-      return "files-metadata";
-    case STORES.IMAGES:
-      return "files-images";
-    case STORES.BOOKS:
-      return "files-books";
-    case STORES.TRASH:
-      return "files-trash";
-    case STORES.APPLETS:
-      return "files-applets";
-    default:
-      return null;
-  }
-};
-
-export const getCloudSyncDeletionBucketForContentStore = (
-  storeName: string
-): CloudSyncDeletionBucket | null => {
-  switch (storeName) {
-    case STORES.IMAGES:
-      return "fileImageKeys";
-    case STORES.BOOKS:
-      return "fileBookKeys";
-    case STORES.TRASH:
-      return "fileTrashKeys";
-    case STORES.APPLETS:
-      return "fileAppletKeys";
-    default:
-      return null;
-  }
-};
 
 // --- Helper Functions --- //
 

@@ -16,7 +16,7 @@ import {
   type ControlPanelMacNavigationEntry,
   type ControlPanelPaneId,
 } from "./controlPanelsCategories";
-import { getUsernameInitials } from "./syncUtils";
+import { getUsernameInitials } from "@/utils/usernameInitials";
 import { useIsRyoAdmin } from "@/hooks/useIsRyoAdmin";
 
 export function ControlPanelsAppComponent({
@@ -164,49 +164,6 @@ export function ControlPanelsAppComponent({
     isEmailStatusLoading,
     refreshRecoveryEmailStatus,
     accountJoinedAt,
-    autoSyncEnabled,
-    setAutoSyncEnabled,
-    syncFiles,
-    syncSettings,
-    syncSongs,
-    syncVideos,
-    syncStickies,
-    syncCalendar,
-    syncContacts,
-    syncMaps,
-    syncBooks,
-    setSyncFiles,
-    setSyncSettings,
-    setSyncSongs,
-    setSyncVideos,
-    setSyncStickies,
-    setSyncCalendar,
-    setSyncContacts,
-    setSyncMaps,
-    setSyncBooks,
-    isAutoSyncChecking,
-    autoSyncLastCheckedAt,
-    autoSyncLastError,
-    autoSyncDomainStatus,
-    cloudSyncStatus,
-    isCloudBackingUp,
-    isCloudRestoring,
-    isCloudForceSyncing,
-    isCloudForceUploading,
-    isCloudForceDownloading,
-    isCloudStatusLoading,
-    isConfirmCloudRestoreOpen,
-    setIsConfirmCloudRestoreOpen,
-    isConfirmForceUploadOpen,
-    setIsConfirmForceUploadOpen,
-    isConfirmForceDownloadOpen,
-    setIsConfirmForceDownloadOpen,
-    handleCloudForceUpload,
-    handleCloudForceDownload,
-    handleCloudBackup,
-    handleCloudRestore,
-    cloudProgress,
-    CLOUD_BACKUP_MAX_SIZE,
   } = logic;
 
   const isAdmin = useIsRyoAdmin();
@@ -309,43 +266,6 @@ export function ControlPanelsAppComponent({
       username={username}
       promptSetUsername={promptSetUsername}
       promptLogin={promptLogin}
-      autoSyncEnabled={autoSyncEnabled}
-      setAutoSyncEnabled={setAutoSyncEnabled}
-      isAutoSyncChecking={isAutoSyncChecking}
-      autoSyncLastCheckedAt={autoSyncLastCheckedAt}
-      autoSyncLastError={autoSyncLastError}
-      autoSyncDomainStatus={autoSyncDomainStatus}
-      syncFiles={syncFiles}
-      syncSettings={syncSettings}
-      syncCalendar={syncCalendar}
-      syncContacts={syncContacts}
-      syncMaps={syncMaps}
-      syncSongs={syncSongs}
-      syncVideos={syncVideos}
-      syncStickies={syncStickies}
-      syncBooks={syncBooks}
-      setSyncFiles={setSyncFiles}
-      setSyncSettings={setSyncSettings}
-      setSyncCalendar={setSyncCalendar}
-      setSyncContacts={setSyncContacts}
-      setSyncMaps={setSyncMaps}
-      setSyncSongs={setSyncSongs}
-      setSyncVideos={setSyncVideos}
-      setSyncStickies={setSyncStickies}
-      setSyncBooks={setSyncBooks}
-      isCloudForceSyncing={isCloudForceSyncing}
-      isCloudBackingUp={isCloudBackingUp}
-      isCloudRestoring={isCloudRestoring}
-      isCloudForceUploading={isCloudForceUploading}
-      isCloudForceDownloading={isCloudForceDownloading}
-      setIsConfirmForceUploadOpen={setIsConfirmForceUploadOpen}
-      setIsConfirmForceDownloadOpen={setIsConfirmForceDownloadOpen}
-      handleCloudBackup={handleCloudBackup}
-      setIsConfirmCloudRestoreOpen={setIsConfirmCloudRestoreOpen}
-      cloudSyncStatus={cloudSyncStatus}
-      cloudProgress={cloudProgress}
-      isCloudStatusLoading={isCloudStatusLoading}
-      CLOUD_BACKUP_MAX_SIZE={CLOUD_BACKUP_MAX_SIZE}
       myContact={myContact}
       accountAvatarLabel={accountAvatarLabel}
       accountAvatarInitials={accountAvatarInitials}
@@ -463,15 +383,6 @@ export function ControlPanelsAppComponent({
           isLogoutConfirmDialogOpen={isLogoutConfirmDialogOpen}
           setIsLogoutConfirmDialogOpen={setIsLogoutConfirmDialogOpen}
           confirmLogout={confirmLogout}
-          isConfirmCloudRestoreOpen={isConfirmCloudRestoreOpen}
-          setIsConfirmCloudRestoreOpen={setIsConfirmCloudRestoreOpen}
-          handleCloudRestore={handleCloudRestore}
-          isConfirmForceUploadOpen={isConfirmForceUploadOpen}
-          setIsConfirmForceUploadOpen={setIsConfirmForceUploadOpen}
-          handleCloudForceUpload={handleCloudForceUpload}
-          isConfirmForceDownloadOpen={isConfirmForceDownloadOpen}
-          setIsConfirmForceDownloadOpen={setIsConfirmForceDownloadOpen}
-          handleCloudForceDownload={handleCloudForceDownload}
           isTelegramDialogOpen={isTelegramDialogOpen}
           setIsTelegramDialogOpen={setIsTelegramDialogOpen}
           telegramLinkedAccount={telegramLinkedAccount}

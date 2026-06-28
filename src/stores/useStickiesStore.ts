@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 
 export type StickyColor = "yellow" | "blue" | "green" | "pink" | "purple" | "orange";
 
@@ -88,7 +87,6 @@ export const useStickiesStore = create<StickiesState>()(
         set((state) => ({
           notes: state.notes.filter((note) => note.id !== id),
         }));
-        useCloudSyncStore.getState().markDeletedKeys("stickyNoteIds", [id]);
       },
 
       bringToFront: (id) => {
@@ -105,12 +103,6 @@ export const useStickiesStore = create<StickiesState>()(
       },
 
       clearAllNotes: () => {
-        useCloudSyncStore
-          .getState()
-          .markDeletedKeys(
-            "stickyNoteIds",
-            get().notes.map((note) => note.id)
-          );
         set({ notes: [] });
       },
     }),

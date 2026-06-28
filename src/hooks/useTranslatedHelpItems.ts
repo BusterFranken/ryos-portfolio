@@ -169,7 +169,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "importVCards",
     "smartGroups",
     "useWithRyo",
-    "cloudSync",
   ],
   dashboard: [
     "openDashboard",

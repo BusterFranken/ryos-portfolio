@@ -23,7 +23,6 @@ import { DownloadSimple } from "@phosphor-icons/react";
 import { ScreenSaverOverlay } from "./components/screensavers/ScreenSaverOverlay";
 import { useBackgroundChatNotifications } from "./hooks/useBackgroundChatNotifications";
 import { DesktopErrorBoundary } from "@/components/errors/ErrorBoundaries";
-import { DeferredAutoCloudSync } from "@/hooks/useDeferredAutoCloudSync";
 import { AirDropListener } from "@/components/AirDropListener";
 import { useFilesStore } from "@/stores/useFilesStore";
 import { WallpaperAccentRunner } from "@/hooks/WallpaperAccentRunner";
@@ -258,7 +257,6 @@ export function App() {
       </DesktopErrorBoundary>
       <Toaster position={toastConfig.position} offset={toastConfig.offset} />
       <AirDropListener />
-      <DeferredAutoCloudSync />
       <WallpaperAccentRunner />
       <ScreenSaverOverlay />
     </>
