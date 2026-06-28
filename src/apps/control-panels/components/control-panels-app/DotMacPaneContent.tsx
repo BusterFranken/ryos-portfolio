@@ -28,7 +28,6 @@ export type DotMacPaneContentProps = {
   syncMaps: boolean;
   syncSongs: boolean;
   syncVideos: boolean;
-  syncTv: boolean;
   syncStickies: boolean;
   syncBooks: boolean;
   setSyncFiles: (enabled: boolean) => void;
@@ -38,7 +37,6 @@ export type DotMacPaneContentProps = {
   setSyncMaps: (enabled: boolean) => void;
   setSyncSongs: (enabled: boolean) => void;
   setSyncVideos: (enabled: boolean) => void;
-  setSyncTv: (enabled: boolean) => void;
   setSyncStickies: (enabled: boolean) => void;
   setSyncBooks: (enabled: boolean) => void;
   isMacOSTheme: boolean;
@@ -85,7 +83,6 @@ export function DotMacPaneContent({
   syncMaps,
   syncSongs,
   syncVideos,
-  syncTv,
   syncStickies,
   syncBooks,
   setSyncFiles,
@@ -95,7 +92,6 @@ export function DotMacPaneContent({
   setSyncMaps,
   setSyncSongs,
   setSyncVideos,
-  setSyncTv,
   setSyncStickies,
   setSyncBooks,
   isMacOSTheme,
@@ -248,13 +244,6 @@ export function DotMacPaneContent({
                     status={formatSyncStatus(autoSyncDomainStatus.videos, t)}
                     checked={syncVideos}
                     onCheckedChange={setSyncVideos}
-                  />
-                  <SyncDomainRow
-                    appId={AUTO_SYNC_ITEM_ICONS.tv}
-                    label={t("apps.control-panels.autoSync.tvChannels")}
-                    status={formatSyncStatus(autoSyncDomainStatus.tv, t)}
-                    checked={syncTv}
-                    onCheckedChange={setSyncTv}
                   />
                   <SyncDomainRow
                     appId={AUTO_SYNC_ITEM_ICONS.stickies}

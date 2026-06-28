@@ -54,7 +54,6 @@ const SYNC_CATEGORY_META: Record<
   maps: { labelKey: "apps.control-panels.autoSync.maps", appId: "maps" },
   songs: { labelKey: "apps.control-panels.autoSync.songs", appId: "ipod" },
   videos: { labelKey: "apps.control-panels.autoSync.videos", appId: "videos" },
-  tv: { labelKey: "apps.control-panels.autoSync.tvChannels", appId: "tv" },
   stickies: {
     labelKey: "apps.control-panels.autoSync.stickies",
     appId: "stickies",
@@ -71,7 +70,6 @@ const SYNC_CATEGORY_ORDER: CloudSyncCategory[] = [
   "maps",
   "songs",
   "videos",
-  "tv",
   "stickies",
 ];
 

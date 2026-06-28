@@ -74,7 +74,7 @@ _Every task implicitly includes these. Values copied verbatim from `docs/SPEC.md
 - Realtime: `src/services/chat/ChatRealtimeService.ts`, `src/lib/pusherClient.ts`, `src/api/{rooms,irc,listen,telegram}.ts`.
 - Cloud Sync: `src/sync/`, `src/stores/useCloudSyncStore.ts`, `src/hooks/useDeferredAutoCloudSync.ts`/`useAutoCloudSync.ts`.
 - Object storage: `src/utils/storageUpload.ts` (+ blob callers).
-- `admin` app + `src/api/admin.ts`; `maps` app; `tv` channel-creation; `applet-viewer` share/store calls.
+- `admin` app + `src/api/admin.ts`; `tv` channel-creation; `applet-viewer` share/store calls. (KEEP `maps` — re-point off the Apple MapKit token, see M0.6.)
 - Neutralize prod fallbacks in `src/utils/runtimeConfig.ts:22,26`.
 
 **Tasks** (each = remove one subsystem → `bun run build && bun run test:unit` → commit; stop & map imports if the build breaks, per STRIP_LIST):
@@ -83,7 +83,7 @@ _Every task implicitly includes these. Values copied verbatim from `docs/SPEC.md
 - [ ] M0.3 Remove realtime (Pusher/Redis) facade + `src/api/*` realtime clients.
 - [ ] M0.4 Remove Cloud Sync engine + store + hooks.
 - [ ] M0.5 Remove object-storage uploader + disable upload affordances.
-- [ ] M0.6 Remove/hide `admin`, `maps`; guard `tv`/`applet-viewer`/`ipod` backend hooks (keep client-only playback).
+- [ ] M0.6 Remove `admin`, `tv`, `applet-viewer` (backend-coupled, not in design). Guard `ipod` (strip Apple Music + `/api/songs`, keep local playback). **Keep `maps`** but re-point it off Apple MapKit (which needs a token) to a token-free map (OpenStreetMap embed or static map + pin) centered on Buster's base location (location is deferred content). Do NOT delete the Maps app.
 - [ ] M0.7 Neutralize `runtimeConfig.ts` prod fallbacks; prune now-unused `test:unit` entries (chat/pusher/sync/admin tests).
 - [ ] M0.8 **Verify gate:** `bun run build` green, `bun run test:unit` green, `bun dev` loads desktop with NO env, theme switch Mac⟷XP works, no fatal console errors. Commit `chore: strip backend subsystems for static portfolio`.
 

@@ -296,22 +296,6 @@ export function getToolInvocationResultMessage(
           displayResultMessage = out.message;
         }
       }
-    } else if (toolName === "tvControl") {
-      const out = output as
-        | {
-            success?: boolean;
-            message?: string;
-            channels?: unknown[];
-          }
-        | undefined;
-      if (out?.success && out.message) {
-        displayResultMessage = out.message;
-      } else if (out?.success && Array.isArray(out.channels)) {
-        displayResultMessage = t("apps.chats.toolCalls.tv.foundChannels", {
-          defaultValue: "Found {{count}} channels",
-          count: out.channels.length,
-        });
-      }
     } else if (toolName === "stickiesControl") {
       if (typeof output === "string") {
         // Extract just the first line (the summary) for display

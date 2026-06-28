@@ -7,7 +7,6 @@ export const AUTO_SYNC_ITEM_ICONS = {
   maps: "maps",
   songs: "ipod",
   videos: "videos",
-  tv: "tv",
   stickies: "stickies",
 } as const;
 

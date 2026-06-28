@@ -27,7 +27,6 @@ export type SyncTabContentProps = {
   syncMaps: boolean;
   syncSongs: boolean;
   syncVideos: boolean;
-  syncTv: boolean;
   syncStickies: boolean;
   syncBooks: boolean;
   setSyncFiles: (enabled: boolean) => void;
@@ -37,7 +36,6 @@ export type SyncTabContentProps = {
   setSyncMaps: (enabled: boolean) => void;
   setSyncSongs: (enabled: boolean) => void;
   setSyncVideos: (enabled: boolean) => void;
-  setSyncTv: (enabled: boolean) => void;
   setSyncStickies: (enabled: boolean) => void;
   setSyncBooks: (enabled: boolean) => void;
   isCloudForceSyncing: boolean;
@@ -83,7 +81,6 @@ export function SyncTabContent({
   syncMaps,
   syncSongs,
   syncVideos,
-  syncTv,
   syncStickies,
   syncBooks,
   setSyncFiles,
@@ -93,7 +90,6 @@ export function SyncTabContent({
   setSyncMaps,
   setSyncSongs,
   setSyncVideos,
-  setSyncTv,
   setSyncStickies,
   setSyncBooks,
   isCloudForceSyncing,
@@ -213,13 +209,6 @@ export function SyncTabContent({
                 status={formatSyncStatus(autoSyncDomainStatus.videos, t)}
                 checked={syncVideos}
                 onCheckedChange={setSyncVideos}
-              />
-              <SyncDomainRow
-                appId={AUTO_SYNC_ITEM_ICONS.tv}
-                label={t("apps.control-panels.autoSync.tvChannels")}
-                status={formatSyncStatus(autoSyncDomainStatus.tv, t)}
-                checked={syncTv}
-                onCheckedChange={setSyncTv}
               />
               <SyncDomainRow
                 appId={AUTO_SYNC_ITEM_ICONS.stickies}

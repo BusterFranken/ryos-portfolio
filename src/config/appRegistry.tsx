@@ -85,11 +85,6 @@ const LazyVideosApp = createLazyComponent<VideosInitialData>(
   "videos"
 );
 
-const LazyTvApp = createLazyComponent<unknown>(
-  () => import("@/apps/tv/components/tv-app/TvAppComponent").then(m => ({ default: m.TvAppComponent })),
-  "tv"
-);
-
 const LazyPhotoBoothApp = createLazyComponent<unknown>(
   () => import("@/apps/photo-booth/components/PhotoBoothComponent").then(m => ({ default: m.PhotoBoothComponent })),
   "photo-booth"
@@ -179,7 +174,6 @@ import { appMetadata as paintMetadata, helpItems as paintHelpItems } from "@/app
 import { appMetadata as photoboothMetadata, helpItems as photoboothHelpItems } from "@/apps/photo-booth/metadata";
 import { appMetadata as minesweeperMetadata, helpItems as minesweeperHelpItems } from "@/apps/minesweeper";
 import { appMetadata as videosMetadata, helpItems as videosHelpItems } from "@/apps/videos/metadata";
-import { appMetadata as tvMetadata, helpItems as tvHelpItems } from "@/apps/tv/metadata";
 import { appMetadata as ipodMetadata, helpItems as ipodHelpItems } from "@/apps/ipod/metadata";
 import { appMetadata as karaokeMetadata, helpItems as karaokeHelpItems } from "@/apps/karaoke/metadata";
 import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/apps/synth/metadata";
@@ -330,19 +324,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 340 },
     } as WindowConstraints,
   } as BaseApp<VideosInitialData> & { windowConfig: WindowConstraints },
-  ["tv"]: {
-    id: "tv",
-    name: "TV",
-    icon: { type: "image", src: tvMetadata.icon },
-    description: "Channel surf YouTube",
-    component: LazyTvApp,
-    helpItems: tvHelpItems,
-    metadata: tvMetadata,
-    windowConfig: {
-      defaultSize: { width: 480, height: 520 },
-      minSize: { width: 320, height: 360 },
-    } as WindowConstraints,
-  } as BaseApp<unknown> & { windowConfig: WindowConstraints },
   ["ipod"]: {
     id: "ipod",
     name: "iPod",

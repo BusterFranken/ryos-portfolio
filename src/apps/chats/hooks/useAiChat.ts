@@ -66,7 +66,6 @@ import {
   handleInfiniteMacControl,
   handleCalendarControl,
   handleContactsControl,
-  handleTvControl,
   type ToolContext,
   type LaunchAppInput,
   type CloseAppInput,
@@ -77,7 +76,6 @@ import {
   type InfiniteMacControlInput,
   type CalendarControlInput,
   type ContactsControlInput,
-  type TvControlInput,
 } from "../tools";
 import { SERVER_EXECUTED_TOOL_NAME_SET } from "@/shared/tools/serverExecuted";
 
@@ -1319,15 +1317,6 @@ export function useAiChat(onPromptSetUsername?: () => void) {
           case "contactsControl": {
             handleContactsControl(
               toolCall.input as ContactsControlInput,
-              toolCall.toolCallId,
-              toolContext
-            );
-            result = "";
-            break;
-          }
-          case "tvControl": {
-            await handleTvControl(
-              toolCall.input as TvControlInput,
               toolCall.toolCallId,
               toolContext
             );

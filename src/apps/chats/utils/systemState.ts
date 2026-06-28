@@ -6,8 +6,6 @@ import { useKaraokeStore } from "@/stores/useKaraokeStore";
 import { useTextEditStore } from "@/stores/useTextEditStore";
 import { useChatsStore } from "@/stores/useChatsStore";
 import { useLanguageStore } from "@/stores/useLanguageStore";
-import { useTvStore } from "@/stores/useTvStore";
-import { buildTvChannelLineup, DEFAULT_CHANNELS } from "@/apps/tv/data/channels";
 import { htmlToMarkdown } from "@/utils/markdown";
 import { generateHtmlFromJsonSync } from "@/utils/tiptapHtml";
 
@@ -40,64 +38,12 @@ export const getSystemState = () => {
   const textEditStore = useTextEditStore.getState();
   const chatsStore = useChatsStore.getState();
   const languageStore = useLanguageStore.getState();
-  const tvStore = useTvStore.getState();
 
   const currentVideo = videoStore.getCurrentVideo();
   const currentTrack = getIpodChatContextTrack(ipodStore);
   const karaokeCurrentTrack = karaokeStore.currentSongId
     ? ipodStore.tracks.find((track) => track.id === karaokeStore.currentSongId)
     : ipodStore.tracks[0] ?? null;
-
-  const tvChannelLineup = buildTvChannelLineup(
-    tvStore.customChannels,
-    tvStore.hiddenDefaultChannelIds
-  ).map((ch) => ({
-    ch,
-    isCustom: !DEFAULT_CHANNELS.some((defaultChannel) => defaultChannel.id === ch.id),
-  }));
-  const tvCurrentEntry =
-    tvChannelLineup.find(({ ch }) => ch.id === tvStore.currentChannelId) ??
-    tvChannelLineup[0] ??
-    null;
-  const tvCurrentChannel = tvCurrentEntry
-    ? {
-        id: tvCurrentEntry.ch.id,
-        number: tvCurrentEntry.ch.number,
-        name: tvCurrentEntry.ch.name,
-        description: tvCurrentEntry.ch.description,
-        isCustom: tvCurrentEntry.isCustom,
-        videoCount:
-          tvCurrentEntry.ch.id === "mtv"
-            ? ipodStore.tracks.length
-            : tvCurrentEntry.ch.id === "ryos-picks"
-              ? videoStore.videos.length
-              : tvCurrentEntry.ch.videos.length,
-      }
-    : null;
-  const tvCustomChannels = buildTvChannelLineup(
-    tvStore.customChannels,
-    tvStore.hiddenDefaultChannelIds
-  ).reduce<
-    {
-      id: string;
-      number: number;
-      name: string;
-      description: string;
-      videoCount: number;
-    }[]
-  >((acc, channel) => {
-    if (DEFAULT_CHANNELS.some((defaultChannel) => defaultChannel.id === channel.id)) {
-      return acc;
-    }
-    acc.push({
-      id: channel.id,
-      number: channel.number,
-      name: channel.name,
-      description: channel.description ?? "",
-      videoCount: channel.videos.length,
-    });
-    return acc;
-  }, []);
 
   const runningInstances = Object.entries(appStore.instances).reduce<
     {
@@ -242,11 +188,6 @@ export const getSystemState = () => {
           }
         : null,
       isPlaying: karaokeStore.isPlaying,
-    },
-    tv: {
-      currentChannel: tvCurrentChannel,
-      isPlaying: tvStore.isPlaying,
-      customChannels: tvCustomChannels,
     },
     textEdit: {
       instances: textEditInstancesData,

@@ -73,16 +73,7 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "playback",
     "loop",
     "shuffle",
-    "powersTv",
     "shareDeepLinks",
-  ],
-  tv: [
-    "channels",
-    "playback",
-    "numbers",
-    "aiChannels",
-    "mtvChannel",
-    "fullscreen",
   ],
   ipod: [
     "addSongs",

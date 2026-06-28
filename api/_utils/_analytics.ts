@@ -192,7 +192,6 @@ const KNOWN_APP_IDS = new Set([
   "photo-booth",
   "minesweeper",
   "videos",
-  "tv",
   "ipod",
   "karaoke",
   "synth",

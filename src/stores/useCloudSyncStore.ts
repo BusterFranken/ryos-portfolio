@@ -38,7 +38,6 @@ export const CLOUD_SYNC_DELETION_BUCKETS = [
   "fileAppletKeys",
   "customWallpaperKeys",
   "songTrackIds",
-  "tvCustomChannelIds",
   "mapsFavoriteIds",
 ] as const;
 
@@ -64,7 +63,6 @@ function createEmptyDeletionMarkers(): CloudSyncDeletionMarkerState {
     fileAppletKeys: {},
     customWallpaperKeys: {},
     songTrackIds: {},
-    tvCustomChannelIds: {},
     mapsFavoriteIds: {},
   };
 }
@@ -84,7 +82,6 @@ function createInitialCategoryStatus(): CloudSyncCategoryStatusMap {
     settings: empty(),
     songs: empty(),
     videos: empty(),
-    tv: empty(),
     stickies: empty(),
     calendar: empty(),
     contacts: empty(),
@@ -121,7 +118,6 @@ interface CloudSyncStoreState {
   syncSettings: boolean;
   syncSongs: boolean;
   syncVideos: boolean;
-  syncTv: boolean;
   syncStickies: boolean;
   syncCalendar: boolean;
   syncContacts: boolean;
@@ -177,7 +173,6 @@ const CATEGORY_TOGGLE_FIELDS: Record<SyncCategory, keyof CloudSyncStoreState> = 
   settings: "syncSettings",
   songs: "syncSongs",
   videos: "syncVideos",
-  tv: "syncTv",
   stickies: "syncStickies",
   calendar: "syncCalendar",
   contacts: "syncContacts",
@@ -193,7 +188,6 @@ export const useCloudSyncStore = create<CloudSyncStoreState>()(
       syncSettings: true,
       syncSongs: true,
       syncVideos: true,
-      syncTv: true,
       syncStickies: true,
       syncCalendar: true,
       syncContacts: true,
@@ -390,7 +384,6 @@ export const useCloudSyncStore = create<CloudSyncStoreState>()(
         syncSettings: state.syncSettings,
         syncSongs: state.syncSongs,
         syncVideos: state.syncVideos,
-        syncTv: state.syncTv,
         syncStickies: state.syncStickies,
         syncCalendar: state.syncCalendar,
         syncContacts: state.syncContacts,
@@ -431,7 +424,6 @@ export const useCloudSyncStore = create<CloudSyncStoreState>()(
           "custom-wallpapers": "files",
           songs: "songs",
           videos: "videos",
-          tv: "tv",
           stickies: "stickies",
           calendar: "calendar",
           contacts: "contacts",
@@ -503,7 +495,6 @@ export const useCloudSyncStore = create<CloudSyncStoreState>()(
           syncSettings: candidate.syncSettings ?? true,
           syncSongs: candidate.syncSongs ?? true,
           syncVideos: candidate.syncVideos ?? true,
-          syncTv: candidate.syncTv ?? true,
           syncStickies: candidate.syncStickies ?? true,
           syncCalendar: candidate.syncCalendar ?? true,
           syncContacts: candidate.syncContacts ?? true,

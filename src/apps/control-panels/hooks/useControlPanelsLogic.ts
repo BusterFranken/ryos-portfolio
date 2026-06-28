@@ -352,7 +352,6 @@ export function useControlPanelsLogic({
     syncSettings,
     syncSongs,
     syncVideos,
-    syncTv,
     syncStickies,
     syncCalendar,
     syncContacts,
@@ -371,7 +370,6 @@ export function useControlPanelsLogic({
       syncSettings: state.syncSettings,
       syncSongs: state.syncSongs,
       syncVideos: state.syncVideos,
-      syncTv: state.syncTv,
       syncStickies: state.syncStickies,
       syncCalendar: state.syncCalendar,
       syncContacts: state.syncContacts,
@@ -1609,7 +1607,6 @@ export function useControlPanelsLogic({
     syncSettings,
     syncSongs,
     syncVideos,
-    syncTv,
     syncStickies,
     syncCalendar,
     syncContacts,
@@ -1620,7 +1617,6 @@ export function useControlPanelsLogic({
       setCategoryEnabled("settings", enabled),
     setSyncSongs: (enabled: boolean) => setCategoryEnabled("songs", enabled),
     setSyncVideos: (enabled: boolean) => setCategoryEnabled("videos", enabled),
-    setSyncTv: (enabled: boolean) => setCategoryEnabled("tv", enabled),
     setSyncStickies: (enabled: boolean) =>
       setCategoryEnabled("stickies", enabled),
     setSyncCalendar: (enabled: boolean) =>

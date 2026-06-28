@@ -228,19 +228,6 @@ export const TOOL_DESCRIPTIONS = {
     "'delete' removes a contact by ID. " +
     "Use 'list' first to get IDs before calling 'get', 'update', or 'delete'.",
 
-  tvControl:
-    "Control the TV app. Manage the user's TV channel lineup and tune in to channels. " +
-    "Actions: " +
-    "'list' returns the full lineup (built-in + custom channels) with stable ids and channel numbers; " +
-    "'tune' switches the TV to a channel by id (from 'list') or by 'channelNumber'; " +
-    "'createChannel' creates a new custom channel from a one-line theme/prompt — the server AI-plans the channel name, tagline, and lineup by fanning out YouTube searches. Do NOT pre-search videos with searchSongs first or ask the user for a video list; just pass the user's intent as 'prompt' (e.g. 'lofi beats to study to', 'skateboarding tricks'). Optionally pass 'name' to override the planner's name; " +
-    "'deleteChannel' removes a custom channel by id (built-in channels cannot be deleted); " +
-    "'addVideo' appends a YouTube video (by 'videoId' or 'url') to a custom channel; " +
-    "'removeVideo' removes a video from a custom channel by 'removeVideoId'. " +
-    "Built-in channels (RyoTV, MTV, 台視) are read-only — only custom channels can be edited. " +
-    "Always call 'list' first to get channel ids and current state. " +
-    "The TV app opens automatically when tuning, creating, or editing channels.",
-
   mapsSearchPlaces:
     "Search Apple Maps for points of interest, businesses, and addresses. Use when the user asks to find a place, " +
     "look up an address, get directions to a venue, plan a route, or otherwise wants real geographic data. " +
@@ -486,15 +473,6 @@ export function createChatTools(
       description: TOOL_DESCRIPTIONS.contactsControl,
       inputSchema: schemas.contactsControlSchema,
       // No execute - handled client-side in web chat, server-side in Telegram
-    },
-
-    // ============================================================================
-    // TV Control Tools (Client-side execution)
-    // ============================================================================
-    tvControl: {
-      description: TOOL_DESCRIPTIONS.tvControl,
-      inputSchema: schemas.tvControlSchema,
-      // No execute - handled client-side (requires Zustand store + browser fetch)
     },
 
     // ============================================================================

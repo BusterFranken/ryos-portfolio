@@ -24,7 +24,6 @@ import { useFilesStore, type FileSystemItem } from "@/stores/useFilesStore";
 import { useIpodStore, type Track } from "@/stores/useIpodStore";
 import { sortTracksLikeServerOrder } from "@/stores/ipodTrackOrder";
 import { useVideoStore, type Video } from "@/stores/useVideoStore";
-import { useTvStore, type CustomChannel } from "@/stores/useTvStore";
 import { useDockStore } from "@/stores/useDockStore";
 import { useDashboardStore } from "@/stores/useDashboardStore";
 import { useStickiesStore, type StickyNote } from "@/stores/useStickiesStore";
@@ -110,7 +109,6 @@ export const DELETION_BUCKET_PREFIXES: Record<CloudSyncDeletionBucket, string> =
   fileAppletKeys: "applets/item:",
   customWallpaperKeys: "wallpapers/item:",
   songTrackIds: "songs/track:",
-  tvCustomChannelIds: "tv/channel:",
   mapsFavoriteIds: "maps/favorite:",
 };
 
@@ -1010,98 +1008,6 @@ const videosCodec: SyncCodec = {
 };
 
 // ---------------------------------------------------------------------------
-// TV codec
-// ---------------------------------------------------------------------------
-
-const tvCodec: SyncCodec = {
-  namespace: "tv",
-  collect() {
-    const docs = new Map<string, unknown>();
-    const tvState = useTvStore.getState();
-    for (const channel of tvState.customChannels) {
-      if (channel?.id) {
-        docs.set(`tv/channel:${channel.id}`, channel);
-      }
-    }
-    docs.set("tv/prefs", {
-      hiddenDefaultChannelIds: tvState.hiddenDefaultChannelIds,
-      hiddenDefaultChannelIdsUpdatedAt: tvState.hiddenDefaultChannelIdsUpdatedAt,
-      hiddenDefaultChannelIdsResetAt: tvState.hiddenDefaultChannelIdsResetAt,
-      lcdFilterOn: tvState.lcdFilterOn,
-      closedCaptionsOn: tvState.closedCaptionsOn,
-    });
-    return docs;
-  },
-  apply(ops) {
-    const upserts = new Map<string, CustomChannel>();
-    const deletes = new Set<string>();
-    let prefs: Record<string, unknown> | null = null;
-
-    for (const op of ops) {
-      if (op.k.startsWith("tv/channel:")) {
-        const id = op.k.slice("tv/channel:".length);
-        if (op.del) {
-          deletes.add(id);
-        } else if (asRecord(op.v)) {
-          upserts.set(id, op.v as CustomChannel);
-        }
-      } else if (op.k === "tv/prefs" && !op.del) {
-        prefs = asRecord(op.v);
-      }
-    }
-
-    useTvStore.setState((state) => {
-      const byId = new Map(state.customChannels.map((channel) => [channel.id, channel]));
-      for (const id of deletes) {
-        byId.delete(id);
-      }
-      for (const [id, channel] of upserts) {
-        byId.set(id, channel);
-      }
-      return {
-        customChannels: Array.from(byId.values()),
-        ...(prefs
-          ? {
-              hiddenDefaultChannelIds: Array.isArray(prefs.hiddenDefaultChannelIds)
-                ? (prefs.hiddenDefaultChannelIds as string[])
-                : state.hiddenDefaultChannelIds,
-              hiddenDefaultChannelIdsUpdatedAt:
-                typeof prefs.hiddenDefaultChannelIdsUpdatedAt === "string"
-                  ? prefs.hiddenDefaultChannelIdsUpdatedAt
-                  : null,
-              hiddenDefaultChannelIdsResetAt:
-                typeof prefs.hiddenDefaultChannelIdsResetAt === "string"
-                  ? prefs.hiddenDefaultChannelIdsResetAt
-                  : null,
-              lcdFilterOn: prefs.lcdFilterOn !== false,
-              closedCaptionsOn: prefs.closedCaptionsOn !== false,
-            }
-          : {}),
-      };
-    });
-  },
-  subscribe(onChange) {
-    return useTvStore.subscribe((state, prev) => {
-      if (
-        state.customChannels !== prev.customChannels ||
-        state.hiddenDefaultChannelIds !== prev.hiddenDefaultChannelIds ||
-        state.hiddenDefaultChannelIdsUpdatedAt !==
-          prev.hiddenDefaultChannelIdsUpdatedAt ||
-        state.hiddenDefaultChannelIdsResetAt !== prev.hiddenDefaultChannelIdsResetAt ||
-        state.lcdFilterOn !== prev.lcdFilterOn ||
-        state.closedCaptionsOn !== prev.closedCaptionsOn
-      ) {
-        if (!useTvStore.persist.hasHydrated()) return;
-        onChange();
-      }
-    });
-  },
-  isReady() {
-    return useTvStore.persist.hasHydrated();
-  },
-};
-
-// ---------------------------------------------------------------------------
 // Stickies codec
 // ---------------------------------------------------------------------------
 
@@ -1583,7 +1489,6 @@ export const SYNC_CODECS: Record<SyncNamespace, SyncCodec> = {
   files: filesCodec,
   songs: songsCodec,
   videos: videosCodec,
-  tv: tvCodec,
   stickies: stickiesCodec,
   calendar: calendarCodec,
   contacts: contactsCodec,
@@ -1615,7 +1520,6 @@ export const NAMESPACE_APPLY_ORDER: SyncNamespace[] = [
   "bookshelf",
   "songs",
   "videos",
-  "tv",
   "stickies",
   "calendar",
   "contacts",

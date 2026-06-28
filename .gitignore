@@ -40,3 +40,4 @@ build/apple.p8
 build/github-secrets-paste.txt
 
 core
+.superpowers/
