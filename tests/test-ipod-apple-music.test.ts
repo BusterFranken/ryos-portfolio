@@ -59,7 +59,6 @@ const {
   getIpodTracksForLibrary,
   getIpodChatContextTrack,
 } = await import("../src/stores/useIpodStore");
-const { useKaraokeStore } = await import("../src/stores/useKaraokeStore");
 const {
   shouldFireEndedForPlaybackState,
   isWithinEndedFanoutDedupWindow,
@@ -374,14 +373,6 @@ describe("useIpodStore Apple Music slice", () => {
       loopAll: false,
       loopCurrent: false,
       isShuffled: false,
-    });
-    useKaraokeStore.setState({
-      currentSongId: null,
-      isPlaying: false,
-      loopAll: true,
-      loopCurrent: false,
-      isShuffled: false,
-      playbackHistory: [],
     });
   });
 

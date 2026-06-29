@@ -23,8 +23,6 @@ import { parseCommand } from "../utils/commandParser";
 import { commands, AVAILABLE_COMMANDS } from "../commands";
 import { helpItems } from "../index";
 import { useVimLogic } from "./useVimLogic";
-import type { AIChatMessage } from "@/types/chat";
-
 
 // Helper function to check if a message is urgent (starts with "!!!!")
 export const isUrgentMessage = (content: string): boolean =>
@@ -63,10 +61,7 @@ export const useTerminalLogic = ({
   const { currentPath: storedPath } = useTerminalStoreShallow((state) => ({
     currentPath: state.currentPath,
   }));
-  // AI assistant ("Ryo") was removed for the no-backend portfolio build. These
-  // are inert stand-ins so the terminal renders purely as a classic shell.
-  const isInAiMode = false;
-  const [spinnerIndex, setSpinnerIndex] = useState(0);
+  const spinnerIndex = 0;
   const [isInteractingWithPreview, setIsInteractingWithPreview] =
     useState(false);
   const [inputFocused, setInputFocused] = useState(false); // Add state for input focus
@@ -79,13 +74,6 @@ export const useTerminalLogic = ({
   const isAtBottomRef = useRef(true);
   const hasScrolledRef = useRef(false);
   const previousCommandHistoryLength = useRef(0);
-
-  // Keep track of the last processed message ID to avoid duplicates
-  const lastProcessedMessageIdRef = useRef<string | null>(null);
-  // Inert AI chat stand-ins (AI assistant removed in the no-backend build).
-  const aiMessages: AIChatMessage[] = [];
-  const isAiLoading = false;
-  const stopAiResponse = () => {};
 
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -228,17 +216,6 @@ export const useTerminalLogic = ({
     useTerminalStore.getState().setCurrentPath(currentPath);
   }, [currentPath]);
 
-  // Spinner animation effect
-  useEffect(() => {
-    if (isAiLoading) {
-      const interval = setInterval(() => {
-        setSpinnerIndex((prevIndex) => (prevIndex + 1) % spinnerChars.length);
-      }, 100);
-
-      return () => clearInterval(interval);
-    }
-  }, [isAiLoading, spinnerChars.length]);
-
   const [isClearingTerminal, setIsClearingTerminal] = useState(false);
 
   const handleCommandSubmit = (e: React.FormEvent) => {
@@ -313,7 +290,6 @@ export const useTerminalLogic = ({
         const savedCommands = useTerminalStore.getState().commandHistory;
         const commandEntry = savedCommands[savedCommands.length - 1 - newIndex];
         if (
-          !isInAiMode &&
           commandEntry &&
           commandEntry.command.startsWith("ryo ") &&
           !historicCommand.startsWith("ryo ")
@@ -336,7 +312,6 @@ export const useTerminalLogic = ({
         const savedCommands = useTerminalStore.getState().commandHistory;
         const commandEntry = savedCommands[savedCommands.length - 1 - newIndex];
         if (
-          !isInAiMode &&
           commandEntry &&
           commandEntry.command.startsWith("ryo ") &&
           !historicCommand.startsWith("ryo ")
@@ -480,15 +455,9 @@ export const useTerminalLogic = ({
       if (cmd === "clear") {
         // Trigger clearing animation
         setIsClearingTerminal(true);
-        // Stop any ongoing AI responses
-        if (isInAiMode) {
-          stopAiResponse();
-        }
         setTimeout(() => {
           setIsClearingTerminal(false);
           setCommandHistory([]);
-          // Reset tracking refs for AI responses
-          lastProcessedMessageIdRef.current = null;
         }, 500); // Animation duration
       }
 
@@ -988,9 +957,6 @@ export const useTerminalLogic = ({
     fontSize,
     spinnerIndex,
     spinnerChars,
-    isInAiMode,
-    isAiLoading,
-    aiMessages,
     handleCommandSubmit,
     handleKeyDown,
     inputFocused,

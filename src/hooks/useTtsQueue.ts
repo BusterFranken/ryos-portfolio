@@ -9,7 +9,6 @@ import {
 import { getAudioContext, resumeAudioContext } from "@/lib/audioContext";
 import { useAudioSettingsStore } from "@/stores/useAudioSettingsStore";
 import { useIpodStore } from "@/stores/useIpodStore";
-import { useKaraokeStore } from "@/stores/useKaraokeStore";
 import { checkOfflineAndShowError } from "@/utils/offline";
 
 /**
@@ -86,10 +85,9 @@ export function useTtsQueue(endpoint: string = "/api/speech") {
 
   const duckingTokenRef = useRef<TtsDuckingToken | null>(null);
 
-  // Subscribe to iPod/Karaoke playing state so ducking reacts when playback starts/stops
+  // Subscribe to iPod playing state so ducking reacts when playback starts/stops
   const ipodIsPlaying = useIpodStore((s) => s.isPlaying);
-  const karaokeIsPlaying = useKaraokeStore((s) => s.isPlaying);
-  const musicIsPlaying = ipodIsPlaying || karaokeIsPlaying;
+  const musicIsPlaying = ipodIsPlaying;
 
   // Detect iOS (Safari) environment where programmatic volume control is restricted
   const isIOS =

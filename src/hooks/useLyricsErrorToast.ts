@@ -15,8 +15,8 @@ export interface UseLyricsErrorToastParams {
   onSearchClick: () => void;
   /** Translation function for i18n */
   t: (key: string, options?: { defaultValue: string }) => string;
-  /** App identifier for translation keys (e.g., "ipod" or "karaoke") */
-  appId?: "ipod" | "karaoke";
+  /** App identifier for translation keys (e.g., "ipod") */
+  appId?: "ipod";
 }
 
 // =============================================================================

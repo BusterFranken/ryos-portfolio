@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { useStoreShallow } from "./helpers";
 import { persist } from "zustand/middleware";
-import { abortableFetch } from "@/utils/abortableFetch";
 
 // Define types
 export interface Favorite {
@@ -852,52 +851,12 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
       setTimeMachineViewOpen: (isOpen) =>
         set({ isTimeMachineViewOpen: isOpen }),
       fetchCachedYears: async (url) => {
+        // The time-travel / AI cache backend (/api/iframe-check) was removed in
+        // the static portfolio build. There are no cached year snapshots to
+        // list, so this is a no-op that simply clears any stale state instead
+        // of calling the removed endpoint.
         if (!url) return;
-        set({ isFetchingCachedYears: true, cachedYears: [] });
-        try {
-          const normalizedUrl = url.startsWith("http") ? url : `https://${url}`;
-          const response = await abortableFetch(
-            `/api/iframe-check?mode=list-cache&url=${encodeURIComponent(
-              normalizedUrl
-            )}`,
-            {
-              timeout: 15000,
-              retry: { maxAttempts: 2, initialDelayMs: 500 },
-            }
-          );
-          const data = await response.json();
-          const fetchedYears: string[] = data.years || [];
-          const currentActualYear = new Date().getFullYear();
-
-          const futureYearsApi = fetchedYears
-            .filter(
-              (year) =>
-                !isNaN(parseInt(year)) && parseInt(year) > currentActualYear
-            )
-            .sort((a, b) => parseInt(b) - parseInt(a));
-
-          const pastYearsApi = fetchedYears
-            .filter(
-              (year) =>
-                !isNaN(parseInt(year)) && parseInt(year) <= currentActualYear
-            )
-            .sort((a, b) => parseInt(b) - parseInt(a));
-
-          const nonNumericPastYears = fetchedYears.filter(
-            (year) => isNaN(parseInt(year)) && year !== "current"
-          );
-
-          const sortedYears = [
-            ...futureYearsApi,
-            "current",
-            ...pastYearsApi,
-            ...nonNumericPastYears,
-          ];
-          set({ cachedYears: sortedYears, isFetchingCachedYears: false });
-        } catch (error) {
-          console.error("Error fetching cached years:", error);
-          set({ isFetchingCachedYears: false, cachedYears: ["current"] });
-        }
+        set({ isFetchingCachedYears: false, cachedYears: [] });
       },
 
       // Add implementations for new actions

@@ -5,7 +5,6 @@ import {
   getEffectiveTranslationLanguage,
   type Track,
 } from "@/stores/useIpodStore";
-import { useKaraokeStore } from "@/stores/useKaraokeStore";
 import {
   DisplayMode,
   getLyricsFontClassName,
@@ -16,7 +15,7 @@ import { useFurigana } from "@/hooks/useFurigana";
 import { useNowPlayingCover } from "@/hooks/useNowPlayingCover";
 
 export interface NowPlayingLyrics {
-  source: "ipod" | "karaoke" | null;
+  source: "ipod" | null;
   isPlaying: boolean;
   track: Track | null;
   coverUrl: string | null;
@@ -30,7 +29,7 @@ export interface NowPlayingLyrics {
   lyricsFontClassName: string;
   /** True when there are lyric lines to render for the active track. */
   hasLyrics: boolean;
-  /** iPod / Karaoke View → Display mode for the active player (iPod when tied). */
+  /** iPod View → Display mode for the active player. */
   effectiveDisplayMode: DisplayMode;
   /** Shader / landscape / cover backgrounds animate only while playing in non-Video modes. */
   visualBackgroundActive: boolean;
@@ -39,9 +38,8 @@ export interface NowPlayingLyrics {
 /**
  * Resolves the now-playing track + synced lyrics for the `dynamic://lyrics`
  * wallpaper. Mirrors {@link useNowPlayingCover}'s precedence (actively playing
- * wins, iPod over Karaoke on ties; otherwise whichever has a current track) and
- * independently loads lyrics so the wallpaper works whether or not the iPod /
- * Karaoke windows are open.
+ * wins; otherwise whichever has a current track) and independently loads lyrics
+ * so the wallpaper works whether or not the iPod window is open.
  */
 export function useNowPlayingLyrics(): NowPlayingLyrics {
   // iPod playback state.
@@ -53,11 +51,6 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
   const ipodAppleTracks = useIpodStore((s) => s.appleMusicTracks);
   const ipodElapsed = useIpodStore((s) => s.elapsedTime);
 
-  // Karaoke playback state (library shared with the iPod's YouTube tracks).
-  const karaokeIsPlaying = useKaraokeStore((s) => s.isPlaying);
-  const karaokeSongId = useKaraokeStore((s) => s.currentSongId);
-  const karaokeElapsed = useKaraokeStore((s) => s.elapsedTime);
-
   // Shared lyrics preferences live on the iPod store.
   const romanization = useIpodStore((s) => s.romanization);
   const lyricsTranslationLanguage = useIpodStore(
@@ -65,9 +58,6 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
   );
   const lyricsFont = useIpodStore((s) => s.lyricsFont);
   const ipodDisplayMode = useIpodStore((s) => s.displayMode ?? DisplayMode.Video);
-  const karaokeDisplayMode = useKaraokeStore(
-    (s) => s.displayMode ?? DisplayMode.Video
-  );
 
   const cover = useNowPlayingCover();
 
@@ -79,22 +69,11 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
       appleMusicTracks: ipodAppleTracks,
       appleMusicCurrentSongId: ipodAppleSongId,
     });
-    const karaokeTrack = karaokeSongId
-      ? ipodTracks.find((t) => t.id === karaokeSongId) ?? null
-      : null;
-
     if (ipodIsPlaying)
       return {
         source: "ipod" as const,
         track: ipodTrack,
         elapsed: ipodElapsed,
-        isPlaying: true,
-      };
-    if (karaokeIsPlaying)
-      return {
-        source: "karaoke" as const,
-        track: karaokeTrack,
-        elapsed: karaokeElapsed,
         isPlaying: true,
       };
     if (ipodTrack)
@@ -104,15 +83,8 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
         elapsed: ipodElapsed,
         isPlaying: false,
       };
-    if (karaokeTrack)
-      return {
-        source: "karaoke" as const,
-        track: karaokeTrack,
-        elapsed: karaokeElapsed,
-        isPlaying: false,
-      };
     return {
-      source: null as "ipod" | "karaoke" | null,
+      source: null as "ipod" | null,
       track: null as Track | null,
       elapsed: 0,
       isPlaying: false,
@@ -125,9 +97,6 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
     ipodTracks,
     ipodAppleTracks,
     ipodElapsed,
-    karaokeIsPlaying,
-    karaokeSongId,
-    karaokeElapsed,
   ]);
 
   const lyricOffsetMs = track?.lyricOffset ?? 0;
@@ -174,8 +143,7 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
     lyricsFont ?? LyricsFontEnum.GoldGlow
   );
 
-  const displayMode =
-    source === "karaoke" ? karaokeDisplayMode : ipodDisplayMode;
+  const displayMode = ipodDisplayMode;
   const effectiveDisplayMode =
     source === "ipod" &&
     track?.source === "appleMusic" &&

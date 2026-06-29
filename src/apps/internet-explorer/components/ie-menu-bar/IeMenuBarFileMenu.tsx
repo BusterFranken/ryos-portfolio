@@ -13,7 +13,7 @@ export function IeMenuBarFileMenu({
 }: {
   vm: InternetExplorerMenuBarViewModel;
 }) {
-  const { t, onFocusUrlInput, onSharePage, onOpenTimeMachine, onClose } = vm;
+  const { t, onFocusUrlInput, onSharePage, onClose } = vm;
 
   return (
     <MenubarMenu>
@@ -26,10 +26,6 @@ export function IeMenuBarFileMenu({
         </MenubarItem>
         <MenubarItem onClick={onSharePage} className="text-md h-6 px-3">
           {t("apps.internet-explorer.menu.sharePage")}
-        </MenubarItem>
-        <MenubarSeparator className="h-[2px] bg-black my-1" />
-        <MenubarItem onClick={onOpenTimeMachine} className="text-md h-6 px-3">
-          {t("apps.internet-explorer.menu.openTimeMachine")}
         </MenubarItem>
         <MenubarSeparator className="h-[2px] bg-black my-1" />
         <MenubarItem onClick={onClose} className="text-md h-6 px-3">
