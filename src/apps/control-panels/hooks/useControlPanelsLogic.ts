@@ -33,7 +33,6 @@ import type { ControlPanelsInitialData } from "@/apps/base/types";
 import { abortableFetch } from "@/utils/abortableFetch";
 import { triggerRuntimeCrashTest } from "@/utils/errorReporting";
 import { SETTINGS_ANALYTICS, track } from "@/utils/analytics";
-import { useTelegramLink } from "@/hooks/useTelegramLink";
 import { useRecoveryEmail } from "@/hooks/useRecoveryEmail";
 import { useAccountJoinDate } from "@/hooks/useAccountJoinDate";
 import {
@@ -447,19 +446,6 @@ export function useControlPanelsLogic({
       setIsLoggingOutAllDevices(false);
     }
   };
-
-  const {
-    telegramLinkedAccount,
-    telegramLinkSession,
-    isTelegramStatusLoading,
-    isCreatingTelegramLink,
-    isDisconnectingTelegramLink,
-    refreshTelegramLinkStatus,
-    handleCreateTelegramLink,
-    handleOpenTelegramLink,
-    handleCopyTelegramCode,
-    handleDisconnectTelegramLink,
-  } = useTelegramLink({ username, isAuthenticated });
 
   const {
     recoveryEmailStatus,
@@ -1047,16 +1033,6 @@ export function useControlPanelsLogic({
     handleVerifyTokenSubmit,
     handleSetPassword,
     handleLogoutAllDevices,
-    telegramLinkedAccount,
-    telegramLinkSession,
-    isTelegramStatusLoading,
-    isCreatingTelegramLink,
-    isDisconnectingTelegramLink,
-    refreshTelegramLinkStatus,
-    handleCreateTelegramLink,
-    handleOpenTelegramLink,
-    handleCopyTelegramCode,
-    handleDisconnectTelegramLink,
     recoveryEmailStatus,
     isEmailStatusLoading,
     refreshRecoveryEmailStatus,

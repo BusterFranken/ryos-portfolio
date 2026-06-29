@@ -122,10 +122,6 @@ export function FinderAppComponent({
     translatedHelpItems,
     getFileType,
     getDisplayPath,
-    isAirDropView,
-    navigateToAirDrop,
-    navigateAwayFromAirDrop,
-    handleAirDropSendFile,
   } = logic;
 
   useRegisterUndoRedo(instanceId!, {
@@ -179,7 +175,6 @@ export function FinderAppComponent({
       instanceId={instanceId}
       showSidebar={showSidebar}
       onToggleSidebar={() => setShowSidebar((s) => !s)}
-      onNavigateToAirDrop={navigateToAirDrop}
     />
   );
 
@@ -292,7 +287,6 @@ export function FinderAppComponent({
           blankLongPressHandlers={blankLongPressHandlers}
           macToolbarProps={{
             t,
-            isAirDropView,
             currentPath,
             searchQuery,
             setSearchQuery,
@@ -303,7 +297,6 @@ export function FinderAppComponent({
             canCreateFolder,
             navigateBack,
             navigateForward,
-            navigateAwayFromAirDrop,
             navigateUp,
             handleNewFolder,
             handleImportFile,
@@ -313,7 +306,6 @@ export function FinderAppComponent({
             t,
             isWindowsTheme,
             currentTheme,
-            isAirDropView,
             currentPath,
             pathInputRef,
             displayPath: getDisplayPath(currentPath),
@@ -321,7 +313,6 @@ export function FinderAppComponent({
             canNavigateForward,
             navigateBack,
             navigateForward,
-            navigateAwayFromAirDrop,
             navigateUp,
             handlePathInputChange,
             handlePathInputKeyDown,
@@ -334,24 +325,16 @@ export function FinderAppComponent({
             showSidebar,
             sidebarItems,
             activeSidebarPath,
-            isAirDropView,
             sortedFilesCount: sortedFiles.length,
             storageSpaceAvailable: storageSpace.available,
             fileListContentProps,
-            navigateToAirDrop,
-            navigateAwayFromAirDrop,
             navigateToPath,
-            handleAirDropSendFile,
-            promptVerifyToken: auth.promptVerifyToken,
           }}
           legacyContentProps={{
             t,
-            isAirDropView,
             sortedFilesCount: sortedFiles.length,
             storageSpaceAvailable: storageSpace.available,
             fileListContentProps,
-            handleAirDropSendFile,
-            promptVerifyToken: auth.promptVerifyToken,
           }}
         />
     </AppWindowShell>

@@ -15,7 +15,7 @@ import { useWeatherSimulationStore } from "@/stores/useWeatherSimulationStore";
 import { SF_LAT, SF_LON } from "@/stores/useWeatherStore";
 import { WeatherShaderBackground } from "@/components/shared/WeatherShaderBackground";
 import { YouTubePlayer } from "@/components/shared/YouTubePlayer";
-import { KaraokeVisualLayers } from "@/apps/karaoke/components/karaoke-app/KaraokeVisualLayers";
+import { NowPlayingVisualLayers } from "@/components/layout/desktop/NowPlayingVisualLayers";
 import { DisplayMode } from "@/types/lyrics";
 import { getWeatherEmoji } from "@/lib/weather/openMeteo";
 import { Emoji } from "@/components/shared/Emoji";
@@ -505,7 +505,7 @@ function LyricsWallpaperLayer() {
           </div>
         </div>
       )}
-      <KaraokeVisualLayers
+      <NowPlayingVisualLayers
         effectiveDisplayMode={np.effectiveDisplayMode}
         visualBackgroundActive={np.visualBackgroundActive}
         currentTrack={np.track}

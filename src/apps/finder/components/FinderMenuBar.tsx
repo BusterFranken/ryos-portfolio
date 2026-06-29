@@ -47,7 +47,6 @@ export interface FinderMenuBarProps {
   instanceId?: string;
   showSidebar?: boolean;
   onToggleSidebar?: () => void;
-  onNavigateToAirDrop?: () => void;
 }
 
 export function FinderMenuBar({
@@ -79,7 +78,6 @@ export function FinderMenuBar({
   instanceId,
   showSidebar,
   onToggleSidebar,
-  onNavigateToAirDrop,
 }: FinderMenuBarProps) {
   const { t } = useTranslation();
   const {
@@ -345,18 +343,6 @@ export function FinderMenuBar({
             className="text-md h-6 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("apps.finder.menu.forward")}
-          </MenubarItem>
-          <MenubarSeparator className={MENUBAR_SEPARATOR_CLASS} />
-          <MenubarItem
-            onClick={onNavigateToAirDrop}
-            className="text-md h-6 px-3 flex items-center gap-2"
-          >
-            <ThemedIcon
-              name="/icons/default/airdrop.png"
-              alt=""
-              className="size-4 [image-rendering:pixelated]"
-            />
-            {t("apps.finder.airdrop.title")}
           </MenubarItem>
           <MenubarSeparator className={MENUBAR_SEPARATOR_CLASS} />
 

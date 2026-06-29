@@ -85,14 +85,6 @@ describe("Shared dialog state wiring", () => {
     expect(source).toContain("useMediaAppDialogs()");
   });
 
-  test("useKaraokeLogic uses useMediaAppDialogs", () => {
-    const source = readSource("src/apps/karaoke/hooks/useKaraokeLogic.ts");
-    expect(source).toContain(
-      'import { useMediaAppDialogs } from "@/hooks/useMediaAppDialogs"'
-    );
-    expect(source).toContain("useMediaAppDialogs()");
-  });
-
   test("shared hooks exist and expose the expected API", () => {
     const helpAbout = readSource("src/hooks/useAppHelpAboutDialogs.ts");
     expect(helpAbout).toContain("export function useAppHelpAboutDialogs");

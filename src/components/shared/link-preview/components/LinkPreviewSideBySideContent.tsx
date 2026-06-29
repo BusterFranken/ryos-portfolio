@@ -10,7 +10,6 @@ export function LinkPreviewSideBySideContent({
   isMacOSTheme,
   dispatch,
   handleAddToIpod,
-  handleOpenInKaraoke,
   handleOpenYouTube,
   handleOpenExternally,
 }: {
@@ -19,7 +18,6 @@ export function LinkPreviewSideBySideContent({
   isMacOSTheme: boolean;
   dispatch: Dispatch<LinkPreviewAction>;
   handleAddToIpod: (e: MouseEvent | TouchEvent) => void;
-  handleOpenInKaraoke: (e: MouseEvent | TouchEvent) => void;
   handleOpenYouTube: (e: MouseEvent | TouchEvent) => void;
   handleOpenExternally: (e: MouseEvent | TouchEvent) => void;
 }) {
@@ -119,7 +117,6 @@ export function LinkPreviewSideBySideContent({
         isMacOSTheme={isMacOSTheme}
         layout="sideBySide"
         handleAddToIpod={handleAddToIpod}
-        handleOpenInKaraoke={handleOpenInKaraoke}
         handleOpenYouTube={handleOpenYouTube}
         handleOpenExternally={handleOpenExternally}
       />

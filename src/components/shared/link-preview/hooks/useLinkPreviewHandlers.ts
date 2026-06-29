@@ -22,22 +22,6 @@ export function useLinkPreviewHandlers(url: string) {
     }
   };
 
-  const handleOpenInKaraoke = (e: MouseEvent | TouchEvent) => {
-    e.stopPropagation();
-    try {
-      const videoId = extractYouTubeVideoId(url);
-      if (videoId) {
-        launchApp("karaoke", { initialData: { videoId } });
-      } else {
-        toast.error("Could not extract video ID from this URL");
-        console.warn("Could not extract video ID from URL:", url);
-      }
-    } catch (error) {
-      toast.error("Failed to open video in Karaoke app");
-      console.error("Error launching Karaoke app:", error);
-    }
-  };
-
   const handleOpenYouTube = (e: MouseEvent | TouchEvent) => {
     e.stopPropagation();
     if (url.includes("/ipod/") || url.includes("/karaoke/")) {
@@ -58,7 +42,6 @@ export function useLinkPreviewHandlers(url: string) {
 
   return {
     handleAddToIpod,
-    handleOpenInKaraoke,
     handleOpenYouTube,
     handleOpenExternally,
   };

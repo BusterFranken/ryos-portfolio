@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
 import {
   useIpodStore,
   getActiveIpodCurrentTrack,
@@ -7,7 +6,6 @@ import {
   type Track,
 } from "@/stores/useIpodStore";
 import { useKaraokeStore } from "@/stores/useKaraokeStore";
-import { useListenSessionStore } from "@/stores/useListenSessionStore";
 import {
   DisplayMode,
   getLyricsFontClassName,
@@ -70,15 +68,6 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
   const karaokeDisplayMode = useKaraokeStore(
     (s) => s.displayMode ?? DisplayMode.Video
   );
-
-  const { listenSession, isListenSessionDj, isListenSessionAnonymous } =
-    useListenSessionStore(
-      useShallow((s) => ({
-        listenSession: s.currentSession,
-        isListenSessionDj: s.isDj,
-        isListenSessionAnonymous: s.isAnonymous,
-      }))
-    );
 
   const cover = useNowPlayingCover();
 
@@ -187,22 +176,14 @@ export function useNowPlayingLyrics(): NowPlayingLyrics {
 
   const displayMode =
     source === "karaoke" ? karaokeDisplayMode : ipodDisplayMode;
-  const listenRemoteOnly =
-    source === "karaoke" &&
-    Boolean(
-      listenSession && !isListenSessionDj && !isListenSessionAnonymous
-    );
-  const effectiveDisplayMode = listenRemoteOnly
-    ? DisplayMode.Cover
-    : source === "ipod" &&
-        track?.source === "appleMusic" &&
-        displayMode === DisplayMode.Video
+  const effectiveDisplayMode =
+    source === "ipod" &&
+    track?.source === "appleMusic" &&
+    displayMode === DisplayMode.Video
       ? DisplayMode.Cover
       : displayMode;
   const visualBackgroundActive =
-    isPlaying &&
-    !listenRemoteOnly &&
-    effectiveDisplayMode !== DisplayMode.Video;
+    isPlaying && effectiveDisplayMode !== DisplayMode.Video;
 
   return {
     source,

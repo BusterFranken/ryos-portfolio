@@ -48,7 +48,6 @@ import { shouldRestartTrackOnPrevious } from "@/shared/media/previousTrackBehavi
 import { useAppStoreShallow } from "@/stores/useAppStore";
 import { useAudioSettingsStoreShallow } from "@/stores/useAudioSettingsStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useListenSessionStore } from "@/stores/useListenSessionStore";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { LyricsAlignment, LyricsFont, DisplayMode, getLyricsFontClassName } from "@/types/lyrics";
 import { IPOD_ANALYTICS } from "@/utils/analytics";
@@ -316,9 +315,6 @@ export function useIpodLogic({
     ? instances[instanceId]?.isMinimized ?? false
     : false;
   const lastProcessedInitialDataRef = useRef<unknown>(null);
-  const lastProcessedListenSessionRef = useRef<string | null>(null);
-
-  const joinListenSession = useListenSessionStore((s) => s.joinSession);
 
   // Status / backlight / activity state is owned by useIpodStatusBacklight
   // (composed below, after the playback + games state it depends on).
@@ -3778,53 +3774,11 @@ export function useIpodLogic({
     };
   }, [isWindowOpen, initialData, processVideoId, clearIpodInitialData, instanceId]);
 
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    if (
-      isWindowOpen &&
-      initialData?.listenSessionId &&
-      typeof initialData.listenSessionId === "string"
-    ) {
-      if (lastProcessedListenSessionRef.current === initialData.listenSessionId) return;
-
-      const sessionIdToProcess = initialData.listenSessionId;
-      timeoutId = setTimeout(() => {
-        joinListenSession(sessionIdToProcess, username || undefined)
-          .then((result) => {
-            if (!result.ok) {
-              toast.error(t("apps.ipod.dialogs.listenSessionJoinFailed"), {
-                description:
-                  result.error || t("apps.ipod.dialogs.pleaseTryAgain"),
-              });
-            }
-            if (instanceId) clearIpodInitialData(instanceId);
-          })
-          .catch((error) => {
-            console.error(`[iPod] Error joining listen session ${sessionIdToProcess}:`, error);
-          });
-      }, 100);
-      lastProcessedListenSessionRef.current = initialData.listenSessionId;
-    }
-    return () => {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [
-    isWindowOpen,
-    initialData,
-    joinListenSession,
-    username,
-    clearIpodInitialData,
-    instanceId,
-  ]);
-
   // Update app event handling
   useEffect(() => {
     return onAppUpdate((event) => {
       const updateInitialData = event.detail.initialData as
-        | { videoId?: string; listenSessionId?: string }
+        | { videoId?: string }
         | undefined;
 
       if (
@@ -3846,33 +3800,8 @@ export function useIpodLogic({
         });
         lastProcessedInitialDataRef.current = updateInitialData;
       }
-
-      if (
-        event.detail.appId === "ipod" &&
-        updateInitialData?.listenSessionId &&
-        (!event.detail.instanceId || event.detail.instanceId === instanceId)
-      ) {
-        const sessionId = updateInitialData.listenSessionId;
-        if (lastProcessedListenSessionRef.current === sessionId) return;
-        if (instanceId) {
-          bringInstanceToForeground(instanceId);
-        }
-        joinListenSession(sessionId, username || undefined)
-          .then((result) => {
-            if (!result.ok) {
-              toast.error(t("apps.ipod.dialogs.listenSessionJoinFailed"), {
-                description:
-                  result.error || t("apps.ipod.dialogs.pleaseTryAgain"),
-              });
-            }
-          })
-          .catch((error) => {
-            console.error(`[iPod] Error joining listen session ${sessionId}:`, error);
-          });
-        lastProcessedListenSessionRef.current = sessionId;
-      }
     });
-  }, [bringInstanceToForeground, instanceId, joinListenSession, processVideoId, username]);
+  }, [bringInstanceToForeground, instanceId, processVideoId]);
 
   // Handle closing sync mode - flush pending offset saves
   const closeSyncMode = useCallback(async () => {

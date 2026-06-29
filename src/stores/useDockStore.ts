@@ -19,7 +19,6 @@ const DEFAULT_PINNED_ITEMS: DockItem[] = [
   { type: "app", id: "finder" },
   { type: "app", id: "dashboard" },
   { type: "app", id: "internet-explorer" },
-  { type: "app", id: "karaoke" },
 ];
 
 const DOCK_STORE_VERSION = 1;

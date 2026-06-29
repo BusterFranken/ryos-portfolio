@@ -5,7 +5,6 @@ import { AppProps, ControlPanelsInitialData } from "@/apps/base/types";
 import { useControlPanelsLogic } from "../../hooks/useControlPanelsLogic";
 import { useContactsStore } from "@/stores/useContactsStore";
 import { getContactInitials } from "@/utils/contacts";
-import { useRealtimeConnectionStatus } from "@/hooks/useRealtimeConnectionStatus";
 import { ControlPanelsDialogs } from "./ControlPanelsDialogs";
 import { ControlPanelsMacLayout } from "./ControlPanelsMacLayout";
 import { ControlPanelsMacPaneRenderer } from "./ControlPanelsMacPaneRenderer";
@@ -150,16 +149,6 @@ export function ControlPanelsAppComponent({
     handleVerifyTokenSubmit,
     handleSetPassword,
     handleLogoutAllDevices,
-    telegramLinkedAccount,
-    telegramLinkSession,
-    isTelegramStatusLoading,
-    isCreatingTelegramLink,
-    isDisconnectingTelegramLink,
-    refreshTelegramLinkStatus,
-    handleCreateTelegramLink,
-    handleOpenTelegramLink,
-    handleCopyTelegramCode,
-    handleDisconnectTelegramLink,
     recoveryEmailStatus,
     isEmailStatusLoading,
     refreshRecoveryEmailStatus,
@@ -185,26 +174,6 @@ export function ControlPanelsAppComponent({
       ? state.contacts.find((contact) => contact.id === state.myContactId) ?? null
       : null
   );
-  const realtimeStatus = useRealtimeConnectionStatus();
-  const [isTelegramDialogOpen, setIsTelegramDialogOpen] = React.useState(false);
-
-  const openTelegramDialog = React.useCallback(async () => {
-    const status = await refreshTelegramLinkStatus();
-
-    if (!status?.account && !status?.pendingLink && !telegramLinkSession) {
-      const createdLink = await handleCreateTelegramLink();
-      if (!createdLink) {
-        return;
-      }
-    }
-
-    setIsTelegramDialogOpen(true);
-  }, [
-    refreshTelegramLinkStatus,
-    telegramLinkSession,
-    handleCreateTelegramLink,
-  ]);
-
   const accountAvatarLabel = myContact?.displayName || username || "";
   const accountAvatarInitials = myContact
     ? getContactInitials(myContact)
@@ -269,7 +238,6 @@ export function ControlPanelsAppComponent({
       myContact={myContact}
       accountAvatarLabel={accountAvatarLabel}
       accountAvatarInitials={accountAvatarInitials}
-      realtimeStatus={realtimeStatus}
       accountJoinedAt={accountJoinedAt}
       debugMode={debugMode}
       isAdmin={isAdmin}
@@ -281,9 +249,6 @@ export function ControlPanelsAppComponent({
       logout={logout}
       handleLogoutAllDevices={handleLogoutAllDevices}
       isLoggingOutAllDevices={isLoggingOutAllDevices}
-      telegramLinkedAccount={telegramLinkedAccount}
-      openTelegramDialog={openTelegramDialog}
-      isTelegramStatusLoading={isTelegramStatusLoading}
       recoveryEmailStatus={recoveryEmailStatus}
       isEmailStatusLoading={isEmailStatusLoading}
       refreshRecoveryEmailStatus={refreshRecoveryEmailStatus}
@@ -383,17 +348,6 @@ export function ControlPanelsAppComponent({
           isLogoutConfirmDialogOpen={isLogoutConfirmDialogOpen}
           setIsLogoutConfirmDialogOpen={setIsLogoutConfirmDialogOpen}
           confirmLogout={confirmLogout}
-          isTelegramDialogOpen={isTelegramDialogOpen}
-          setIsTelegramDialogOpen={setIsTelegramDialogOpen}
-          telegramLinkedAccount={telegramLinkedAccount}
-          telegramLinkSession={telegramLinkSession}
-          isTelegramStatusLoading={isTelegramStatusLoading}
-          isCreatingTelegramLink={isCreatingTelegramLink}
-          isDisconnectingTelegramLink={isDisconnectingTelegramLink}
-          handleCreateTelegramLink={handleCreateTelegramLink}
-          handleOpenTelegramLink={handleOpenTelegramLink}
-          handleCopyTelegramCode={handleCopyTelegramCode}
-          handleDisconnectTelegramLink={handleDisconnectTelegramLink}
         />
       }
     >

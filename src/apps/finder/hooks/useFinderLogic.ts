@@ -32,8 +32,6 @@ import {
   emitFileSaved,
   emitFileUpdated,
 } from "@/utils/appEventBus";
-import { useAirDropStore } from "@/stores/useAirDropStore";
-import { useAuthStore } from "@/stores/useAuthStore";
 
 type FinderUndoAction =
   | { type: "moveToTrash"; fileName: string; originalPath: string }
@@ -914,9 +912,6 @@ export function useFinderLogic({
     e.stopPropagation();
     setContextMenuPos({ x: e.clientX, y: e.clientY });
     setContextMenuFile(file);
-    if (canShareViaAirDrop(file)) {
-      void fetchNearbyUsers();
-    }
     if (!selectedFiles.includes(file.path)) {
       handleFileSelect(file);
     }
@@ -1095,77 +1090,6 @@ export function useFinderLogic({
     return false;
   };
 
-  // AirDrop state
-  const [isAirDropView, setIsAirDropView] = useState(false);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const chatUsername = useAuthStore((s) => s.username);
-  const nearbyUsers = useAirDropStore((s) => s.nearbyUsers);
-  const isDiscovering = useAirDropStore((s) => s.isDiscovering);
-  const fetchNearbyUsers = useAirDropStore((s) => s.fetchNearbyUsers);
-  const sendFileToUser = useAirDropStore((s) => s.sendFile);
-
-  const navigateToAirDrop = useCallback(() => {
-    setIsAirDropView(true);
-  }, []);
-
-  const navigateAwayFromAirDrop = useCallback(() => {
-    setIsAirDropView(false);
-  }, []);
-
-  const canShareViaAirDrop = (file: FileItem): boolean => {
-    if (file.isDirectory) return false;
-    if (file.path.startsWith("/Applications")) return false;
-    if (!isAuthenticated || !chatUsername) return false;
-    return true;
-  };
-
-  const handleShareViaAirDrop = useCallback(() => {
-    navigateToAirDrop();
-  }, [navigateToAirDrop]);
-
-  const availableAirDropUsers = useMemo(() => {
-    if (!chatUsername) {
-      return nearbyUsers;
-    }
-
-    return [chatUsername, ...nearbyUsers.filter((user) => user !== chatUsername)];
-  }, [nearbyUsers, chatUsername]);
-
-  const getAirDropMenuItems = (file: FileItem): MenuItem[] => {
-    const recipientItems: MenuItem[] =
-      availableAirDropUsers.length > 0
-        ? availableAirDropUsers.map((recipient) => ({
-            type: "item" as const,
-            label: `@${recipient}`,
-            onSelect: () =>
-              void handleAirDropSendFile(
-                recipient,
-                file.name,
-                file.path,
-                getFileType(file, t)
-              ),
-          }))
-        : [
-            {
-              type: "item",
-              label: isDiscovering
-                ? t("apps.finder.contextMenu.searchingForAirDropUsers")
-                : t("apps.finder.contextMenu.noAirDropUsersAvailable"),
-              disabled: true,
-            },
-          ];
-
-    return [
-      ...recipientItems,
-      { type: "separator" },
-      {
-        type: "item",
-        label: t("apps.finder.contextMenu.openAirDrop"),
-        onSelect: handleShareViaAirDrop,
-      },
-    ];
-  };
-
   const fileMenuItems = (file: FileItem): MenuItem[] => {
     const isTrashedItem = currentPath === "/Trash" || file.status === "trashed";
 
@@ -1174,13 +1098,6 @@ export function useFinderLogic({
         type: "item",
         label: t("apps.finder.contextMenu.open"),
         onSelect: () => handleFileOpen(file),
-      },
-      { type: "separator" },
-      {
-        type: "submenu",
-        label: t("apps.finder.contextMenu.shareViaAirDrop"),
-        items: getAirDropMenuItems(file),
-        disabled: !canShareViaAirDrop(file),
       },
       { type: "separator" },
       {
@@ -1231,54 +1148,6 @@ export function useFinderLogic({
 
   const [showSidebar, setShowSidebar] = useState(() => window.innerWidth >= 500);
 
-  const handleAirDropSendFile = useCallback(
-    async (
-      recipient: string,
-      fileName: string,
-      filePath: string,
-      fileType: string
-    ) => {
-      const fileMetadata = getFileItem(filePath);
-      if (!fileMetadata) {
-        toast.error(t("apps.finder.airdrop.fileNotFound"));
-        return;
-      }
-
-      let content: string = "";
-      if (fileMetadata.uuid) {
-        const storeName = filePath.startsWith("/Documents")
-          ? STORES.DOCUMENTS
-          : filePath.startsWith("/Images")
-            ? STORES.IMAGES
-            : null;
-        if (storeName) {
-          const doc = await dbOperations.get<DocumentContent>(
-            storeName,
-            fileMetadata.uuid
-          );
-          if (doc?.content) {
-            if (typeof doc.content === "string") {
-              content = doc.content;
-            } else if (doc.content instanceof Blob) {
-              const buf = await doc.content.arrayBuffer();
-              content = btoa(
-                String.fromCharCode(...new Uint8Array(buf))
-              );
-            }
-          }
-        }
-      }
-
-      if (!content) {
-        toast.error(t("apps.finder.airdrop.noContent"));
-        return;
-      }
-
-      await sendFileToUser(recipient, fileName, content, fileType);
-    },
-    [getFileItem, sendFileToUser, t]
-  );
-
   const sidebarItems = useMemo(() => {
     const visibleRootFolders = rootFolders.filter(
       (f) => !SIDEBAR_HIDDEN_FOLDERS.has(f.path)
@@ -1298,33 +1167,21 @@ export function useFinderLogic({
         path: f.path,
         icon: f.icon,
         divider: false,
-        isAirDrop: false,
       }));
     return [
-      { name: t("apps.finder.window.macintoshHd"), path: "/", icon: "/icons/default/disk.png", divider: false, isAirDrop: false },
-      {
-        name: t("apps.finder.airdrop.title"),
-        path: "__airdrop__",
-        icon: "/icons/default/airdrop.png",
-        divider: true,
-        isAirDrop: true,
-      },
+      { name: t("apps.finder.window.macintoshHd"), path: "/", icon: "/icons/default/disk.png", divider: false },
       ...places,
     ];
   }, [rootFolders, t]);
 
   const activeSidebarPath = useMemo(() => {
-    if (isAirDropView) return "__airdrop__";
     if (currentPath === "/") return "/";
     const firstSegment = currentPath.split("/").filter(Boolean)[0];
     return "/" + firstSegment;
-  }, [currentPath, isAirDropView]);
+  }, [currentPath]);
 
   // Computed window title
   const windowTitle = useMemo(() => {
-    if (isAirDropView) {
-      return t("apps.finder.airdrop.title");
-    }
     if (currentPath === "/") {
       return t("apps.finder.window.macintoshHd");
     }
@@ -1344,7 +1201,7 @@ export function useFinderLogic({
         t("apps.finder.window.finder")
       );
     }
-  }, [currentPath, isAirDropView, t]);
+  }, [currentPath, t]);
 
   // Drag handlers
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -1560,12 +1417,6 @@ export function useFinderLogic({
     // Helper functions
     getFileType: (file: FileItem) => getFileType(file, t),
     getDisplayPath,
-
-    // AirDrop
-    isAirDropView,
-    navigateToAirDrop,
-    navigateAwayFromAirDrop,
-    handleAirDropSendFile,
 
     // Props passed through
     isWindowOpen,

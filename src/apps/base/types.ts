@@ -30,7 +30,6 @@ export interface BaseApp<TInitialData = unknown> {
     | "photo-booth"
     | "synth"
     | "ipod"
-    | "karaoke"
     | "terminal"
     | "stickies"
     | "infinite-mac"
@@ -89,12 +88,6 @@ export interface InternetExplorerInitialData {
 
 export interface IpodInitialData {
   videoId?: string;
-  listenSessionId?: string;
-}
-
-export interface KaraokeInitialData {
-  videoId?: string;
-  listenSessionId?: string;
 }
 
 export interface PaintInitialData {
@@ -123,7 +116,6 @@ export type AnyApp =
   | BaseApp<ControlPanelsInitialData>
   | BaseApp<InternetExplorerInitialData>
   | BaseApp<IpodInitialData>
-  | BaseApp<KaraokeInitialData>
   | BaseApp<PaintInitialData>
   | BaseApp<VideosInitialData>
   | BaseApp<BooksInitialData>
@@ -135,7 +127,6 @@ export type AnyInitialData =
   | ControlPanelsInitialData
   | InternetExplorerInitialData
   | IpodInitialData
-  | KaraokeInitialData
   | PaintInitialData
   | VideosInitialData
   | BooksInitialData

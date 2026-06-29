@@ -1,5 +1,4 @@
 import type { RefObject } from "react";
-import { PaperPlaneRight } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { Label } from "@/components/ui/label";
@@ -12,10 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { AIModel } from "@/types/aiModels";
-import { getTelegramLinkedAccountLabel } from "@/hooks/useTelegramLink";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { Contact } from "@/utils/contacts";
-import type { TelegramLinkedAccount } from "@/api/telegram";
 import type { AIModelInfo } from "@/types/aiModels";
 import { cn } from "@/lib/utils";
 import type { TabStyleConfig } from "@/utils/tabStyles";
@@ -43,7 +39,6 @@ export type SystemTabContentProps = {
   myContact: Contact | null;
   accountAvatarLabel: string;
   accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
   debugMode: boolean;
   isAdmin: boolean;
   promptSetUsername: () => void;
@@ -55,9 +50,6 @@ export type SystemTabContentProps = {
   logout: () => void;
   handleLogoutAllDevices: () => void;
   isLoggingOutAllDevices: boolean;
-  telegramLinkedAccount: TelegramLinkedAccount | null;
-  openTelegramDialog: () => void;
-  isTelegramStatusLoading: boolean;
   handleCheckForUpdates: () => void;
   handleBackup: () => void;
   fileInputRef: RefObject<HTMLInputElement | null>;
@@ -90,7 +82,6 @@ export function SystemTabContent({
   username,
   myContact,
   accountAvatarLabel,
-  realtimeStatus,
   debugMode,
   isAdmin,
   promptSetUsername,
@@ -102,9 +93,6 @@ export function SystemTabContent({
   logout,
   handleLogoutAllDevices,
   isLoggingOutAllDevices,
-  telegramLinkedAccount,
-  openTelegramDialog,
-  isTelegramStatusLoading,
   handleCheckForUpdates,
   handleBackup,
   fileInputRef,
@@ -176,23 +164,6 @@ export function SystemTabContent({
                       />
                     )}
                   </div>
-                  <span
-                    className={cn(
-                      "absolute -bottom-px -right-px block size-[10px] rounded-full border-[1.5px] border-white",
-                      realtimeStatus === "connected"
-                        ? "bg-green-500"
-                        : realtimeStatus === "connecting"
-                          ? "bg-amber-400"
-                          : "bg-neutral-400"
-                    )}
-                    title={
-                      realtimeStatus === "connected"
-                        ? t("apps.control-panels.connectionStatus.connected")
-                        : realtimeStatus === "connecting"
-                          ? t("apps.control-panels.connectionStatus.connecting")
-                          : t("apps.control-panels.connectionStatus.disconnected")
-                    }
-                  />
                 </div>
                 <div className="flex flex-col gap-0.5 min-w-0">
                   <span className="text-[13px] font-geneva-12 font-medium leading-tight truncate">
@@ -248,55 +219,6 @@ export function SystemTabContent({
             </div>
           </div>
         )}
-      </div>
-
-      <div className="space-y-2">
-        <div
-          className={cn(
-            "flex items-center justify-between gap-3",
-            !username && "opacity-50"
-          )}
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className={cn(
-                controlPanelItemIconShell,
-                "rounded-full bg-[#229ED9] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.18)] flex items-center justify-center"
-              )}
-            >
-              <PaperPlaneRight
-                size={16}
-                weight="fill"
-                className="-rotate-[32deg] translate-x-[1px] -translate-y-[1px]"
-              />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[13px] font-geneva-12 font-medium">
-                {t("apps.control-panels.telegram.title")}
-              </span>
-              <span className="text-[11px] text-neutral-600 font-geneva-12">
-                {username
-                  ? telegramLinkedAccount
-                    ? t("apps.control-panels.telegram.linkedAs", {
-                        account: getTelegramLinkedAccountLabel(telegramLinkedAccount),
-                      })
-                    : t("apps.control-panels.telegram.description")
-                  : t("apps.control-panels.telegram.description")}
-              </span>
-            </div>
-          </div>
-
-          <Button
-            variant="retro"
-            onClick={openTelegramDialog}
-            disabled={!username || isTelegramStatusLoading}
-            className="h-7"
-          >
-            {telegramLinkedAccount
-              ? t("apps.control-panels.telegram.manage")
-              : t("apps.control-panels.telegram.link")}
-          </Button>
-        </div>
       </div>
 
       </div>

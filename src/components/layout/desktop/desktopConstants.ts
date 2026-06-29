@@ -3,7 +3,6 @@ import type { AppId } from "@/config/appRegistry";
 export const DEFAULT_SHORTCUT_ORDER: AppId[] = [
   "ipod",
   "internet-explorer",
-  "karaoke",
   "textedit",
   "photo-booth",
   "videos",

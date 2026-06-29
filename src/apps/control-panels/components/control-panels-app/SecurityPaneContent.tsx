@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { RecoveryEmailDialog } from "@/components/dialogs/RecoveryEmailDialog";
 import { DeleteAccountDialog } from "@/components/dialogs/DeleteAccountDialog";
 import type { LanguageCode } from "@/stores/useLanguageStore";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { Contact } from "@/utils/contacts";
 import { AccountProfileHeader } from "./AccountProfileHeader";
 import { ControlPanelsPrefFormRow } from "./ControlPanelsPrefFormRow";
@@ -14,7 +13,6 @@ export type SecurityPaneContentProps = {
   myContact: Contact | null;
   accountAvatarLabel: string;
   accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
   accountJoinedAt?: number | null;
   locale: LanguageCode;
   hasPassword: boolean | null;
@@ -34,7 +32,6 @@ export function SecurityPaneContent({
   myContact,
   accountAvatarLabel,
   accountAvatarInitials,
-  realtimeStatus,
   accountJoinedAt,
   locale,
   hasPassword,
@@ -65,7 +62,6 @@ export function SecurityPaneContent({
           myContact={myContact}
           accountAvatarLabel={accountAvatarLabel}
           accountAvatarInitials={accountAvatarInitials}
-          realtimeStatus={realtimeStatus}
           accountJoinedAt={accountJoinedAt}
           locale={locale}
           promptSetUsername={promptSetUsername}

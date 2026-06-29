@@ -321,7 +321,6 @@ describe("Control Panels macOS 10.3 layout", () => {
     );
     expect(securityCase.includes("myContact")).toBe(true);
     expect(securityCase.includes("accountAvatarLabel")).toBe(true);
-    expect(securityCase.includes("realtimeStatus")).toBe(true);
     expect(securityCase.includes("accountJoinedAt")).toBe(true);
     expect(securitySource.includes("logOutRowDescription")).toBe(true);
     expect(securitySource.includes("logOutOfAllDevices")).toBe(true);
@@ -371,7 +370,6 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(accountsSource.includes("AccountProfileHeader")).toBe(true);
     expect(accountsSource.includes("SecurityPaneContent")).toBe(true);
     expect(accountsSource.includes("control-panels-pref-tab-panel")).toBe(true);
-    expect(accountsSource.includes("openTelegramDialog")).toBe(true);
     expect(accountsSource.includes("recoveryEmailStatus")).toBe(true);
     expect(accountsSource.includes("apps.control-panels.email.title")).toBe(true);
     expect(accountsSource.includes("ThemedIcon")).toBe(true);
@@ -404,9 +402,7 @@ describe("Control Panels macOS 10.3 layout", () => {
       accountsSource.indexOf('hidden={accountsTab !== "security"}')
     );
     const emailRowIndex = accountsTabPanel.indexOf("apps.control-panels.email.title");
-    const telegramRowIndex = accountsTabPanel.indexOf("apps.control-panels.telegram.title");
     expect(emailRowIndex).toBeGreaterThan(-1);
-    expect(telegramRowIndex).toBeGreaterThan(emailRowIndex);
 
     const securityTabPanel = accountsSource.slice(
       accountsSource.indexOf('hidden={accountsTab !== "security"}'),

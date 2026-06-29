@@ -304,11 +304,6 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
   },
   {
     paneId: "accounts",
-    labelKey: `${CP}.telegram.title`,
-    keywords: ["telegram", "link", "bot"],
-  },
-  {
-    paneId: "accounts",
     labelKey: `${CP}.systemFont`,
     keywords: ["font", "typeface", "ui font"],
   },

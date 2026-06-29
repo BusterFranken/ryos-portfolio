@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import type { LanguageCode } from "@/stores/useLanguageStore";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { Contact } from "@/utils/contacts";
 import { cn } from "@/lib/utils";
 import { getAccountJoinStatusLabel } from "./accountJoinDateLabel";
@@ -16,7 +15,6 @@ export type AccountProfileHeaderProps = {
   myContact: Contact | null;
   accountAvatarLabel: string;
   accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
   accountJoinedAt?: number | null;
   locale: LanguageCode;
   promptSetUsername: () => void;
@@ -29,7 +27,6 @@ export function AccountProfileHeader({
   username,
   myContact,
   accountAvatarLabel,
-  realtimeStatus,
   accountJoinedAt,
   locale,
   promptSetUsername,
@@ -68,16 +65,6 @@ export function AccountProfileHeader({
               />
             )}
           </div>
-          <span
-            className={cn(
-              "control-panels-account-profile-presence",
-              realtimeStatus === "connected"
-                ? "bg-green-500"
-                : realtimeStatus === "connecting"
-                  ? "bg-amber-400"
-                  : "bg-neutral-400"
-            )}
-          />
         </div>
         <div className="control-panels-account-profile-text">
           <span className="control-panels-account-profile-username">

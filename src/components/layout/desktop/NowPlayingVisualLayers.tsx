@@ -6,7 +6,7 @@ import { WaterBackground } from "@/components/shared/WaterBackground";
 import { DisplayMode } from "@/types/lyrics";
 import type { Track } from "@/stores/useIpodStore";
 
-type KaraokeVisualLayersProps = {
+type NowPlayingVisualLayersProps = {
   effectiveDisplayMode: DisplayMode;
   visualBackgroundActive: boolean;
   currentTrack: Track | null;
@@ -17,7 +17,7 @@ type KaraokeVisualLayersProps = {
   onCoverInteraction: () => void;
 };
 
-export function KaraokeVisualLayers({
+export function NowPlayingVisualLayers({
   effectiveDisplayMode,
   visualBackgroundActive,
   currentTrack,
@@ -26,7 +26,7 @@ export function KaraokeVisualLayers({
   layerClassName,
   coverOverlayClassName,
   onCoverInteraction,
-}: KaraokeVisualLayersProps) {
+}: NowPlayingVisualLayersProps) {
   return (
     <>
       {effectiveDisplayMode === DisplayMode.Landscapes &&

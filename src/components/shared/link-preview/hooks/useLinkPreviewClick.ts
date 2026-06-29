@@ -14,7 +14,7 @@ export function useLinkPreviewClick(url: string) {
     }
 
     if (isYouTubeUrl(url)) {
-      if (url.includes("/ipod/")) {
+      if (url.includes("/ipod/") || url.includes("/karaoke/")) {
         try {
           const videoId = extractYouTubeVideoId(url);
           if (videoId) {
@@ -29,22 +29,6 @@ export function useLinkPreviewClick(url: string) {
         } catch (error) {
           toast.error("Failed to open video in iPod app");
           console.error("Error launching iPod app:", error);
-        }
-      } else if (url.includes("/karaoke/")) {
-        try {
-          const videoId = extractYouTubeVideoId(url);
-          if (videoId) {
-            console.log(
-              `[LinkPreview] Adding Karaoke link to Karaoke with videoId: ${videoId}`
-            );
-            launchApp("karaoke", { initialData: { videoId } });
-          } else {
-            toast.error("Could not extract video ID from this Karaoke URL");
-            console.warn("Could not extract video ID from Karaoke URL:", url);
-          }
-        } catch (error) {
-          toast.error("Failed to open video in Karaoke app");
-          console.error("Error launching Karaoke app:", error);
         }
       } else {
         try {

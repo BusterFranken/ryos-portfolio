@@ -3,13 +3,7 @@ import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { LoginDialog } from "@/components/dialogs/LoginDialog";
 import { ChangePasswordDialog } from "@/components/dialogs/ChangePasswordDialog";
 import { LogoutDialog } from "@/components/dialogs/LogoutDialog";
-import { TelegramLinkDialog } from "@/components/dialogs/TelegramLinkDialog";
 import { appMetadata } from "../..";
-import type {
-  TelegramLinkCreateResponse,
-  TelegramLinkSession,
-  TelegramLinkedAccount,
-} from "@/api/telegram";
 
 export type ControlPanelsDialogsProps = {
   t: (key: string, opts?: Record<string, unknown>) => string;
@@ -61,17 +55,6 @@ export type ControlPanelsDialogsProps = {
   isLogoutConfirmDialogOpen: boolean;
   setIsLogoutConfirmDialogOpen: (open: boolean) => void;
   confirmLogout: () => void;
-  isTelegramDialogOpen: boolean;
-  setIsTelegramDialogOpen: (open: boolean) => void;
-  telegramLinkedAccount: TelegramLinkedAccount | null;
-  telegramLinkSession: TelegramLinkSession | null;
-  isTelegramStatusLoading: boolean;
-  isCreatingTelegramLink: boolean;
-  isDisconnectingTelegramLink: boolean;
-  handleCreateTelegramLink: () => Promise<TelegramLinkCreateResponse | null>;
-  handleOpenTelegramLink: () => void;
-  handleCopyTelegramCode: () => Promise<void>;
-  handleDisconnectTelegramLink: () => Promise<void>;
 };
 
 export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
@@ -119,17 +102,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
     isLogoutConfirmDialogOpen,
     setIsLogoutConfirmDialogOpen,
     confirmLogout,
-    isTelegramDialogOpen,
-    setIsTelegramDialogOpen,
-    telegramLinkedAccount,
-    telegramLinkSession,
-    isTelegramStatusLoading,
-    isCreatingTelegramLink,
-    isDisconnectingTelegramLink,
-    handleCreateTelegramLink,
-    handleOpenTelegramLink,
-    handleCopyTelegramCode,
-    handleDisconnectTelegramLink,
   } = props;
 
   return (
@@ -229,19 +201,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
           setPasswordError(null);
           setIsPasswordDialogOpen(true);
         }}
-      />
-      <TelegramLinkDialog
-        isOpen={isTelegramDialogOpen}
-        onClose={() => setIsTelegramDialogOpen(false)}
-        linkedAccount={telegramLinkedAccount}
-        linkSession={telegramLinkSession}
-        isStatusLoading={isTelegramStatusLoading}
-        isCreatingLink={isCreatingTelegramLink}
-        isDisconnectingLink={isDisconnectingTelegramLink}
-        onCreateLink={handleCreateTelegramLink}
-        onOpenTelegramLink={handleOpenTelegramLink}
-        onCopyTelegramCode={handleCopyTelegramCode}
-        onDisconnectTelegramLink={handleDisconnectTelegramLink}
       />
     </>
   );

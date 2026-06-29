@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PaperPlaneRight } from "@phosphor-icons/react";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import type { AIModel } from "@/types/aiModels";
 import type { AIModelInfo } from "@/types/aiModels";
@@ -12,11 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getTelegramLinkedAccountLabel } from "@/hooks/useTelegramLink";
 import type { LanguageCode } from "@/stores/useLanguageStore";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { Contact } from "@/utils/contacts";
-import type { TelegramLinkedAccount } from "@/api/telegram";
 import { cn } from "@/lib/utils";
 import type { TabStyleConfig } from "@/utils/tabStyles";
 import {
@@ -44,16 +40,12 @@ export type AccountsPaneContentProps = {
   myContact: Contact | null;
   accountAvatarLabel: string;
   accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
   accountJoinedAt?: number | null;
   locale: LanguageCode;
   debugMode: boolean;
   isAdmin: boolean;
   promptSetUsername: () => void;
   promptLogin: () => void;
-  telegramLinkedAccount: TelegramLinkedAccount | null;
-  openTelegramDialog: () => void;
-  isTelegramStatusLoading: boolean;
   recoveryEmailStatus: EmailStatusResponse | null;
   isEmailStatusLoading: boolean;
   refreshRecoveryEmailStatus: () => Promise<EmailStatusResponse | null>;
@@ -89,16 +81,12 @@ export function AccountsPaneContent({
   myContact,
   accountAvatarLabel,
   accountAvatarInitials,
-  realtimeStatus,
   accountJoinedAt,
   locale,
   debugMode,
   isAdmin,
   promptSetUsername,
   promptLogin,
-  telegramLinkedAccount,
-  openTelegramDialog,
-  isTelegramStatusLoading,
   recoveryEmailStatus,
   isEmailStatusLoading,
   refreshRecoveryEmailStatus,
@@ -239,7 +227,6 @@ export function AccountsPaneContent({
                 myContact={myContact}
                 accountAvatarLabel={accountAvatarLabel}
                 accountAvatarInitials={accountAvatarInitials}
-                realtimeStatus={realtimeStatus}
                 accountJoinedAt={accountJoinedAt}
                 locale={locale}
                 promptSetUsername={promptSetUsername}
@@ -277,50 +264,6 @@ export function AccountsPaneContent({
                 </Button>
               </div>
 
-              <div
-                className={cn(
-                  "flex items-center justify-between gap-3",
-                  !username && "opacity-50"
-                )}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={cn(
-                      controlPanelItemIconShell,
-                      "rounded-full bg-[#229ED9] text-white flex items-center justify-center scale-90"
-                    )}
-                    aria-hidden="true"
-                  >
-                    <PaperPlaneRight
-                      size={16}
-                      weight="fill"
-                      className="-rotate-[32deg] translate-x-[1px] -translate-y-[1px]"
-                    />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[13px] font-geneva-12 font-medium">
-                      {t("apps.control-panels.telegram.title")}
-                    </span>
-                    <span className="text-[11px] text-neutral-600 font-geneva-12">
-                      {username && telegramLinkedAccount
-                        ? t("apps.control-panels.telegram.linkedAs", {
-                            account: getTelegramLinkedAccountLabel(telegramLinkedAccount),
-                          })
-                        : t("apps.control-panels.telegram.description")}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  variant="retro"
-                  onClick={openTelegramDialog}
-                  disabled={!username || isTelegramStatusLoading}
-                  className="h-7"
-                >
-                  {telegramLinkedAccount
-                    ? t("apps.control-panels.telegram.manage")
-                    : t("apps.control-panels.telegram.link")}
-                </Button>
-              </div>
             </div>
           </div>
           <div
@@ -335,7 +278,6 @@ export function AccountsPaneContent({
               myContact={myContact}
               accountAvatarLabel={accountAvatarLabel}
               accountAvatarInitials={accountAvatarInitials}
-              realtimeStatus={realtimeStatus}
               accountJoinedAt={accountJoinedAt}
               locale={locale}
               hasPassword={hasPassword}

@@ -9,7 +9,6 @@ export function LinkPreviewFullWidthContent({
   metadata,
   isMacOSTheme,
   handleAddToIpod,
-  handleOpenInKaraoke,
   handleOpenYouTube,
   handleOpenExternally,
 }: {
@@ -17,7 +16,6 @@ export function LinkPreviewFullWidthContent({
   metadata: LinkMetadata;
   isMacOSTheme: boolean;
   handleAddToIpod: (e: MouseEvent | TouchEvent) => void;
-  handleOpenInKaraoke: (e: MouseEvent | TouchEvent) => void;
   handleOpenYouTube: (e: MouseEvent | TouchEvent) => void;
   handleOpenExternally: (e: MouseEvent | TouchEvent) => void;
 }) {
@@ -64,7 +62,6 @@ export function LinkPreviewFullWidthContent({
         isMacOSTheme={isMacOSTheme}
         layout="fullWidth"
         handleAddToIpod={handleAddToIpod}
-        handleOpenInKaraoke={handleOpenInKaraoke}
         handleOpenYouTube={handleOpenYouTube}
         handleOpenExternally={handleOpenExternally}
       />

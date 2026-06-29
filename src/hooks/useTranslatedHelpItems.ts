@@ -75,14 +75,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "shareSongs",
     "displayFullscreen",
   ],
-  karaoke: [
-    "addSearchSongs",
-    "syncLyricsTiming",
-    "stylePronunciation",
-    "listenParty",
-    "syncedWithIpod",
-    "keyboardShortcuts",
-  ],
   synth: [
     "virtualKeyboard",
     "controlsPanel",

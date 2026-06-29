@@ -1,9 +1,7 @@
 import type { RefObject } from "react";
 import type { ReactNode } from "react";
 import type { Contact } from "@/utils/contacts";
-import type { TelegramLinkedAccount } from "@/api/telegram";
 import type { EmailStatusResponse } from "@/shared/contracts/auth";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { LanguageCode } from "@/stores/useLanguageStore";
 import type { OsThemeId } from "@/themes/types";
 import type { AccentChrome, AccentId } from "@/themes/accents";
@@ -78,7 +76,6 @@ export type ControlPanelsMacPaneRendererProps = {
   myContact: Contact | null;
   accountAvatarLabel: string;
   accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
   accountJoinedAt?: number | null;
   debugMode: boolean;
   isAdmin: boolean;
@@ -90,9 +87,6 @@ export type ControlPanelsMacPaneRendererProps = {
   logout: () => void;
   handleLogoutAllDevices: () => void;
   isLoggingOutAllDevices: boolean;
-  telegramLinkedAccount: TelegramLinkedAccount | null;
-  openTelegramDialog: () => void;
-  isTelegramStatusLoading: boolean;
   recoveryEmailStatus: EmailStatusResponse | null;
   isEmailStatusLoading: boolean;
   refreshRecoveryEmailStatus: () => Promise<EmailStatusResponse | null>;
@@ -164,7 +158,6 @@ export function ControlPanelsMacPaneRenderer(
           myContact={props.myContact}
           accountAvatarLabel={props.accountAvatarLabel}
           accountAvatarInitials={props.accountAvatarInitials}
-          realtimeStatus={props.realtimeStatus}
           accountJoinedAt={props.accountJoinedAt}
           locale={props.currentLanguage}
           hasPassword={props.hasPassword}
@@ -241,16 +234,12 @@ export function ControlPanelsMacPaneRenderer(
           myContact={props.myContact}
           accountAvatarLabel={props.accountAvatarLabel}
           accountAvatarInitials={props.accountAvatarInitials}
-          realtimeStatus={props.realtimeStatus}
           accountJoinedAt={props.accountJoinedAt}
           locale={props.currentLanguage}
           debugMode={props.debugMode}
           isAdmin={props.isAdmin}
           promptSetUsername={props.promptSetUsername}
           promptLogin={props.promptLogin}
-          telegramLinkedAccount={props.telegramLinkedAccount}
-          openTelegramDialog={props.openTelegramDialog}
-          isTelegramStatusLoading={props.isTelegramStatusLoading}
           recoveryEmailStatus={props.recoveryEmailStatus}
           isEmailStatusLoading={props.isEmailStatusLoading}
           refreshRecoveryEmailStatus={props.refreshRecoveryEmailStatus}

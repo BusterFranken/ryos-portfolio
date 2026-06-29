@@ -174,10 +174,7 @@ export function useAppManager({ apps }: AppManagerProps) {
   }, []);
 
   useEffect(() => {
-    const routeAction = resolveInitialRoute(
-      window.location.pathname,
-      window.location.search
-    );
+    const routeAction = resolveInitialRoute(window.location.pathname);
 
     if (!routeAction) {
       return;

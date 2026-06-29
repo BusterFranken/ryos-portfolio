@@ -94,11 +94,6 @@ const LazyIpodApp = createLazyComponent<IpodInitialData>(
   "ipod"
 );
 
-const LazyKaraokeApp = createLazyComponent<IpodInitialData>(
-  () => import("@/apps/karaoke/components/karaoke-app/KaraokeAppComponent").then(m => ({ default: m.KaraokeAppComponent })),
-  "karaoke"
-);
-
 const LazyTerminalApp = createLazyComponent<unknown>(
   () => import("@/apps/terminal/components/TerminalAppComponent").then(m => ({ default: m.TerminalAppComponent })),
   "terminal"
@@ -164,7 +159,6 @@ import { appMetadata as photoboothMetadata, helpItems as photoboothHelpItems } f
 import { appMetadata as minesweeperMetadata, helpItems as minesweeperHelpItems } from "@/apps/minesweeper";
 import { appMetadata as videosMetadata, helpItems as videosHelpItems } from "@/apps/videos/metadata";
 import { appMetadata as ipodMetadata, helpItems as ipodHelpItems } from "@/apps/ipod/metadata";
-import { appMetadata as karaokeMetadata, helpItems as karaokeHelpItems } from "@/apps/karaoke/metadata";
 import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/apps/synth/metadata";
 import { appMetadata as terminalMetadata, helpItems as terminalHelpItems } from "@/apps/terminal";
 import { appMetadata as controlPanelsMetadata, helpItems as controlPanelsHelpItems } from "@/apps/control-panels";
@@ -310,20 +304,6 @@ export const appRegistry = {
     windowConfig: {
       defaultSize: { width: 300, height: 480 },
       minSize: { width: 300, height: 480 },
-    } as WindowConstraints,
-  } as BaseApp<IpodInitialData> & { windowConfig: WindowConstraints },
-  ["karaoke"]: {
-    id: "karaoke",
-    name: "Karaoke",
-    icon: { type: "image", src: karaokeMetadata.icon },
-    description: "Karaoke player with synced lyrics",
-    component: LazyKaraokeApp,
-    helpItems: karaokeHelpItems,
-    metadata: karaokeMetadata,
-    windowConfig: {
-      defaultSize: { width: 560, height: 560 },
-      minSize: { width: 400, height: 300 },
-      mobileSquare: true,
     } as WindowConstraints,
   } as BaseApp<IpodInitialData> & { windowConfig: WindowConstraints },
   ["synth"]: {

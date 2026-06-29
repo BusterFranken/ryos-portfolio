@@ -21,9 +21,7 @@ import {
 } from "./utils/desktopDownload";
 import { DownloadSimple } from "@phosphor-icons/react";
 import { ScreenSaverOverlay } from "./components/screensavers/ScreenSaverOverlay";
-import { useBackgroundChatNotifications } from "./hooks/useBackgroundChatNotifications";
 import { DesktopErrorBoundary } from "@/components/errors/ErrorBoundaries";
-import { AirDropListener } from "@/components/AirDropListener";
 import { useFilesStore } from "@/stores/useFilesStore";
 import { WallpaperAccentRunner } from "@/hooks/WallpaperAccentRunner";
 import { DesktopCornerMask } from "@/components/layout/desktop/DesktopCornerMask";
@@ -79,7 +77,6 @@ export function App() {
   const isMobile = useIsMobile();
   // Initialize offline detection
   useOffline();
-  useBackgroundChatNotifications();
 
   // Determine toast position and offset based on theme and device
   const toastConfig = useMemo(() => {
@@ -256,7 +253,6 @@ export function App() {
         <AppManager apps={apps} />
       </DesktopErrorBoundary>
       <Toaster position={toastConfig.position} offset={toastConfig.offset} />
-      <AirDropListener />
       <WallpaperAccentRunner />
       <ScreenSaverOverlay />
     </>
