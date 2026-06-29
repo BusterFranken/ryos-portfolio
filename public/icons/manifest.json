@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-29T13:42:46.590Z",
+  "generatedAt": "2026-06-29T15:08:27.678Z",
   "themes": {
     "default": [
       "admin.png",
@@ -43,6 +43,7 @@
       "control-panels/sound-manager/sound-on.png",
       "control-panels/sound-manager/stt.png",
       "control-panels/sound-manager/tts.png",
+      "cv-pdf.png",
       "dashboard.png",
       "desktop.png",
       "directory.png",
@@ -71,6 +72,7 @@
       "internet.png",
       "ipod.png",
       "isync.png",
+      "jdog.png",
       "kafka-form.png",
       "karaoke.png",
       "mac-classic.png",
@@ -113,6 +115,7 @@
       "sound.png",
       "soundboard.png",
       "sounds.png",
+      "speaking.png",
       "stickies.png",
       "synth.png",
       "tarot.png",
@@ -158,7 +161,8 @@
       "video-tape.png",
       "videos.png",
       "warn.png",
-      "winamp.png"
+      "winamp.png",
+      "workout.png"
     ],
     "macosx": [
       "account-login.png",

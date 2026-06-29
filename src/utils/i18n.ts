@@ -155,6 +155,10 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     "dnd-cv": [],
     tarot: [],
     pawnshop: [],
+    workout: [],
+    jdog: [],
+    speaking: [],
+    "cv-pdf": [],
   };
 
   const keys = helpKeys[appId] || [];

@@ -48,7 +48,11 @@ export interface BaseApp<TInitialData = unknown> {
     | "mpoftheweek"
     | "dnd-cv"
     | "tarot"
-    | "pawnshop";
+    | "pawnshop"
+    | "workout"
+    | "jdog"
+    | "speaking"
+    | "cv-pdf";
   name: string;
   icon: string | { type: "image"; src: string };
   description: string;

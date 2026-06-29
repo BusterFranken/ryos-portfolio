@@ -4,6 +4,16 @@ import {
   makeProjectMetadata,
   helpItems as projectHelpItems,
 } from "@/apps/projects/metadata";
+import { makeGalleryApp } from "@/apps/gallery/registerGalleryApps";
+import {
+  makeGalleryMetadata,
+  helpItems as galleryHelpItems,
+} from "@/apps/gallery/metadata";
+import { makeDocViewerApp } from "@/apps/docviewer/registerDocViewerApps";
+import {
+  makeDocViewerMetadata,
+  helpItems as docViewerHelpItems,
+} from "@/apps/docviewer/metadata";
 import type {
   BaseApp,
   ControlPanelsInitialData,
@@ -585,6 +595,58 @@ export const appRegistry = {
     windowConfig: {
       defaultSize: { width: 800, height: 600 },
       minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["workout"]: {
+    id: "workout",
+    name: appNames["workout"],
+    icon: { type: "image", src: "/icons/default/workout.png" },
+    description: "A simpler, better workout app",
+    component: makeGalleryApp("workout"),
+    helpItems: galleryHelpItems,
+    metadata: makeGalleryMetadata("workout", appNames["workout"]),
+    windowConfig: {
+      defaultSize: { width: 700, height: 520 },
+      minSize: { width: 320, height: 320 },
+    } as WindowConstraints,
+  },
+  ["jdog"]: {
+    id: "jdog",
+    name: appNames["jdog"],
+    icon: { type: "image", src: "/icons/default/jdog.png" },
+    description: "Read-only WhatsApp digest agent",
+    component: makeGalleryApp("jdog"),
+    helpItems: galleryHelpItems,
+    metadata: makeGalleryMetadata("jdog", appNames["jdog"]),
+    windowConfig: {
+      defaultSize: { width: 700, height: 520 },
+      minSize: { width: 320, height: 320 },
+    } as WindowConstraints,
+  },
+  ["speaking"]: {
+    id: "speaking",
+    name: appNames["speaking"],
+    icon: { type: "image", src: "/icons/default/speaking.png" },
+    description: "Talks & events",
+    component: makeGalleryApp("speaking"),
+    helpItems: galleryHelpItems,
+    metadata: makeGalleryMetadata("speaking", appNames["speaking"]),
+    windowConfig: {
+      defaultSize: { width: 700, height: 520 },
+      minSize: { width: 320, height: 320 },
+    } as WindowConstraints,
+  },
+  ["cv-pdf"]: {
+    id: "cv-pdf",
+    name: appNames["cv-pdf"],
+    icon: { type: "image", src: "/icons/default/cv-pdf.png" },
+    description: "Résumé (PDF)",
+    component: makeDocViewerApp("cv-pdf"),
+    helpItems: docViewerHelpItems,
+    metadata: makeDocViewerMetadata("cv-pdf", appNames["cv-pdf"]),
+    windowConfig: {
+      defaultSize: { width: 640, height: 800 },
+      minSize: { width: 360, height: 420 },
     } as WindowConstraints,
   },
 } as const;

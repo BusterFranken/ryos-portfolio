@@ -14,5 +14,9 @@ export const AQUA_DESKTOP_APP_IDS: AppId[] = [
   "dnd-cv",
   "tarot",
   "pawnshop",
+  "workout",
+  "jdog",
+  "speaking",
+  "cv-pdf",
   "contacts",
 ];
