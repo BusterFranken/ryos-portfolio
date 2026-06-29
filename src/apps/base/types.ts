@@ -49,9 +49,7 @@ export interface BaseApp<TInitialData = unknown> {
     | "dnd-cv"
     | "tarot"
     | "pawnshop"
-    | "workout"
-    | "jdog"
-    | "speaking"
+    | "gallery"
     | "cv-pdf";
   name: string;
   icon: string | { type: "image"; src: string };

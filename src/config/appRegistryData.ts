@@ -35,9 +35,7 @@ export const appIds = [
   "dnd-cv",
   "tarot",
   "pawnshop",
-  "workout",
-  "jdog",
-  "speaking",
+  "gallery",
   "cv-pdf",
 ] as const;
 
@@ -93,9 +91,7 @@ export const appNames: Record<AppId, string> = {
   "dnd-cv": "CV",
   "tarot": "Tarot",
   "pawnshop": "Pawnshop",
-  "workout": "Workout",
-  "jdog": "jDog",
-  "speaking": "Speaking",
+  "gallery": "Gallery",
   "cv-pdf": "Résumé",
 };
 

@@ -1,22 +1,16 @@
 import { describe, test, expect } from "bun:test";
 import {
   galleryAlbums,
-  resolveGalleryAlbum,
+  getAlbum,
+  getAllImages,
 } from "../src/apps/gallery/galleryConfig";
 import { appIds, appNames } from "../src/config/appRegistryData";
 
 describe("galleryConfig", () => {
-  const GALLERY_IDS = ["workout", "jdog", "speaking"] as const;
-
-  test("every gallery id resolves to an album", () => {
-    for (const id of GALLERY_IDS) {
-      expect(resolveGalleryAlbum(id)).toBeDefined();
-    }
-  });
-
-  test("each album has a title and a mailto cta", () => {
-    for (const id of GALLERY_IDS) {
-      const album = resolveGalleryAlbum(id)!;
+  test("there are albums, each with an id, title and a mailto cta", () => {
+    expect(galleryAlbums.length).toBeGreaterThan(0);
+    for (const album of galleryAlbums) {
+      expect(album.id).toBeTruthy();
       expect(album.title).toBeTruthy();
       expect(album.cta).toBeDefined();
       expect(album.cta!.href).toMatch(/^mailto:/);
@@ -24,14 +18,18 @@ describe("galleryConfig", () => {
     }
   });
 
-  test("non-gallery id resolves to undefined", () => {
-    expect(resolveGalleryAlbum("finder")).toBeUndefined();
+  test("getAlbum resolves known albums and undefined otherwise", () => {
+    expect(getAlbum("workout")).toBeDefined();
+    expect(getAlbum("does-not-exist")).toBeUndefined();
   });
 
-  test("all gallery ids are registered in appIds + appNames", () => {
-    for (const id of Object.keys(galleryAlbums)) {
-      expect(appIds).toContain(id);
-      expect(appNames[id as keyof typeof appNames]).toBeTruthy();
-    }
+  test("getAllImages flattens every album's images", () => {
+    const total = galleryAlbums.reduce((n, a) => n + a.images.length, 0);
+    expect(getAllImages().length).toBe(total);
+  });
+
+  test("the single Gallery app is registered", () => {
+    expect(appIds).toContain("gallery");
+    expect(appNames.gallery).toBe("Gallery");
   });
 });

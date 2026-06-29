@@ -1,13 +1,11 @@
-import type { AppId } from "@/config/appRegistryData";
-
-/** A screenshot album rendered by the Gallery window (one per app id). */
+/** A screenshot album shown in the Gallery (selectable from the source list). */
 export interface GalleryAlbum {
-  appId: AppId;
+  id: string;
   title: string;
   blurb?: string;
   /** Public image paths. Empty while screenshots are still deferred. */
   images: string[];
-  /** "Work with me" style call-to-action shown at the bottom. */
+  /** "Work with me" style call-to-action shown in the toolbar. */
   cta?: { label: string; href: string };
 }
 
@@ -21,30 +19,30 @@ const DEMO_IMAGES = [
   "/wallpapers/photos/aqua/0-leopard-aqua_graphite.jpg",
 ];
 
-export const galleryAlbums: Partial<Record<AppId, GalleryAlbum>> = {
-  workout: {
-    appId: "workout",
+export const galleryAlbums: GalleryAlbum[] = [
+  {
+    id: "workout",
     title: "Workout",
     blurb: "A simpler, better workout app — Swift / iOS.",
     images: DEMO_IMAGES,
     cta: {
-      label: "Want something like this? Get in touch →",
+      label: "Want something like this? →",
       href: "mailto:busterfranken@gmail.com?subject=Workout%20app",
     },
   },
-  jdog: {
-    appId: "jdog",
+  {
+    id: "jdog",
     title: "jDog",
     blurb:
       "Self-hosted, read-only WhatsApp digest agent (WAHA + Node/TS + SQLite).",
     images: DEMO_IMAGES,
     cta: {
-      label: "Want something like this? Get in touch →",
+      label: "Want something like this? →",
       href: "mailto:busterfranken@gmail.com?subject=jDog",
     },
   },
-  speaking: {
-    appId: "speaking",
+  {
+    id: "speaking",
     title: "Speaking",
     blurb: "Talks & events.",
     images: DEMO_IMAGES,
@@ -53,8 +51,13 @@ export const galleryAlbums: Partial<Record<AppId, GalleryAlbum>> = {
       href: "mailto:busterfranken@gmail.com?subject=Speaking%20invite",
     },
   },
-};
+];
 
-export function resolveGalleryAlbum(appId: AppId): GalleryAlbum | undefined {
-  return galleryAlbums[appId];
+export function getAlbum(id: string): GalleryAlbum | undefined {
+  return galleryAlbums.find((a) => a.id === id);
+}
+
+/** Every image across all albums (the "Photos" library view). */
+export function getAllImages(): string[] {
+  return galleryAlbums.flatMap((a) => a.images);
 }

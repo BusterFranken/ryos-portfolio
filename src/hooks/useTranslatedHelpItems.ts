@@ -168,9 +168,7 @@ const HELP_KEYS: Record<AppId, string[]> = {
   "dnd-cv": [],
   tarot: [],
   pawnshop: [],
-  workout: [],
-  jdog: [],
-  speaking: [],
+  gallery: [],
   "cv-pdf": [],
 };
 
