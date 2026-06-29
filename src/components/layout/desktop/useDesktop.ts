@@ -49,6 +49,7 @@ import type {
   DesktopItemDefinition,
 } from "./desktopTypes";
 import { useDesktopVideoWallpaper } from "./useDesktopVideoWallpaper";
+import { AQUA_DESKTOP_APP_IDS } from "./aquaDesktopApps";
 
 export function useDesktop({
   apps,
@@ -393,7 +394,7 @@ export function useDesktop({
 
   const displayedApps =
     isMacOSTheme
-      ? sortedApps.filter((app) => app.id === "ipod")
+      ? sortedApps.filter((app) => AQUA_DESKTOP_APP_IDS.includes(app.id))
       : sortedApps;
 
   const desktopItemsInOrder = useMemo<DesktopItemDefinition[]>(() => {
