@@ -9,6 +9,11 @@ import {
   makeGalleryMetadata,
   helpItems as galleryHelpItems,
 } from "@/apps/gallery/metadata";
+import { makeSubstackApp } from "@/apps/substack/registerSubstackApp";
+import {
+  makeSubstackMetadata,
+  helpItems as substackHelpItems,
+} from "@/apps/substack/metadata";
 import { makeDocViewerApp } from "@/apps/docviewer/registerDocViewerApps";
 import {
   makeDocViewerMetadata,
@@ -621,6 +626,19 @@ export const appRegistry = {
     windowConfig: {
       defaultSize: { width: 640, height: 800 },
       minSize: { width: 360, height: 420 },
+    } as WindowConstraints,
+  },
+  ["substack"]: {
+    id: "substack",
+    name: appNames["substack"],
+    icon: { type: "image", src: "/icons/default/substack.png" },
+    description: "Read my Substack",
+    component: makeSubstackApp(),
+    helpItems: substackHelpItems,
+    metadata: makeSubstackMetadata("substack", appNames["substack"]),
+    windowConfig: {
+      defaultSize: { width: 760, height: 560 },
+      minSize: { width: 420, height: 360 },
     } as WindowConstraints,
   },
 } as const;

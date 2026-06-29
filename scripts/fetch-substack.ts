@@ -70,14 +70,6 @@ export function parseRss(xml: string): SubstackPost[] {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-const EMPTY_OUTPUT = {
-  get generatedAt() {
-    return new Date().toISOString();
-  },
-  feedUrl: FEED_URL,
-  posts: [] as SubstackPost[],
-};
-
 async function writeOutput(posts: SubstackPost[]): Promise<void> {
   await mkdir(OUT_DIR, { recursive: true });
   const payload = JSON.stringify(

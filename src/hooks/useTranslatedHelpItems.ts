@@ -170,6 +170,7 @@ const HELP_KEYS: Record<AppId, string[]> = {
   pawnshop: [],
   gallery: [],
   "cv-pdf": [],
+  substack: [],
 };
 
 /**

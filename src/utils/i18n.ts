@@ -157,6 +157,7 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     pawnshop: [],
     gallery: [],
     "cv-pdf": [],
+    substack: [],
   };
 
   const keys = helpKeys[appId] || [];

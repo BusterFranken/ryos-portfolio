@@ -50,7 +50,8 @@ export interface BaseApp<TInitialData = unknown> {
     | "tarot"
     | "pawnshop"
     | "gallery"
-    | "cv-pdf";
+    | "cv-pdf"
+    | "substack";
   name: string;
   icon: string | { type: "image"; src: string };
   description: string;
