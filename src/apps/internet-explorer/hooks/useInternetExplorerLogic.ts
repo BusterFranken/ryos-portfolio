@@ -4,7 +4,6 @@ import React, {
   useReducer,
   useState,
   useCallback,
-  useMemo,
   CSSProperties,
   ReactNode,
 } from "react";
@@ -12,7 +11,6 @@ import { InternetExplorerInitialData } from "../../base/types";
 import {
   useInternetExplorerStore,
   DEFAULT_FAVORITES,
-  ErrorResponse,
   Favorite,
 } from "@/stores/useInternetExplorerStore";
 import { useAiGeneration } from "./useAiGeneration";
@@ -96,9 +94,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen,
     language,
     location,
-    isTimeMachineViewOpen,
-    cachedYears,
-    isFetchingCachedYears,
 
     setUrl,
     setYear,
@@ -122,7 +117,6 @@ export function useInternetExplorerLogic({
     setFutureSettingsDialogOpen,
     setLanguage,
     setLocation,
-    setTimeMachineViewOpen,
   } = useInternetExplorerStoreShallow((state) => ({
     url: state.url,
     year: state.year,
@@ -146,9 +140,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen: state.isFutureSettingsDialogOpen,
     language: state.language,
     location: state.location,
-    isTimeMachineViewOpen: state.isTimeMachineViewOpen,
-    cachedYears: state.cachedYears,
-    isFetchingCachedYears: state.isFetchingCachedYears,
 
     setUrl: state.setUrl,
     setYear: state.setYear,
@@ -172,7 +163,6 @@ export function useInternetExplorerLogic({
     setFutureSettingsDialogOpen: state.setFutureSettingsDialogOpen,
     setLanguage: state.setLanguage,
     setLocation: state.setLocation,
-    setTimeMachineViewOpen: state.setTimeMachineViewOpen,
   }));
 
   const { t } = useTranslation();
@@ -450,13 +440,10 @@ export function useInternetExplorerLogic({
           finalUrl.startsWith("http") || finalUrl.startsWith("/")
             ? finalUrl
             : `https://${finalUrl}`;
-        const effectiveUrl = urlToParse.startsWith("/api/iframe-check")
-          ? url
-          : urlToParse;
         const hostname = new URL(
-          effectiveUrl.startsWith("http")
-            ? effectiveUrl
-            : `https://${effectiveUrl}`
+          urlToParse.startsWith("http")
+            ? urlToParse
+            : `https://${urlToParse}`
         ).hostname;
         newTitle = formatTitle(hostname);
       } catch {
@@ -485,72 +472,6 @@ export function useInternetExplorerLogic({
       iframeRef.current &&
       iframeRef.current.dataset.navToken === navTokenRef.current.toString()
     ) {
-      const iframeSrc = iframeRef.current.src;
-      if (
-        iframeSrc.includes("/api/iframe-check") &&
-        iframeRef.current.contentDocument
-      ) {
-        try {
-          const textContent =
-            iframeRef.current.contentDocument.body?.textContent?.trim();
-          if (textContent) {
-            // Only try to parse as JSON if it looks like JSON (starts with { or [)
-            const looksLikeJson =
-              textContent.startsWith("{") || textContent.startsWith("[");
-            if (looksLikeJson) {
-              try {
-                const potentialErrorData = JSON.parse(
-                  textContent
-                ) as ErrorResponse;
-                if (
-                  potentialErrorData &&
-                  potentialErrorData.error === true &&
-                  potentialErrorData.type
-                ) {
-                  console.log(
-                    "[IE] Detected JSON error response in iframe body:",
-                    potentialErrorData
-                  );
-                  track(IE_ANALYTICS.NAVIGATION_ERROR, {
-                    ...normalizeUrlForAnalytics(iframeSrc),
-                    type: potentialErrorData.type,
-                    status: potentialErrorData.status || 500,
-                  });
-                  handleNavigationError(potentialErrorData, url);
-                  return;
-                }
-              } catch {
-                // Silently ignore - content looked like JSON but wasn't valid JSON
-                // This is expected for regular HTML pages
-              }
-            }
-          }
-
-          const contentType = iframeRef.current.contentDocument.contentType;
-          if (contentType === "application/json") {
-            const text = iframeRef.current.contentDocument.body.textContent;
-            if (text) {
-              const errorData = JSON.parse(text) as ErrorResponse;
-              if (errorData.error) {
-                console.log(
-                  "[IE] Detected error response (via content-type check):",
-                  errorData
-                );
-                track(IE_ANALYTICS.NAVIGATION_ERROR, {
-                  ...normalizeUrlForAnalytics(iframeSrc),
-                  type: errorData.type,
-                  status: errorData.status || 500,
-                });
-                handleNavigationError(errorData, url);
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          console.warn("[IE] Error processing iframe content:", error);
-        }
-      }
-
       clearErrorDetails();
 
       setTimeout(() => {
@@ -578,19 +499,6 @@ export function useInternetExplorerLogic({
               "[IE] Failed to read iframe document title directly:",
               error
             );
-          }
-
-          if (!loadedTitle && finalUrl?.startsWith("/api/iframe-check")) {
-            try {
-              const metaTitle = iframeRef.current?.contentDocument
-                ?.querySelector('meta[name="page-title"]')
-                ?.getAttribute("content");
-              if (metaTitle) {
-                loadedTitle = decodeURIComponent(metaTitle);
-              }
-            } catch (error) {
-              console.warn("[IE] Failed to read page-title meta tag:", error);
-            }
           }
 
           const favicon = `https://www.google.com/s2/favicons?domain=${
@@ -973,7 +881,7 @@ export function useInternetExplorerLogic({
           if (finalUrl && finalUrl.startsWith("http")) {
             return new URL(finalUrl).hostname;
           }
-          // If finalUrl is a relative path (e.g. starts with /api/iframe-check), fall back to the main url.
+          // If finalUrl is a relative path, fall back to the main url.
           const candidate =
             finalUrl && !finalUrl.startsWith("/") ? finalUrl : url;
           if (candidate) {
@@ -1585,25 +1493,6 @@ export function useInternetExplorerLogic({
     }
   };
 
-  // --- Add custom sorting logic for TimeMachineView ---
-  const chronologicallySortedYears = useMemo(() => {
-    const parseYear = (yearStr: string): number => {
-      if (yearStr === "current")
-        return new Date().getFullYear() + 0.5; // Place 'current' slightly after the current year number
-      if (yearStr.endsWith(" BC")) {
-        return -parseInt(yearStr.replace(" BC", ""), 10);
-      }
-      if (yearStr.endsWith(" CE")) {
-        return parseInt(yearStr.replace(" CE", ""), 10);
-      }
-      const yearNum = parseInt(yearStr, 10);
-      return isNaN(yearNum) ? Infinity : yearNum; // Handle potential non-numeric strings
-    };
-
-    return [...cachedYears].sort((a, b) => parseYear(a) - parseYear(b));
-  }, [cachedYears]);
-  // --- End custom sorting logic ---
-
   const handleSharePage = useCallback(() => {
     setIsShareDialogOpen(true);
   }, []);
@@ -1636,9 +1525,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen,
     language,
     location,
-    isTimeMachineViewOpen,
-    cachedYears,
-    isFetchingCachedYears,
 
     // Store actions
     setUrl,
@@ -1655,7 +1541,6 @@ export function useInternetExplorerLogic({
     setFutureSettingsDialogOpen,
     setLanguage,
     setLocation,
-    setTimeMachineViewOpen,
     clearHistory,
     addFavorite,
     clearFavorites,
@@ -1706,7 +1591,6 @@ export function useInternetExplorerLogic({
     pastYears,
     futureYears,
     isFutureYear,
-    chronologicallySortedYears,
 
     // Loading state
     isLoading,

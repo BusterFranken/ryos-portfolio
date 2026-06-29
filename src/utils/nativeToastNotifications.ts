@@ -12,7 +12,6 @@ export type NativeToastOptions = {
   cancel?: unknown;
   duration?: unknown;
   id?: unknown;
-  chatRoomId?: unknown;
 };
 
 const MAX_TITLE_LENGTH = 120;
@@ -115,17 +114,6 @@ function shouldSkipNativeToast(options: NativeToastOptions | undefined): boolean
   return false;
 }
 
-function getNativeToastChatRoomId(
-  options: NativeToastOptions | undefined
-): string | null | undefined {
-  if (!options || !("chatRoomId" in options)) {
-    return undefined;
-  }
-  return typeof options.chatRoomId === "string" || options.chatRoomId === null
-    ? options.chatRoomId
-    : undefined;
-}
-
 export function getNativeToastNotification(
   _kind: NativeToastKind,
   message: unknown,
@@ -145,12 +133,10 @@ export function getNativeToastNotification(
     if (!body) {
       return null;
     }
-    const chatRoomId = getNativeToastChatRoomId(options);
-    return chatRoomId !== undefined ? { title, body, chatRoomId } : { title, body };
+    return { title, body };
   }
 
-  const chatRoomId = getNativeToastChatRoomId(options);
-  return chatRoomId !== undefined ? { title, chatRoomId } : { title };
+  return { title };
 }
 
 function getDesktopApi() {

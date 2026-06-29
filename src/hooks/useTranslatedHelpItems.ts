@@ -86,7 +86,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
   terminal: [
     "basicCommands",
     "navigation",
-    "aiAssistant",
     "fileEditing",
     "commandHistory",
     "terminalSounds",
@@ -95,7 +94,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "appearance",
     "shaderEffects",
     "sounds",
-    "aiModel",
     "sync",
     "backupRestore",
   ],
@@ -113,7 +111,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "displayScaling",
     "pauseResume",
     "captureScreenshot",
-    "chatsCanDriveIt",
   ],
   pc: [
     "pcEmulator",
@@ -144,7 +141,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "createContacts",
     "importVCards",
     "smartGroups",
-    "useWithRyo",
   ],
   dashboard: [
     "openDashboard",

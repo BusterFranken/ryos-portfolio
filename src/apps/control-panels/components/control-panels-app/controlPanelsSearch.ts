@@ -189,7 +189,7 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
   {
     paneId: "sound",
     labelKey: `${CP}.chatSynth`,
-    keywords: ["chat synth", "synth", "typing", "preset", "chats"],
+    keywords: ["chat synth", "synth", "typing", "preset"],
   },
   {
     paneId: "sound",

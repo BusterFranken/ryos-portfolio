@@ -45,7 +45,6 @@ export function InternetExplorerAppComponent({
     errorDetails,
     isResetFavoritesDialogOpen,
     isFutureSettingsDialogOpen,
-    isTimeMachineViewOpen,
     hasMoreToScroll,
     isUrlDropdownOpen,
     setIsUrlDropdownOpen,
@@ -66,7 +65,6 @@ export function InternetExplorerAppComponent({
     currentTheme,
     isWindowsTheme,
     isOffline,
-    chronologicallySortedYears,
     isLoading,
     loadingBarVariants,
     handleNavigate,
@@ -99,7 +97,6 @@ export function InternetExplorerAppComponent({
     clearHistory,
     setResetFavoritesDialogOpen,
     setFutureSettingsDialogOpen,
-    setTimeMachineViewOpen,
     translatedHelpItems,
     setUrl,
     setLanguage,
@@ -133,7 +130,6 @@ export function InternetExplorerAppComponent({
       canGoBack={historyIndex < history.length - 1}
       canGoForward={historyIndex > 0}
       onClearHistory={() => setClearHistoryDialogOpen(true)}
-      onOpenTimeMachine={() => setTimeMachineViewOpen(true)}
       onClose={onClose}
       onEditFuture={() => setFutureSettingsDialogOpen(true)}
       language={logic.language}
@@ -243,11 +239,7 @@ export function InternetExplorerAppComponent({
             isClearHistoryDialogOpen={isClearHistoryDialogOpen}
             isResetFavoritesDialogOpen={isResetFavoritesDialogOpen}
             isFutureSettingsDialogOpen={isFutureSettingsDialogOpen}
-            isTimeMachineViewOpen={isTimeMachineViewOpen}
             translatedHelpItems={translatedHelpItems}
-            url={url}
-            year={year}
-            chronologicallySortedYears={chronologicallySortedYears}
             setTitleDialogOpen={setTitleDialogOpen}
             setNewFavoriteTitle={setNewFavoriteTitle}
             setHelpDialogOpen={setHelpDialogOpen}
@@ -256,12 +248,10 @@ export function InternetExplorerAppComponent({
             setClearHistoryDialogOpen={setClearHistoryDialogOpen}
             setResetFavoritesDialogOpen={setResetFavoritesDialogOpen}
             setFutureSettingsDialogOpen={setFutureSettingsDialogOpen}
-            setTimeMachineViewOpen={setTimeMachineViewOpen}
             handleTitleSubmit={handleTitleSubmit}
             handleClearFavorites={handleClearFavorites}
             handleResetFavorites={handleResetFavorites}
             clearHistory={clearHistory}
-            handleNavigate={handleNavigate}
           />
       </TooltipProvider>
     </AppWindowShell>
