@@ -1,8 +1,5 @@
 import { AppHelpAboutDialogs } from "@/components/shared/AppHelpAboutDialogs";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
-import { LoginDialog } from "@/components/dialogs/LoginDialog";
-import { ChangePasswordDialog } from "@/components/dialogs/ChangePasswordDialog";
-import { LogoutDialog } from "@/components/dialogs/LogoutDialog";
 import { appMetadata } from "../..";
 
 export type ControlPanelsDialogsProps = {
@@ -18,43 +15,6 @@ export type ControlPanelsDialogsProps = {
   isConfirmFormatOpen: boolean;
   setIsConfirmFormatOpen: (open: boolean) => void;
   handleConfirmFormat: () => void;
-  isUsernameDialogOpen: boolean;
-  setIsUsernameDialogOpen: (open: boolean) => void;
-  verifyUsernameInput: string;
-  setVerifyUsernameInput: (value: string) => void;
-  verifyPasswordInput: string;
-  setVerifyPasswordInput: (value: string) => void;
-  handleVerifyTokenSubmit: (
-    password: string,
-    closeOnSuccess?: boolean
-  ) => Promise<void>;
-  isVerifyingToken: boolean;
-  verifyError: string | null;
-  newUsername: string;
-  setNewUsername: (value: string) => void;
-  newPassword: string;
-  setNewPassword: (value: string) => void;
-  submitUsernameDialog: () => Promise<void>;
-  isSettingUsername: boolean;
-  usernameError: string | null;
-  isVerifyDialogOpen: boolean;
-  setVerifyDialogOpen: (open: boolean) => void;
-  promptSetUsername: () => void;
-  usernameDialogInitialTab: "login" | "signup";
-  isPasswordDialogOpen: boolean;
-  setIsPasswordDialogOpen: (open: boolean) => void;
-  setPasswordInput: (value: string) => void;
-  setPasswordError: (error: string | null) => void;
-  hasPassword: boolean | null;
-  isSettingPassword: boolean;
-  passwordError: string | null;
-  handleSetPassword: (
-    newPassword: string,
-    currentPassword?: string
-  ) => Promise<void>;
-  isLogoutConfirmDialogOpen: boolean;
-  setIsLogoutConfirmDialogOpen: (open: boolean) => void;
-  confirmLogout: () => void;
 };
 
 export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
@@ -71,37 +31,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
     isConfirmFormatOpen,
     setIsConfirmFormatOpen,
     handleConfirmFormat,
-    isUsernameDialogOpen,
-    setIsUsernameDialogOpen,
-    verifyUsernameInput,
-    setVerifyUsernameInput,
-    verifyPasswordInput,
-    setVerifyPasswordInput,
-    handleVerifyTokenSubmit,
-    isVerifyingToken,
-    verifyError,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    submitUsernameDialog,
-    isSettingUsername,
-    usernameError,
-    isVerifyDialogOpen,
-    setVerifyDialogOpen,
-    promptSetUsername,
-    usernameDialogInitialTab,
-    isPasswordDialogOpen,
-    setIsPasswordDialogOpen,
-    setPasswordInput,
-    setPasswordError,
-    hasPassword,
-    isSettingPassword,
-    passwordError,
-    handleSetPassword,
-    isLogoutConfirmDialogOpen,
-    setIsLogoutConfirmDialogOpen,
-    confirmLogout,
   } = props;
 
   return (
@@ -128,79 +57,6 @@ export function ControlPanelsDialogs(props: ControlPanelsDialogsProps) {
         onConfirm={handleConfirmFormat}
         title={t("common.system.formatFileSystem")}
         description={t("common.system.formatFileSystemDesc")}
-      />
-      <LoginDialog
-        initialTab={usernameDialogInitialTab}
-        isOpen={isUsernameDialogOpen}
-        onOpenChange={setIsUsernameDialogOpen}
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        newUsername={newUsername}
-        onNewUsernameChange={setNewUsername}
-        newPassword={newPassword}
-        onNewPasswordChange={setNewPassword}
-        onSignUpSubmit={submitUsernameDialog}
-        isSignUpLoading={isSettingUsername}
-        signUpError={usernameError}
-      />
-      <LoginDialog
-        isOpen={isVerifyDialogOpen}
-        onOpenChange={setVerifyDialogOpen}
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        newUsername={verifyUsernameInput}
-        onNewUsernameChange={setVerifyUsernameInput}
-        newPassword={verifyPasswordInput}
-        onNewPasswordChange={setVerifyPasswordInput}
-        onSignUpSubmit={async () => {
-          setVerifyDialogOpen(false);
-          promptSetUsername();
-        }}
-        isSignUpLoading={false}
-        signUpError={null}
-      />
-      <ChangePasswordDialog
-        isOpen={isPasswordDialogOpen}
-        onOpenChange={(open) => {
-          setIsPasswordDialogOpen(open);
-          if (!open) {
-            setPasswordInput("");
-            setPasswordError(null);
-          }
-        }}
-        hasPassword={hasPassword === true}
-        isLoading={isSettingPassword}
-        errorMessage={passwordError}
-        onAnyInputChange={() => setPasswordError(null)}
-        onSubmit={async ({ currentPassword, newPassword }) => {
-          setPasswordInput(newPassword);
-          await handleSetPassword(newPassword, currentPassword || undefined);
-        }}
-      />
-      <LogoutDialog
-        isOpen={isLogoutConfirmDialogOpen}
-        onOpenChange={setIsLogoutConfirmDialogOpen}
-        onConfirm={confirmLogout}
-        hasPassword={hasPassword}
-        onSetPassword={() => {
-          setPasswordInput("");
-          setPasswordError(null);
-          setIsPasswordDialogOpen(true);
-        }}
       />
     </>
   );

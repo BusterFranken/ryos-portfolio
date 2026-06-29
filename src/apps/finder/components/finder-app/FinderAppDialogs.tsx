@@ -3,7 +3,6 @@ import { HelpDialog } from "@/components/dialogs/HelpDialog";
 import { AppHelpAboutDialogs } from "@/components/shared/AppHelpAboutDialogs";
 import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { InputDialog } from "@/components/dialogs/InputDialog";
-import { LoginDialog } from "@/components/dialogs/LoginDialog";
 import { RightClickMenu } from "@/components/ui/right-click-menu";
 import { appMetadata } from "../../index";
 import type { FileItem } from "../FileList";
@@ -33,25 +32,6 @@ export interface FinderAppDialogsProps {
   newFolderName: string;
   setNewFolderName: (name: string) => void;
   handleNewFolderSubmit: (name: string) => void;
-  isUsernameDialogOpen: boolean;
-  setIsUsernameDialogOpen: (open: boolean) => void;
-  newUsername: string;
-  setNewUsername: (name: string) => void;
-  newPassword: string;
-  setNewPassword: (password: string) => void;
-  submitUsernameDialog: () => void | Promise<void>;
-  isSettingUsername: boolean;
-  usernameError: string | null;
-  isVerifyDialogOpen: boolean;
-  setVerifyDialogOpen: (open: boolean) => void;
-  verifyPasswordInput: string;
-  setVerifyPasswordInput: (password: string) => void;
-  verifyUsernameInput: string;
-  setVerifyUsernameInput: (username: string) => void;
-  isVerifyingToken: boolean;
-  verifyError: string | null;
-  handleVerifyTokenSubmit: (password: string, remember?: boolean) => Promise<void>;
-  promptSetUsername: () => void;
   contextMenuPos: { x: number; y: number } | null;
   setContextMenuPos: (pos: { x: number; y: number } | null) => void;
   contextMenuFile: FileItem | null;
@@ -80,25 +60,6 @@ export function FinderAppDialogs({
   newFolderName,
   setNewFolderName,
   handleNewFolderSubmit,
-  isUsernameDialogOpen,
-  setIsUsernameDialogOpen,
-  newUsername,
-  setNewUsername,
-  newPassword,
-  setNewPassword,
-  submitUsernameDialog,
-  isSettingUsername,
-  usernameError,
-  isVerifyDialogOpen,
-  setVerifyDialogOpen,
-  verifyPasswordInput,
-  setVerifyPasswordInput,
-  verifyUsernameInput,
-  setVerifyUsernameInput,
-  isVerifyingToken,
-  verifyError,
-  handleVerifyTokenSubmit,
-  promptSetUsername,
   contextMenuPos,
   setContextMenuPos,
   contextMenuFile,
@@ -142,52 +103,6 @@ export function FinderAppDialogs({
         description={t("apps.finder.dialogs.newFolder.description")}
         value={newFolderName}
         onChange={setNewFolderName}
-      />
-      <LoginDialog
-        initialTab="signup"
-        isOpen={isUsernameDialogOpen}
-        onOpenChange={setIsUsernameDialogOpen}
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        newUsername={newUsername}
-        onNewUsernameChange={setNewUsername}
-        newPassword={newPassword}
-        onNewPasswordChange={setNewPassword}
-        onSignUpSubmit={async () => {
-          await submitUsernameDialog();
-        }}
-        isSignUpLoading={isSettingUsername}
-        signUpError={usernameError}
-      />
-      <LoginDialog
-        isOpen={isVerifyDialogOpen}
-        onOpenChange={setVerifyDialogOpen}
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        newUsername={newUsername}
-        onNewUsernameChange={setNewUsername}
-        newPassword={newPassword}
-        onNewPasswordChange={setNewPassword}
-        onSignUpSubmit={async () => {
-          setVerifyDialogOpen(false);
-          promptSetUsername();
-        }}
-        isSignUpLoading={false}
-        signUpError={null}
       />
       <RightClickMenu
         position={contextMenuPos}

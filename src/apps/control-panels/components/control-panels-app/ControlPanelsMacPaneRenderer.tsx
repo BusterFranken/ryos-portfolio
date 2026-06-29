@@ -1,7 +1,5 @@
 import type { RefObject } from "react";
 import type { ReactNode } from "react";
-import type { Contact } from "@/utils/contacts";
-import type { EmailStatusResponse } from "@/shared/contracts/auth";
 import type { LanguageCode } from "@/stores/useLanguageStore";
 import type { OsThemeId } from "@/themes/types";
 import type { AccentChrome, AccentId } from "@/themes/accents";
@@ -12,14 +10,10 @@ import {
 import { AppearancePaneContent } from "./AppearancePaneContent";
 import { DesktopScreenSaverPaneContent } from "./DesktopScreenSaverPaneContent";
 import { InternationalPaneContent } from "./InternationalPaneContent";
-import { SecurityPaneContent } from "./SecurityPaneContent";
 import { SoundPaneContent } from "./SoundPaneContent";
 import { DisplaysPaneContent } from "./DisplaysPaneContent";
 import { SharingPaneContent } from "./SharingPaneContent";
-import { AccountsPaneContent } from "./AccountsPaneContent";
 import { SoftwareUpdatePaneContent } from "./SoftwareUpdatePaneContent";
-import type { AIModel } from "@/types/aiModels";
-import type { AIModelInfo } from "@/types/aiModels";
 
 export type ControlPanelsMacPaneRendererProps = {
   paneId: ControlPanelPaneId;
@@ -70,49 +64,14 @@ export type ControlPanelsMacPaneRendererProps = {
   handleIpodMuteToggle: () => void;
   isIOS: boolean;
   isMacOSTheme: boolean;
-  username: string | null;
-  promptSetUsername: () => void;
-  promptLogin: () => void;
-  myContact: Contact | null;
-  accountAvatarLabel: string;
-  accountAvatarInitials: string;
-  accountJoinedAt?: number | null;
-  debugMode: boolean;
-  isAdmin: boolean;
-  promptVerifyToken: () => void;
-  hasPassword: boolean | null;
-  setPasswordInput: (value: string) => void;
-  setPasswordError: (error: string | null) => void;
-  setIsPasswordDialogOpen: (open: boolean) => void;
-  logout: () => void;
-  handleLogoutAllDevices: () => void;
-  isLoggingOutAllDevices: boolean;
-  recoveryEmailStatus: EmailStatusResponse | null;
-  isEmailStatusLoading: boolean;
-  refreshRecoveryEmailStatus: () => Promise<EmailStatusResponse | null>;
   handleCheckForUpdates: () => void;
   handleBackup: () => void;
   fileInputRef: RefObject<HTMLInputElement | null>;
   handleRestore: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleResetAll: () => void;
   setIsConfirmFormatOpen: (open: boolean) => void;
-  setDebugMode: (enabled: boolean) => void;
-  showResizers: boolean;
-  setShowResizers: (enabled: boolean) => void;
   shaderEffectEnabled: boolean;
   setShaderEffectEnabled: (enabled: boolean) => void;
-  systemFont: import("@/themes/systemFonts").SystemFontId;
-  setSystemFont: (font: import("@/themes/systemFonts").SystemFontId) => void;
-  AI_MODELS: AIModelInfo[];
-  aiModel: AIModel | null;
-  setAiModel: (model: AIModel | null) => void;
-  ttsModel: "openai" | "elevenlabs" | null;
-  setTtsModel: (model: "openai" | "elevenlabs" | null) => void;
-  ttsVoice: string | null;
-  setTtsVoice: (voice: string | null) => void;
-  handleShowBootScreen: () => void;
-  handleTriggerAppCrashTest: () => void;
-  handleTriggerDesktopCrashTest: () => void;
 };
 
 export function ControlPanelsMacPaneRenderer(
@@ -148,27 +107,6 @@ export function ControlPanelsMacPaneRenderer(
           t={t}
           currentLanguage={props.currentLanguage}
           setLanguage={props.setLanguage}
-        />
-      );
-    case "security":
-      return (
-        <SecurityPaneContent
-          t={t}
-          username={props.username}
-          myContact={props.myContact}
-          accountAvatarLabel={props.accountAvatarLabel}
-          accountAvatarInitials={props.accountAvatarInitials}
-          accountJoinedAt={props.accountJoinedAt}
-          locale={props.currentLanguage}
-          hasPassword={props.hasPassword}
-          promptSetUsername={props.promptSetUsername}
-          promptLogin={props.promptLogin}
-          logout={props.logout}
-          handleLogoutAllDevices={props.handleLogoutAllDevices}
-          isLoggingOutAllDevices={props.isLoggingOutAllDevices}
-          setPasswordInput={props.setPasswordInput}
-          setPasswordError={props.setPasswordError}
-          setIsPasswordDialogOpen={props.setIsPasswordDialogOpen}
         />
       );
     case "sound":
@@ -223,48 +161,6 @@ export function ControlPanelsMacPaneRenderer(
           handleRestore={props.handleRestore}
           handleResetAll={props.handleResetAll}
           setIsConfirmFormatOpen={props.setIsConfirmFormatOpen}
-        />
-      );
-    case "accounts":
-      return (
-        <AccountsPaneContent
-          t={t}
-          tabStyles={props.tabStyles}
-          username={props.username}
-          myContact={props.myContact}
-          accountAvatarLabel={props.accountAvatarLabel}
-          accountAvatarInitials={props.accountAvatarInitials}
-          accountJoinedAt={props.accountJoinedAt}
-          locale={props.currentLanguage}
-          debugMode={props.debugMode}
-          isAdmin={props.isAdmin}
-          promptSetUsername={props.promptSetUsername}
-          promptLogin={props.promptLogin}
-          recoveryEmailStatus={props.recoveryEmailStatus}
-          isEmailStatusLoading={props.isEmailStatusLoading}
-          refreshRecoveryEmailStatus={props.refreshRecoveryEmailStatus}
-          hasPassword={props.hasPassword}
-          logout={props.logout}
-          handleLogoutAllDevices={props.handleLogoutAllDevices}
-          isLoggingOutAllDevices={props.isLoggingOutAllDevices}
-          setPasswordInput={props.setPasswordInput}
-          setPasswordError={props.setPasswordError}
-          setIsPasswordDialogOpen={props.setIsPasswordDialogOpen}
-          setDebugMode={props.setDebugMode}
-          showResizers={props.showResizers}
-          setShowResizers={props.setShowResizers}
-          systemFont={props.systemFont}
-          setSystemFont={props.setSystemFont}
-          AI_MODELS={props.AI_MODELS}
-          aiModel={props.aiModel}
-          setAiModel={props.setAiModel}
-          ttsModel={props.ttsModel}
-          setTtsModel={props.setTtsModel}
-          ttsVoice={props.ttsVoice}
-          setTtsVoice={props.setTtsVoice}
-          handleShowBootScreen={props.handleShowBootScreen}
-          handleTriggerAppCrashTest={props.handleTriggerAppCrashTest}
-          handleTriggerDesktopCrashTest={props.handleTriggerDesktopCrashTest}
         />
       );
     case "software-update":

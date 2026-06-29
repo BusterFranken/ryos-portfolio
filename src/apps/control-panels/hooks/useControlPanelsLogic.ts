@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useAppHelpAboutDialogs } from "@/hooks/useAppHelpAboutDialogs";
 import { useTranslation } from "react-i18next";
@@ -19,22 +19,16 @@ import { setNextBootMessage, clearNextBootMessage } from "@/utils/bootMessage";
 import { clearPrefetchFlag, forceRefreshCache } from "@/utils/prefetch";
 import { AI_MODEL_METADATA } from "@/types/aiModels";
 import { v4 as uuidv4 } from "uuid";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { useThemeStore } from "@/stores/useThemeStore";
-import { getApiUrl } from "@/utils/platform";
 import { getTranslatedAppName } from "@/utils/i18n";
 import { normalizeControlPanelClassicTabId } from "@/apps/control-panels/components/control-panels-app/controlPanelsCategories";
 import { saveBlobToDevice } from "@/utils/nativeFileDialogs";
 import { getTabStyles } from "@/utils/tabStyles";
 import { useLanguageStore } from "@/stores/useLanguageStore";
 import type { ControlPanelsInitialData } from "@/apps/base/types";
-import { abortableFetch } from "@/utils/abortableFetch";
 import { triggerRuntimeCrashTest } from "@/utils/errorReporting";
 import { SETTINGS_ANALYTICS, track } from "@/utils/analytics";
-import { useRecoveryEmail } from "@/hooks/useRecoveryEmail";
-import { useAccountJoinDate } from "@/hooks/useAccountJoinDate";
 import {
   readStoreItems,
   restoreStoreItems,
@@ -299,164 +293,6 @@ export function useControlPanelsLogic({
   // Language state
   const currentLanguage = useLanguageStore((state) => state.current);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
-
-  // Use auth hook
-  const {
-    username,
-    isAuthenticated,
-    promptSetUsername,
-    promptLogin,
-    usernameDialogInitialTab,
-    isUsernameDialogOpen,
-    setIsUsernameDialogOpen,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    isSettingUsername,
-    usernameError,
-    submitUsernameDialog,
-    promptVerifyToken,
-    isVerifyDialogOpen,
-    setVerifyDialogOpen,
-    verifyPasswordInput,
-    setVerifyPasswordInput,
-    verifyUsernameInput,
-    setVerifyUsernameInput,
-    hasPassword,
-    setPassword,
-    logout,
-    confirmLogout,
-    isLogoutConfirmDialogOpen,
-    setIsLogoutConfirmDialogOpen,
-    isVerifyingToken,
-    verifyError,
-    handleVerifyTokenSubmit,
-  } = useAuth();
-
-  // Password dialog states
-  // `isPasswordDialogOpen` drives both the legacy "set password" and the new
-  // "change password" experience — the dialog itself decides which fields to
-  // show based on `hasPassword`.
-  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [isSettingPassword, setIsSettingPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-
-  // Log out all devices state
-  const [isLoggingOutAllDevices, setIsLoggingOutAllDevices] = useState(false);
-
-  // Password status is now automatically checked by the store when username/token changes
-
-  // Debug hasPassword value
-  useEffect(() => {
-    console.log(
-      "[ControlPanel] hasPassword value:",
-      hasPassword,
-      "type:",
-      typeof hasPassword
-    );
-  }, [hasPassword]);
-
-  const handleSetPassword = async (
-    password: string,
-    currentPassword?: string
-  ) => {
-    setIsSettingPassword(true);
-    setPasswordError(null);
-
-    if (!password || password.length < 8) {
-      setPasswordError(t("common.auth.changePassword.tooShort"));
-      setIsSettingPassword(false);
-      return;
-    }
-
-    const result = await setPassword(password, currentPassword);
-
-    if (result.ok) {
-      const wasChange = hasPassword === true;
-      toast.success(
-        wasChange
-          ? t("common.auth.changePassword.toastChangedTitle")
-          : t("common.auth.changePassword.toastSetTitle"),
-        {
-          description: wasChange
-            ? t("common.auth.changePassword.toastChangedDescription")
-            : t("common.auth.changePassword.toastSetDescription"),
-        }
-      );
-      setIsPasswordDialogOpen(false);
-      setPasswordInput("");
-    } else {
-      setPasswordError(
-        result.error || t("common.auth.changePassword.genericError")
-      );
-    }
-
-    setIsSettingPassword(false);
-  };
-
-  const handleLogoutAllDevices = async () => {
-    setIsLoggingOutAllDevices(true);
-
-    try {
-      // Ensure we have auth info from the auth hook
-      if (!isAuthenticated || !username) {
-        toast.error(t("apps.control-panels.logoutAll.authErrorTitle"), {
-          description: t("apps.control-panels.logoutAll.authErrorDescription"),
-        });
-        return;
-      }
-
-      const response = await abortableFetch(getApiUrl("/api/auth/logout-all"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        timeout: 15000,
-        throwOnHttpError: false,
-        retry: { maxAttempts: 1, initialDelayMs: 250 },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success(t("apps.control-panels.logoutAll.successTitle"), {
-          description:
-            data.message ||
-            t("apps.control-panels.logoutAll.successDescription"),
-        });
-
-        // Immediately clear auth via store logout (bypass confirmation)
-        confirmLogout();
-
-        // No full page reload needed – UI will update via store reset
-      } else {
-        toast.error(t("apps.control-panels.logoutAll.failedTitle"), {
-          description:
-            data.error || t("apps.control-panels.logoutAll.failedDescription"),
-        });
-      }
-    } catch (error) {
-      console.error("Error logging out all devices:", error);
-      toast.error(t("apps.control-panels.logoutAll.networkErrorTitle"), {
-        description: t("apps.control-panels.logoutAll.networkErrorDescription"),
-      });
-    } finally {
-      setIsLoggingOutAllDevices(false);
-    }
-  };
-
-  const {
-    recoveryEmailStatus,
-    isEmailStatusLoading,
-    refreshRecoveryEmailStatus,
-  } = useRecoveryEmail({ username, isAuthenticated });
-
-  const { accountJoinedAt } = useAccountJoinDate({
-    username,
-    isAuthenticated,
-  });
 
   // States for previous volume levels for mute/unmute functionality
   const [prevMasterVolume, setPrevMasterVolume] = useState(
@@ -921,14 +757,6 @@ export function useControlPanelsLogic({
     setIsConfirmResetOpen,
     isConfirmFormatOpen,
     setIsConfirmFormatOpen,
-    isPasswordDialogOpen,
-    setIsPasswordDialogOpen,
-    passwordInput,
-    setPasswordInput,
-    passwordError,
-    setPasswordError,
-    isSettingPassword,
-    isLoggingOutAllDevices,
     fileInputRef,
     handleRestore,
     handleBackup,
@@ -1003,39 +831,5 @@ export function useControlPanelsLogic({
     setTtsModel,
     ttsVoice,
     setTtsVoice,
-    username,
-    promptSetUsername,
-    promptLogin,
-    usernameDialogInitialTab,
-    isUsernameDialogOpen,
-    setIsUsernameDialogOpen,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    isSettingUsername,
-    usernameError,
-    submitUsernameDialog,
-    promptVerifyToken,
-    isVerifyDialogOpen,
-    setVerifyDialogOpen,
-    verifyPasswordInput,
-    setVerifyPasswordInput,
-    verifyUsernameInput,
-    setVerifyUsernameInput,
-    hasPassword,
-    logout,
-    confirmLogout,
-    isLogoutConfirmDialogOpen,
-    setIsLogoutConfirmDialogOpen,
-    isVerifyingToken,
-    verifyError,
-    handleVerifyTokenSubmit,
-    handleSetPassword,
-    handleLogoutAllDevices,
-    recoveryEmailStatus,
-    isEmailStatusLoading,
-    refreshRecoveryEmailStatus,
-    accountJoinedAt,
   };
 }

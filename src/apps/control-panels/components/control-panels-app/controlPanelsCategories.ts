@@ -2,11 +2,9 @@ export type ControlPanelPaneId =
   | "appearance"
   | "desktop-screen-saver"
   | "international"
-  | "security"
   | "displays"
   | "sound"
   | "sharing"
-  | "accounts"
   | "software-update";
 
 /** Legacy tab IDs used by Windows/System7 layout and deep links. */
@@ -49,11 +47,6 @@ export const CONTROL_PANEL_CATEGORIES: ControlPanelCategory[] = [
     icon: "control-panels/international.png",
   },
   {
-    id: "security",
-    labelKey: "apps.control-panels.panes.security",
-    icon: "control-panels/keychain.png",
-  },
-  {
     id: "displays",
     labelKey: "apps.control-panels.panes.displays",
     icon: "control-panels/displays.png",
@@ -67,11 +60,6 @@ export const CONTROL_PANEL_CATEGORIES: ControlPanelCategory[] = [
     id: "sharing",
     labelKey: "apps.control-panels.panes.sharing",
     icon: "control-panels/backup-restore.png",
-  },
-  {
-    id: "accounts",
-    labelKey: "apps.control-panels.panes.accounts",
-    icon: "control-panels/users.png",
   },
   {
     id: "software-update",
@@ -90,7 +78,7 @@ export const CONTROL_PANEL_SECTIONS: ControlPanelSection[] = [
   {
     id: "hardware-system",
     labelKey: "apps.control-panels.sections.hardwareSystem",
-    paneIds: ["displays", "sound", "accounts", "security"],
+    paneIds: ["displays", "sound"],
   },
   {
     id: "internet-network",
@@ -103,7 +91,6 @@ export const CONTROL_PANEL_SECTIONS: ControlPanelSection[] = [
 export const CONTROL_PANEL_PINNED_PANES: ControlPanelPaneId[] = [
   "appearance",
   "desktop-screen-saver",
-  "accounts",
 ];
 
 const LEGACY_PANE_ALIASES: Record<string, ControlPanelPaneId> = {

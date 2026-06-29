@@ -11,14 +11,11 @@ import {
   MenubarSubContent,
 } from "@/components/ui/menubar";
 import { AboutFinderDialog } from "@/components/dialogs/AboutFinderDialog";
-import { LoginDialog } from "@/components/dialogs/LoginDialog";
-import { LogoutDialog } from "@/components/dialogs/LogoutDialog";
 import { AppId, appRegistry } from "@/config/appRegistry";
 import { useLaunchApp } from "@/hooks/useLaunchApp";
 import { useRyosFullscreen } from "@/hooks/useRyosFullscreen";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { useAppStore, RecentDocument } from "@/stores/useAppStore";
-import { useAuth } from "@/hooks/useAuth";
 import { isDesktop } from "@/utils/platform";
 import { cn } from "@/lib/utils";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
@@ -80,41 +77,6 @@ export function AppleMenu() {
   const recentApps = useAppStore((state) => state.recentApps);
   const recentDocuments = useAppStore((state) => state.recentDocuments);
 
-  // Auth state and handlers from useAuth
-  const {
-    username,
-    isAuthenticated,
-    hasPassword,
-    // Username/signup dialog
-    promptSetUsername,
-    isUsernameDialogOpen,
-    setIsUsernameDialogOpen,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    isSettingUsername,
-    usernameError,
-    submitUsernameDialog,
-    // Token/login verification dialog
-    promptVerifyToken,
-    isVerifyDialogOpen,
-    setVerifyDialogOpen,
-    verifyPasswordInput,
-    setVerifyPasswordInput,
-    verifyUsernameInput,
-    setVerifyUsernameInput,
-    isVerifyingToken,
-    verifyError,
-    handleVerifyTokenSubmit,
-    // Logout
-    logout,
-    confirmLogout,
-    isLogoutConfirmDialogOpen,
-    setIsLogoutConfirmDialogOpen,
-  } = useAuth();
-
-  const isLoggedIn = !!(username && isAuthenticated);
   const isDesktopApp = isDesktop();
 
   const handleAppClick = (appId: string) => {
@@ -295,30 +257,6 @@ export function AppleMenu() {
                 : t("common.appleMenu.enterFullScreen")}
             </MenubarItem>
           )}
-
-          <MenubarSeparator className="h-[2px] bg-black my-1" />
-
-          {/* Account section */}
-          {isLoggedIn ? (
-            <MenubarItem onClick={logout} className="text-md h-6 px-3">
-              {t("common.appleMenu.logOut", { username })}
-            </MenubarItem>
-          ) : (
-            <>
-              <MenubarItem
-                onClick={promptSetUsername}
-                className="text-md h-6 px-3"
-              >
-                {t("common.appleMenu.createAccount")}
-              </MenubarItem>
-              <MenubarItem
-                onClick={promptVerifyToken}
-                className="text-md h-6 px-3"
-              >
-                {t("common.appleMenu.login")}
-              </MenubarItem>
-            </>
-          )}
         </MenubarContent>
       </MenubarMenu>
 
@@ -326,70 +264,6 @@ export function AppleMenu() {
       <AboutFinderDialog
         isOpen={aboutFinderOpen}
         onOpenChange={setAboutFinderOpen}
-      />
-
-      {/* Sign Up Dialog */}
-      <LoginDialog
-        initialTab="signup"
-        isOpen={isUsernameDialogOpen}
-        onOpenChange={setIsUsernameDialogOpen}
-        /* Login props */
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        /* Sign-up props */
-        newUsername={newUsername}
-        onNewUsernameChange={setNewUsername}
-        newPassword={newPassword}
-        onNewPasswordChange={setNewPassword}
-        onSignUpSubmit={submitUsernameDialog}
-        isSignUpLoading={isSettingUsername}
-        signUpError={usernameError}
-      />
-
-      {/* Log In Dialog */}
-      <LoginDialog
-        isOpen={isVerifyDialogOpen}
-        onOpenChange={setVerifyDialogOpen}
-        /* Login props */
-        usernameInput={verifyUsernameInput}
-        onUsernameInputChange={setVerifyUsernameInput}
-        passwordInput={verifyPasswordInput}
-        onPasswordInputChange={setVerifyPasswordInput}
-        onLoginSubmit={async () => {
-          await handleVerifyTokenSubmit(verifyPasswordInput, true);
-        }}
-        isLoginLoading={isVerifyingToken}
-        loginError={verifyError}
-        /* Sign-up props */
-        newUsername={newUsername}
-        onNewUsernameChange={setNewUsername}
-        newPassword={newPassword}
-        onNewPasswordChange={setNewPassword}
-        onSignUpSubmit={async () => {
-          setVerifyDialogOpen(false);
-          promptSetUsername();
-        }}
-        isSignUpLoading={false}
-        signUpError={null}
-      />
-
-      {/* Logout Confirmation Dialog */}
-      <LogoutDialog
-        isOpen={isLogoutConfirmDialogOpen}
-        onOpenChange={setIsLogoutConfirmDialogOpen}
-        onConfirm={confirmLogout}
-        hasPassword={hasPassword}
-        onSetPassword={() => {
-          // For now, just close and prompt login to set password
-          setIsLogoutConfirmDialogOpen(false);
-        }}
       />
     </>
   );

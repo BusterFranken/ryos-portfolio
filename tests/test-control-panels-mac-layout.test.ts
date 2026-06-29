@@ -3,7 +3,7 @@
  * Wiring tests for macOS System Preferences layout in Control Panels.
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, test, expect } from "bun:test";
 import {
@@ -195,7 +195,7 @@ describe("Control Panels macOS 10.3 layout", () => {
       ...categoriesSource.matchAll(/icon:\s*"([^"]+)"/g),
     ].map((match) => match[1]);
 
-    expect(iconMatches.length).toBe(9);
+    expect(iconMatches.length).toBe(7);
     for (const icon of iconMatches) {
       expect(macosxIcons.has(icon)).toBe(true);
     }
@@ -216,14 +216,11 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(categoriesSource.includes("background-fill.png")).toBe(false);
     expect(categoriesSource.includes("location/app.png")).toBe(false);
     expect(categoriesSource.includes("floppy.png")).toBe(false);
-    expect(categoriesSource.includes("control-panels/keychain.png")).toBe(true);
-    expect(getControlPanelCategory("security")?.icon).toBe(
-      "control-panels/keychain.png"
-    );
-    expect(categoriesSource.includes("control-panels/users.png")).toBe(true);
-    expect(getControlPanelCategory("accounts")?.icon).toBe(
-      "control-panels/users.png"
-    );
+    // Accounts/Security panes were removed in the backend strip.
+    expect(categoriesSource.includes("control-panels/keychain.png")).toBe(false);
+    expect(getControlPanelCategory("security")).toBeUndefined();
+    expect(categoriesSource.includes("control-panels/users.png")).toBe(false);
+    expect(getControlPanelCategory("accounts")).toBeUndefined();
     expect(categoriesSource.includes("control-panels/displays.png")).toBe(true);
   });
 
@@ -249,7 +246,7 @@ describe("Control Panels macOS 10.3 layout", () => {
 
     const sharingCase = rendererSource.slice(
       rendererSource.indexOf('case "sharing":'),
-      rendererSource.indexOf('case "accounts":')
+      rendererSource.indexOf('case "software-update":')
     );
     expect(sharingCase.includes("handleCloudBackup")).toBe(false);
     expect(sharingCase.includes("handleBackup")).toBe(true);
@@ -284,61 +281,24 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(spotlightSource.includes('id: "setting-screensaver"')).toBe(true);
   });
 
-  test("Security pane shows account header and delete account row", () => {
-    const securitySource = readSource(
-      "src/apps/control-panels/components/control-panels-app/SecurityPaneContent.tsx"
-    );
+  test("Accounts and Security panes are removed (backend strip)", () => {
     const rendererSource = readSource(
       "src/apps/control-panels/components/control-panels-app/ControlPanelsMacPaneRenderer.tsx"
     );
-    const headerSource = readSource(
+    expect(rendererSource.includes('case "security":')).toBe(false);
+    expect(rendererSource.includes('case "accounts":')).toBe(false);
+    expect(rendererSource.includes("SecurityPaneContent")).toBe(false);
+    expect(rendererSource.includes("AccountsPaneContent")).toBe(false);
+
+    expect(existsSync(resolve(process.cwd(),
+      "src/apps/control-panels/components/control-panels-app/SecurityPaneContent.tsx"
+    ))).toBe(false);
+    expect(existsSync(resolve(process.cwd(),
+      "src/apps/control-panels/components/control-panels-app/AccountsPaneContent.tsx"
+    ))).toBe(false);
+    expect(existsSync(resolve(process.cwd(),
       "src/apps/control-panels/components/control-panels-app/AccountProfileHeader.tsx"
-    );
-    const constantsSource = readSource(
-      "src/apps/control-panels/components/control-panels-app/constants.ts"
-    );
-
-    expect(headerSource.includes("AccountProfileHeader")).toBe(true);
-    expect(headerSource.includes("control-panels-account-profile")).toBe(true);
-    expect(headerSource.includes("getAccountJoinStatusLabel")).toBe(true);
-    expect(headerSource.includes("accountJoinedAt")).toBe(true);
-    expect(headerSource.includes("loggedInToRyOS")).toBe(false);
-    expect(headerSource.includes("AccountActionsMenu")).toBe(false);
-    expect(headerSource.includes("ThemedIcon")).toBe(true);
-    expect(headerSource.includes("ACCOUNT_PROFILE_AVATAR_ICON")).toBe(true);
-    expect(constantsSource.includes("control-panels/account-avatar.png")).toBe(
-      true
-    );
-    expect(headerSource.includes("accountAvatarInitials")).toBe(true);
-    expect(securitySource.includes("AccountProfileHeader")).toBe(true);
-    expect(securitySource.includes("DeleteAccountDialog")).toBe(true);
-    expect(securitySource.includes("deleteAccountRowDescription")).toBe(true);
-    expect(securitySource.includes("deleteAccount.submit")).toBe(true);
-
-    const securityCase = rendererSource.slice(
-      rendererSource.indexOf('case "security":'),
-      rendererSource.indexOf('case "sound":')
-    );
-    expect(securityCase.includes("myContact")).toBe(true);
-    expect(securityCase.includes("accountAvatarLabel")).toBe(true);
-    expect(securityCase.includes("accountJoinedAt")).toBe(true);
-    expect(securitySource.includes("logOutRowDescription")).toBe(true);
-    expect(securitySource.includes("logOutOfAllDevices")).toBe(true);
-    expect(securitySource.includes("logOutOfAllDevicesRowDescription")).toBe(true);
-    expect(securitySource.includes("changePasswordButton")).toBe(true);
-    expect(securitySource.includes("logOutAll")).toBe(true);
-    expect(securitySource.includes("verifyAccount")).toBe(false);
-    expect(securityCase.includes("logout")).toBe(true);
-    expect(securityCase.includes("handleLogoutAllDevices")).toBe(true);
-    expect(securityCase.includes("isLoggingOutAllDevices")).toBe(true);
-    expect(securityCase.includes("promptVerifyToken")).toBe(false);
-
-    const logOutRowIndex = securitySource.indexOf("logOutRowDescription");
-    const logOutAllRowIndex = securitySource.indexOf("logOutOfAllDevicesRowDescription");
-    const deleteAccountRowIndex = securitySource.indexOf("deleteAccountRowDescription");
-    expect(logOutRowIndex).toBeGreaterThan(-1);
-    expect(logOutAllRowIndex).toBeGreaterThan(logOutRowIndex);
-    expect(deleteAccountRowIndex).toBeGreaterThan(logOutAllRowIndex);
+    ))).toBe(false);
   });
 
   test("Sound pane Effects tab rows include secondary descriptions", () => {
@@ -353,88 +313,7 @@ describe("Control Panels macOS 10.3 layout", () => {
     expect(soundSource.includes("soundTabs.effects")).toBe(true);
   });
 
-  test("Accounts pane uses Accounts, Security, and admin-gated Debug tabs", () => {
-    const accountsSource = readSource(
-      "src/apps/control-panels/components/control-panels-app/AccountsPaneContent.tsx"
-    );
-    const rendererSource = readSource(
-      "src/apps/control-panels/components/control-panels-app/ControlPanelsMacPaneRenderer.tsx"
-    );
-
-    expect(accountsSource.includes("control-panels-pref-form-tabbed")).toBe(true);
-    expect(accountsSource.includes("control-panels-pref-tab-bar")).toBe(true);
-    expect(accountsSource.includes("accountsTabs.accounts")).toBe(true);
-    expect(accountsSource.includes("accountsTabs.security")).toBe(true);
-    expect(accountsSource.includes("accountsTabs.debug")).toBe(true);
-    expect(accountsSource.includes("accountsTabs.advanced")).toBe(false);
-    expect(accountsSource.includes("AccountProfileHeader")).toBe(true);
-    expect(accountsSource.includes("SecurityPaneContent")).toBe(true);
-    expect(accountsSource.includes("control-panels-pref-tab-panel")).toBe(true);
-    expect(accountsSource.includes("recoveryEmailStatus")).toBe(true);
-    expect(accountsSource.includes("apps.control-panels.email.title")).toBe(true);
-    expect(accountsSource.includes("ThemedIcon")).toBe(true);
-    expect(accountsSource.includes("mail.png")).toBe(true);
-    expect(accountsSource.includes("cloud-sync.png")).toBe(false);
-    expect(accountsSource.includes("panes.dotMac")).toBe(false);
-    expect(accountsSource.includes("setDebugMode")).toBe(true);
-    expect(accountsSource.includes("shaderEffectEnabled")).toBe(false);
-    expect(accountsSource.includes("setAiModel")).toBe(true);
-    expect(accountsSource.includes("setTtsModel")).toBe(true);
-    expect(accountsSource.includes("handleShowBootScreen")).toBe(true);
-    expect(accountsSource.includes("ControlPanelsPrefFormRow")).toBe(true);
-    expect(accountsSource.includes("handleTriggerAppCrashTest")).toBe(true);
-    expect(accountsSource.includes("control-panels-pref-divider")).toBe(false);
-
-    const accountsTabBar = accountsSource.slice(
-      accountsSource.indexOf('aria-label={t("apps.control-panels.panes.accounts")}'),
-      accountsSource.indexOf('<div className="control-panels-pref-well">')
-    );
-    const accountsTabIndex = accountsTabBar.indexOf("accountsTabs.accounts");
-    const securityTabIndex = accountsTabBar.indexOf("accountsTabs.security");
-    const debugTabIndex = accountsTabBar.indexOf("accountsTabs.debug");
-    expect(accountsTabIndex).toBeGreaterThan(-1);
-    expect(securityTabIndex).toBeGreaterThan(accountsTabIndex);
-    expect(debugTabIndex).toBeGreaterThan(securityTabIndex);
-    expect(accountsTabBar.indexOf("{isAdmin &&")).toBeGreaterThan(securityTabIndex);
-
-    const accountsTabPanel = accountsSource.slice(
-      accountsSource.indexOf('hidden={accountsTab !== "accounts"}'),
-      accountsSource.indexOf('hidden={accountsTab !== "security"}')
-    );
-    const emailRowIndex = accountsTabPanel.indexOf("apps.control-panels.email.title");
-    expect(emailRowIndex).toBeGreaterThan(-1);
-
-    const securityTabPanel = accountsSource.slice(
-      accountsSource.indexOf('hidden={accountsTab !== "security"}'),
-      accountsSource.indexOf('hidden={accountsTab !== "debug"}')
-    );
-    expect(securityTabPanel.includes("SecurityPaneContent")).toBe(true);
-    expect(securityTabPanel.includes("hasPassword")).toBe(true);
-    expect(securityTabPanel.includes("handleLogoutAllDevices")).toBe(true);
-
-    const debugTabPanel = accountsSource.slice(
-      accountsSource.indexOf('hidden={accountsTab !== "debug"}'),
-      accountsSource.indexOf("</div>\n      </div>\n      <RecoveryEmailDialog")
-    );
-    expect(debugTabPanel.includes("setDebugMode")).toBe(true);
-    expect(debugTabPanel.includes("shaderEffectEnabled")).toBe(false);
-
-    const accountsCase = rendererSource.slice(
-      rendererSource.indexOf('case "accounts":'),
-      rendererSource.indexOf('case "software-update":')
-    );
-    expect(accountsCase.includes("setDebugMode")).toBe(true);
-    expect(accountsCase.includes("shaderEffectEnabled")).toBe(false);
-    expect(accountsCase.includes("AI_MODELS")).toBe(true);
-    expect(accountsCase.includes("setAiModel")).toBe(true);
-    expect(accountsCase.includes("setTtsModel")).toBe(true);
-    expect(accountsCase.includes("handleShowBootScreen")).toBe(true);
-    expect(accountsCase.includes("recoveryEmailStatus")).toBe(true);
-    expect(accountsCase.includes("hasPassword")).toBe(true);
-    expect(accountsCase.includes("logout")).toBe(true);
-    expect(accountsCase.includes("handleLogoutAllDevices")).toBe(true);
-    expect(accountsCase.includes("isAdmin")).toBe(true);
-
+  test("renderer wires onNavigateToPane through to panes", () => {
     const appSource = readSource(
       "src/apps/control-panels/components/control-panels-app/ControlPanelsAppComponent.tsx"
     );
@@ -551,12 +430,9 @@ describe("Control Panels macOS 10.3 layout", () => {
       expect(macosxIcons.has(category!.icon)).toBe(true);
     }
 
-    expect(macosxIcons.has("control-panels/users.png")).toBe(true);
-    expect(macosxIcons.has("control-panels/account-avatar.png")).toBe(true);
-    expect(defaultIcons.has("control-panels/account-avatar.png")).toBe(true);
-    expect(getControlPanelCategory("accounts")?.icon).toBe(
-      "control-panels/users.png"
-    );
+    // Accounts pane (and its users.png icon) was removed in the backend strip.
+    expect(defaultIcons).toBeDefined();
+    expect(getControlPanelCategory("accounts")).toBeUndefined();
   });
 
   test("sections merge hardware and system with removed panes omitted", () => {
@@ -568,18 +444,18 @@ describe("Control Panels macOS 10.3 layout", () => {
     ]);
 
     const allPaneIds = CONTROL_PANEL_SECTIONS.flatMap((section) => section.paneIds);
-    expect(allPaneIds).toHaveLength(9);
+    expect(allPaneIds).toHaveLength(7);
     expect(allPaneIds).toEqual([
       "appearance",
       "desktop-screen-saver",
       "international",
       "displays",
       "sound",
-      "accounts",
-      "security",
       "sharing",
       "software-update",
     ]);
+    expect(allPaneIds).not.toContain("accounts");
+    expect(allPaneIds).not.toContain("security");
     expect(allPaneIds).not.toContain("energy-saver");
     expect(allPaneIds).not.toContain("date-time");
     expect(allPaneIds).not.toContain("speech");

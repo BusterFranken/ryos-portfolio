@@ -3,8 +3,6 @@ import { AppWindowShell } from "@/components/shared/AppWindowShell";
 import { ControlPanelsMenuBar } from "../ControlPanelsMenuBar";
 import { AppProps, ControlPanelsInitialData } from "@/apps/base/types";
 import { useControlPanelsLogic } from "../../hooks/useControlPanelsLogic";
-import { useContactsStore } from "@/stores/useContactsStore";
-import { getContactInitials } from "@/utils/contacts";
 import { ControlPanelsDialogs } from "./ControlPanelsDialogs";
 import { ControlPanelsMacLayout } from "./ControlPanelsMacLayout";
 import { ControlPanelsMacPaneRenderer } from "./ControlPanelsMacPaneRenderer";
@@ -15,8 +13,6 @@ import {
   type ControlPanelMacNavigationEntry,
   type ControlPanelPaneId,
 } from "./controlPanelsCategories";
-import { getUsernameInitials } from "@/utils/usernameInitials";
-import { useIsRyoAdmin } from "@/hooks/useIsRyoAdmin";
 
 export function ControlPanelsAppComponent({
   isWindowOpen,
@@ -41,13 +37,6 @@ export function ControlPanelsAppComponent({
     setIsConfirmResetOpen,
     isConfirmFormatOpen,
     setIsConfirmFormatOpen,
-    isPasswordDialogOpen,
-    setIsPasswordDialogOpen,
-    setPasswordInput,
-    passwordError,
-    setPasswordError,
-    isSettingPassword,
-    isLoggingOutAllDevices,
     fileInputRef,
     handleRestore,
     handleBackup,
@@ -55,18 +44,6 @@ export function ControlPanelsAppComponent({
     handleConfirmReset,
     handleConfirmFormat,
     handleCheckForUpdates,
-    handleShowBootScreen,
-    handleTriggerAppCrashTest,
-    handleTriggerDesktopCrashTest,
-    AI_MODELS,
-    aiModel,
-    setAiModel,
-    debugMode,
-    setDebugMode,
-    showResizers,
-    setShowResizers,
-    shaderEffectEnabled,
-    setShaderEffectEnabled,
     currentTheme,
     setTheme,
     aquaMaterial,
@@ -78,8 +55,6 @@ export function ControlPanelsAppComponent({
     accent,
     accentChrome,
     setAccent,
-    systemFont,
-    setSystemFont,
     wallpaperAccentColor,
     currentLanguage,
     setLanguage,
@@ -115,47 +90,10 @@ export function ControlPanelsAppComponent({
     setPrevIpodVolume,
     handleIpodMuteToggle,
     isIOS,
-    ttsModel,
-    setTtsModel,
-    ttsVoice,
-    setTtsVoice,
-    username,
-    promptSetUsername,
-    promptLogin,
-    usernameDialogInitialTab,
-    isUsernameDialogOpen,
-    setIsUsernameDialogOpen,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    isSettingUsername,
-    usernameError,
-    submitUsernameDialog,
-    promptVerifyToken,
-    isVerifyDialogOpen,
-    setVerifyDialogOpen,
-    verifyPasswordInput,
-    setVerifyPasswordInput,
-    verifyUsernameInput,
-    setVerifyUsernameInput,
-    hasPassword,
-    logout,
-    confirmLogout,
-    isLogoutConfirmDialogOpen,
-    setIsLogoutConfirmDialogOpen,
-    isVerifyingToken,
-    verifyError,
-    handleVerifyTokenSubmit,
-    handleSetPassword,
-    handleLogoutAllDevices,
-    recoveryEmailStatus,
-    isEmailStatusLoading,
-    refreshRecoveryEmailStatus,
-    accountJoinedAt,
+    shaderEffectEnabled,
+    setShaderEffectEnabled,
   } = logic;
 
-  const isAdmin = useIsRyoAdmin();
   const isSystem7Theme = currentTheme === "system7";
   const isWin98 = currentTheme === "win98";
   const titlebarHeight = getControlPanelsTitlebarHeight(currentTheme);
@@ -169,15 +107,6 @@ export function ControlPanelsAppComponent({
     () => getControlPanelsMacWindowTitle(currentEntry, t, windowTitle),
     [currentEntry, t, windowTitle]
   );
-  const myContact = useContactsStore((state) =>
-    state.myContactId
-      ? state.contacts.find((contact) => contact.id === state.myContactId) ?? null
-      : null
-  );
-  const accountAvatarLabel = myContact?.displayName || username || "";
-  const accountAvatarInitials = myContact
-    ? getContactInitials(myContact)
-    : getUsernameInitials(username || "");
 
   const renderMacPane = (
     paneId: ControlPanelPaneId,
@@ -232,49 +161,14 @@ export function ControlPanelsAppComponent({
       handleIpodMuteToggle={handleIpodMuteToggle}
       isIOS={isIOS}
       isMacOSTheme={isMacOSTheme}
-      username={username}
-      promptSetUsername={promptSetUsername}
-      promptLogin={promptLogin}
-      myContact={myContact}
-      accountAvatarLabel={accountAvatarLabel}
-      accountAvatarInitials={accountAvatarInitials}
-      accountJoinedAt={accountJoinedAt}
-      debugMode={debugMode}
-      isAdmin={isAdmin}
-      promptVerifyToken={promptVerifyToken}
-      hasPassword={hasPassword}
-      setPasswordInput={setPasswordInput}
-      setPasswordError={setPasswordError}
-      setIsPasswordDialogOpen={setIsPasswordDialogOpen}
-      logout={logout}
-      handleLogoutAllDevices={handleLogoutAllDevices}
-      isLoggingOutAllDevices={isLoggingOutAllDevices}
-      recoveryEmailStatus={recoveryEmailStatus}
-      isEmailStatusLoading={isEmailStatusLoading}
-      refreshRecoveryEmailStatus={refreshRecoveryEmailStatus}
       handleCheckForUpdates={handleCheckForUpdates}
       handleBackup={handleBackup}
       fileInputRef={fileInputRef}
       handleRestore={handleRestore}
       handleResetAll={handleResetAll}
       setIsConfirmFormatOpen={setIsConfirmFormatOpen}
-      setDebugMode={setDebugMode}
-      showResizers={showResizers}
-      setShowResizers={setShowResizers}
       shaderEffectEnabled={shaderEffectEnabled}
       setShaderEffectEnabled={setShaderEffectEnabled}
-      systemFont={systemFont}
-      setSystemFont={setSystemFont}
-      AI_MODELS={AI_MODELS}
-      aiModel={aiModel}
-      setAiModel={setAiModel}
-      ttsModel={ttsModel}
-      setTtsModel={setTtsModel}
-      ttsVoice={ttsVoice}
-      setTtsVoice={setTtsVoice}
-      handleShowBootScreen={handleShowBootScreen}
-      handleTriggerAppCrashTest={handleTriggerAppCrashTest}
-      handleTriggerDesktopCrashTest={handleTriggerDesktopCrashTest}
     />
   );
 
@@ -317,37 +211,6 @@ export function ControlPanelsAppComponent({
           isConfirmFormatOpen={isConfirmFormatOpen}
           setIsConfirmFormatOpen={setIsConfirmFormatOpen}
           handleConfirmFormat={handleConfirmFormat}
-          isUsernameDialogOpen={isUsernameDialogOpen}
-          setIsUsernameDialogOpen={setIsUsernameDialogOpen}
-          verifyUsernameInput={verifyUsernameInput}
-          setVerifyUsernameInput={setVerifyUsernameInput}
-          verifyPasswordInput={verifyPasswordInput}
-          setVerifyPasswordInput={setVerifyPasswordInput}
-          handleVerifyTokenSubmit={handleVerifyTokenSubmit}
-          isVerifyingToken={isVerifyingToken}
-          verifyError={verifyError}
-          newUsername={newUsername}
-          setNewUsername={setNewUsername}
-          newPassword={newPassword}
-          setNewPassword={setNewPassword}
-          submitUsernameDialog={submitUsernameDialog}
-          isSettingUsername={isSettingUsername}
-          usernameError={usernameError}
-          isVerifyDialogOpen={isVerifyDialogOpen}
-          setVerifyDialogOpen={setVerifyDialogOpen}
-          promptSetUsername={promptSetUsername}
-          usernameDialogInitialTab={usernameDialogInitialTab}
-          isPasswordDialogOpen={isPasswordDialogOpen}
-          setIsPasswordDialogOpen={setIsPasswordDialogOpen}
-          setPasswordInput={setPasswordInput}
-          setPasswordError={setPasswordError}
-          hasPassword={hasPassword}
-          isSettingPassword={isSettingPassword}
-          passwordError={passwordError}
-          handleSetPassword={handleSetPassword}
-          isLogoutConfirmDialogOpen={isLogoutConfirmDialogOpen}
-          setIsLogoutConfirmDialogOpen={setIsLogoutConfirmDialogOpen}
-          confirmLogout={confirmLogout}
         />
       }
     >
