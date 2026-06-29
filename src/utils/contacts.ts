@@ -64,14 +64,36 @@ export interface ContactImportResult {
 }
 
 const EMPTY_CONTACT_VALUE_LABEL = "other";
+// The portfolio owner's "reach me" card — the single seeded contact.
+// (Const name kept for import stability; holds Buster's details now.)
 export const DEFAULT_RYO_CONTACT_DRAFT: ContactDraft = {
-  displayName: "Ryo Lu",
-  firstName: "Ryo",
-  lastName: "Lu",
-  nickname: "ryo",
-  organization: "Cursor",
-  emails: ["me@ryo.lu"],
-  urls: ["https://ryo.lu", "https://x.com/ryolu_", "https://os.ryo.lu"],
+  displayName: "Buster Franken",
+  firstName: "Buster",
+  lastName: "Franken",
+  nickname: "buster",
+  emails: ["busterfranken@gmail.com"],
+  urls: [
+    {
+      id: "url-linkedin",
+      label: "linkedin",
+      value: "https://linkedin.com/in/buster-franken",
+    },
+    {
+      id: "url-github",
+      label: "github",
+      value: "https://github.com/BusterFranken",
+    },
+    {
+      id: "url-substack",
+      label: "substack",
+      value: "https://substack.com/@busterfranken",
+    },
+    {
+      id: "url-youtube",
+      label: "youtube",
+      value: "https://youtube.com/@fruitpunchai5359",
+    },
+  ],
   source: "manual",
 };
 const CONTACT_SOURCES: readonly ContactSource[] = [

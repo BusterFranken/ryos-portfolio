@@ -163,6 +163,18 @@ export const useContactsStore = create<ContactsStoreState>()(
     }),
     {
       name: "contacts-storage",
+      version: 1,
+      migrate: (persistedState, version) => {
+        // v0→v1: the single seeded contact changed (upstream "Ryo Lu" → the
+        // portfolio owner). Drop persisted contacts so the new default card
+        // seeds cleanly via merge() below instead of appearing alongside the
+        // stale one for returning visitors.
+        if (version < 1) {
+          const prev = (persistedState ?? {}) as Partial<ContactsStoreState>;
+          return { ...prev, contacts: [] };
+        }
+        return persistedState as Partial<ContactsStoreState>;
+      },
       merge: (persistedState, currentState) => {
         const persisted = persistedState as Partial<ContactsStoreState> | undefined;
         const contacts = seedDefaultContacts(
