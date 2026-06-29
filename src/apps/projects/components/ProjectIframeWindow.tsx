@@ -178,28 +178,38 @@ export function ProjectIframeWindow({
   );
 
   const card = (
-    <div className="flex size-full flex-col items-center justify-center gap-4 p-8 text-center">
-      {config.previewImage && (
+    <div className="flex size-full flex-col items-center justify-center gap-5 p-8 text-center">
+      {/* Hero: real art when supplied, else a designed emoji placeholder so the
+          card reads as an intentional showcase rather than a broken fallback. */}
+      {config.previewImage ? (
         <img
           src={config.previewImage}
           alt={name}
-          className="max-h-48 w-auto rounded-md object-contain"
+          className="max-h-56 w-auto rounded-lg object-contain shadow-lg ring-1 ring-black/10"
         />
+      ) : (
+        <div className="flex size-36 items-center justify-center rounded-2xl bg-gradient-to-br from-neutral-200 to-neutral-400 text-[64px] leading-none shadow-inner dark:from-neutral-700 dark:to-neutral-900">
+          <span aria-hidden>{config.placeholderEmoji ?? "🗂️"}</span>
+        </div>
       )}
-      <h2 className="font-geneva-12 text-[16px] font-bold text-neutral-800 dark:text-neutral-100">
-        {name}
-      </h2>
-      {config.previewBlurb && (
-        <p className="font-geneva-12 max-w-md text-[12px] text-neutral-600 dark:text-neutral-300">
-          {config.previewBlurb}
-        </p>
-      )}
-      {status === "error" && config.mode !== "preview" && (
-        <p className="font-geneva-12 max-w-md text-[11px] text-neutral-500 dark:text-neutral-400">
-          This project can’t be embedded here. Open it in a new tab to view it.
-        </p>
-      )}
-      <Button onClick={openInNewTab}>Open ↗</Button>
+      <div className="space-y-2">
+        <h2 className="font-geneva-12 text-[18px] font-bold text-neutral-800 dark:text-neutral-100">
+          {name}
+        </h2>
+        {config.previewBlurb && (
+          <p className="font-geneva-12 mx-auto max-w-sm text-[12px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+            {config.previewBlurb}
+          </p>
+        )}
+        {status === "error" && config.mode !== "preview" && (
+          <p className="font-geneva-12 mx-auto max-w-sm text-[11px] text-neutral-500 dark:text-neutral-400">
+            This project can’t be embedded here — open it in a new tab to view it.
+          </p>
+        )}
+      </div>
+      <Button onClick={openInNewTab} className="mt-1">
+        {config.ctaLabel ?? "Open"} ↗
+      </Button>
     </div>
   );
 

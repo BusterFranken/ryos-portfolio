@@ -9,6 +9,10 @@ export interface ProjectConfig {
   /** Preview-mode hero image (public path). Deferred content ok. */
   previewImage?: string;
   previewBlurb?: string;
+  /** Project-specific CTA button label (defaults to "Open"). */
+  ctaLabel?: string;
+  /** Emoji hero shown until a real previewImage is supplied (deferred). */
+  placeholderEmoji?: string;
   /** Optional "work with me" mailto/booking link. */
   ctaHref?: string;
 }
@@ -33,12 +37,18 @@ export const projectConfig: Partial<Record<AppId, ProjectConfig>> = {
   tarot: {
     mode: "preview",
     url: "https://tarotread.help/",
-    previewBlurb: "A bit-art fortune teller — start a reading ↗",
+    previewBlurb:
+      "A bit-art fortune teller. Draw a card and let the pixels read your future.",
+    ctaLabel: "Start tarot reading",
+    placeholderEmoji: "🔮",
   },
   pawnshop: {
     mode: "preview",
     url: "https://github.com/BusterFranken/pawnshop",
-    previewBlurb: "AI jewelry-appraisal marketplace (not deployed yet) ↗",
+    previewBlurb:
+      "An AI jewelry-appraisal marketplace — snap a photo, get an instant valuation, book a pawn-shop appointment. Not deployed yet; take a look at the source.",
+    ctaLabel: "View on GitHub",
+    placeholderEmoji: "💎",
   },
 };
 
