@@ -178,9 +178,8 @@ export function DesktopIconGrid({
             />
           </div>
         ))}
-        {/* Display regular app icons (only if not using shortcuts) */}
-        {desktopShortcuts.length === 0 &&
-          displayedApps.map((app) => (
+        {/* Display featured project app icons (always shown; deduped in useDesktop) */}
+        {displayedApps.map((app) => (
             <div
               key={app.id}
               data-desktop-item-id={getDesktopAppItemId(app.id)}

@@ -392,10 +392,21 @@ export function useDesktop({
       }
     });
 
-  const displayedApps =
-    isMacOSTheme
-      ? sortedApps.filter((app) => AQUA_DESKTOP_APP_IDS.includes(app.id))
-      : sortedApps;
+  // App ids that already have a desktop shortcut alias — don't also render the
+  // featured app icon for the same app (would be a duplicate).
+  const shortcutAppIds = new Set(
+    desktopShortcuts
+      .filter((s) => s.aliasType === "app" && s.aliasTarget)
+      .map((s) => s.aliasTarget as string)
+  );
+
+  // Featured project icons shown on the desktop (every theme), minus any that
+  // already have a user shortcut. These ALWAYS render (the portfolio's projects
+  // are the desktop) — see desktopItemsInOrder / DesktopIconGrid.
+  const displayedApps = sortedApps.filter(
+    (app) =>
+      AQUA_DESKTOP_APP_IDS.includes(app.id) && !shortcutAppIds.has(app.id)
+  );
 
   const desktopItemsInOrder = useMemo<DesktopItemDefinition[]>(() => {
     const items: DesktopItemDefinition[] = [
@@ -409,14 +420,12 @@ export function useDesktop({
       })),
     ];
 
-    if (desktopShortcuts.length === 0) {
-      items.push(
-        ...displayedApps.map((app) => ({
-          id: getDesktopAppItemId(app.id),
-          kind: "app" as const,
-        }))
-      );
-    }
+    items.push(
+      ...displayedApps.map((app) => ({
+        id: getDesktopAppItemId(app.id),
+        kind: "app" as const,
+      }))
+    );
 
     if (!isMacOSTheme) {
       items.push({
