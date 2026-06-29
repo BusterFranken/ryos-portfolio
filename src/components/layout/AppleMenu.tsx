@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/menubar";
 import { AboutFinderDialog } from "@/components/dialogs/AboutFinderDialog";
 import { AppId, appRegistry } from "@/config/appRegistry";
+import { bootLayout } from "@/config/bootLayout";
 import { useLaunchApp } from "@/hooks/useLaunchApp";
 import { useRyosFullscreen } from "@/hooks/useRyosFullscreen";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
@@ -91,6 +92,10 @@ export function AppleMenu() {
     launchApp("control-panels" as AppId);
   };
 
+  const handleResetDesktop = () => {
+    useAppStore.getState().resetToBootLayout(bootLayout);
+  };
+
   const handleMoreApps = () => {
     launchApp("finder" as AppId, { initialPath: "/Applications" });
   };
@@ -152,6 +157,14 @@ export function AppleMenu() {
             className="text-md h-6 px-3"
           >
             {isMacOSTheme ? t("common.appleMenu.systemPreferences") : t("common.appleMenu.controlPanels")}
+          </MenubarItem>
+
+          {/* Reset Desktop — restore the curated first-run window layout */}
+          <MenubarItem
+            onClick={handleResetDesktop}
+            className="text-md h-6 px-3"
+          >
+            Reset Desktop
           </MenubarItem>
 
           <MenubarSeparator className="h-[2px] bg-black my-1" />
