@@ -159,6 +159,15 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "fonts",
     "darkMode",
   ],
+  "buster-barn": [],
+  casefile: [],
+  hush: [],
+  "kafka-form": [],
+  eigenvector: [],
+  mpoftheweek: [],
+  "dnd-cv": [],
+  tarot: [],
+  pawnshop: [],
 };
 
 /**

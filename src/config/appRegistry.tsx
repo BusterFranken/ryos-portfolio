@@ -1,4 +1,9 @@
-import { resolveAppId, type AppId } from "./appRegistryData";
+import { resolveAppId, appNames, type AppId } from "./appRegistryData";
+import { makeProjectApp } from "@/apps/projects/registerProjectApps";
+import {
+  makeProjectMetadata,
+  helpItems as projectHelpItems,
+} from "@/apps/projects/metadata";
 import type {
   BaseApp,
   ControlPanelsInitialData,
@@ -465,6 +470,123 @@ export const appRegistry = {
       minSize: { width: 420, height: 360 },
     } as WindowConstraints,
   } as BaseApp<BooksInitialData> & { windowConfig: WindowConstraints },
+  ["buster-barn"]: {
+    id: "buster-barn",
+    name: appNames["buster-barn"],
+    icon: { type: "image", src: "/icons/default/buster-barn.png" },
+    description: "Full-screen pixel-art barn game",
+    component: makeProjectApp("buster-barn"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("buster-barn", appNames["buster-barn"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["casefile"]: {
+    id: "casefile",
+    name: appNames["casefile"],
+    icon: { type: "image", src: "/icons/default/casefile.png" },
+    description: "Courtroom drama investigation",
+    component: makeProjectApp("casefile"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("casefile", appNames["casefile"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["hush"]: {
+    id: "hush",
+    name: appNames["hush"],
+    icon: { type: "image", src: "/icons/default/hush.png" },
+    description: "A quiet little web toy",
+    component: makeProjectApp("hush"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("hush", appNames["hush"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["kafka-form"]: {
+    id: "kafka-form",
+    name: appNames["kafka-form"],
+    icon: { type: "image", src: "/icons/default/kafka-form.png" },
+    description: "A Kafkaesque web form",
+    component: makeProjectApp("kafka-form"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("kafka-form", appNames["kafka-form"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["eigenvector"]: {
+    id: "eigenvector",
+    name: appNames["eigenvector"],
+    icon: { type: "image", src: "/icons/default/eigenvector.png" },
+    description: "eigenvector.pro — live site",
+    component: makeProjectApp("eigenvector"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("eigenvector", appNames["eigenvector"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["mpoftheweek"]: {
+    id: "mpoftheweek",
+    name: appNames["mpoftheweek"],
+    icon: { type: "image", src: "/icons/default/mpoftheweek.png" },
+    description: "MP of the Week — live site",
+    component: makeProjectApp("mpoftheweek"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("mpoftheweek", appNames["mpoftheweek"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["dnd-cv"]: {
+    id: "dnd-cv",
+    name: appNames["dnd-cv"],
+    icon: { type: "image", src: "/icons/default/dnd-cv.png" },
+    description: "D&D-style portfolio CV",
+    component: makeProjectApp("dnd-cv"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("dnd-cv", appNames["dnd-cv"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["tarot"]: {
+    id: "tarot",
+    name: appNames["tarot"],
+    icon: { type: "image", src: "/icons/default/tarot.png" },
+    description: "A bit-art fortune teller",
+    component: makeProjectApp("tarot"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("tarot", appNames["tarot"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
+  ["pawnshop"]: {
+    id: "pawnshop",
+    name: appNames["pawnshop"],
+    icon: { type: "image", src: "/icons/default/pawnshop.png" },
+    description: "AI jewelry-appraisal marketplace",
+    component: makeProjectApp("pawnshop"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("pawnshop", appNames["pawnshop"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
 } as const;
 
 // ============================================================================

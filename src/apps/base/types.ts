@@ -39,7 +39,16 @@ export interface BaseApp<TInitialData = unknown> {
     | "contacts"
     | "dashboard"
     | "maps"
-    | "books";
+    | "books"
+    | "buster-barn"
+    | "casefile"
+    | "hush"
+    | "kafka-form"
+    | "eigenvector"
+    | "mpoftheweek"
+    | "dnd-cv"
+    | "tarot"
+    | "pawnshop";
   name: string;
   icon: string | { type: "image"; src: string };
   description: string;

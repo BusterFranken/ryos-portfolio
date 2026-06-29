@@ -1,28 +1,10 @@
 import i18n from "@/lib/i18n";
 import { useThemeStore } from "@/stores/useThemeStore";
+import type { AppId } from "@/config/appRegistryData";
 
-export type AppId =
-  | "finder"
-  | "soundboard"
-  | "internet-explorer"
-  | "textedit"
-  | "paint"
-  | "photo-booth"
-  | "minesweeper"
-  | "videos"
-  | "ipod"
-  | "synth"
-  | "terminal"
-  | "control-panels"
-  | "stickies"
-  | "infinite-mac"
-  | "pc"
-  | "winamp"
-  | "calendar"
-  | "contacts"
-  | "dashboard"
-  | "maps"
-  | "books";
+// Re-export the canonical AppId (single source of truth in appRegistryData)
+// so consumers importing it from here stay in lockstep automatically.
+export type { AppId };
 
 /**
  * Get translated app name with theme-awareness
@@ -164,6 +146,15 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     dashboard: ["openDashboard", "clockWidget", "calendarWidget", "weatherWidget", "moveWidgets", "closeDashboard"],
     maps: ["searchPlaces", "dropPins", "locateMe", "mapTypes", "poweredByApple", "switchMapStyle"],
     books: ["bookshelf", "import", "pageTurn", "progress", "fonts", "darkMode"],
+    "buster-barn": [],
+    casefile: [],
+    hush: [],
+    "kafka-form": [],
+    eigenvector: [],
+    mpoftheweek: [],
+    "dnd-cv": [],
+    tarot: [],
+    pawnshop: [],
   };
 
   const keys = helpKeys[appId] || [];

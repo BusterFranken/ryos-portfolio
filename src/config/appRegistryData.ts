@@ -26,6 +26,15 @@ export const appIds = [
   "dashboard",
   "maps",
   "books",
+  "buster-barn",
+  "casefile",
+  "hush",
+  "kafka-form",
+  "eigenvector",
+  "mpoftheweek",
+  "dnd-cv",
+  "tarot",
+  "pawnshop",
 ] as const;
 
 export type AppId = (typeof appIds)[number];
@@ -71,6 +80,15 @@ export const appNames: Record<AppId, string> = {
   "dashboard": "Dashboard",
   "maps": "Maps",
   "books": "Books",
+  "buster-barn": "Buster-Barn",
+  "casefile": "Casefile",
+  "hush": "Hush",
+  "kafka-form": "Kafka Form",
+  "eigenvector": "Eigenvector",
+  "mpoftheweek": "MP of the Week",
+  "dnd-cv": "CV",
+  "tarot": "Tarot",
+  "pawnshop": "Pawnshop",
 };
 
 /** Get list of apps with basic info for stores */
