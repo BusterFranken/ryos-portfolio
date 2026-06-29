@@ -3,7 +3,6 @@ import { appRegistry } from "./config/appRegistry";
 import { useEffect, useMemo, useReducer, useCallback } from "react";
 import { applyDisplayMode } from "./utils/displayMode";
 import { Toaster } from "./components/ui/sonner";
-import { toast } from "@/hooks/useToast";
 import { useAppStoreShallow } from "@/stores/useAppStore";
 import { useDisplaySettingsStoreShallow } from "@/stores/useDisplaySettingsStore";
 import { BootScreen } from "./components/dialogs/BootScreen";
@@ -13,13 +12,6 @@ import { useThemeFlags } from "./hooks/useThemeFlags";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { useOffline } from "./hooks/useOffline";
 import { useTranslation } from "react-i18next";
-import { isDesktop } from "./utils/platform";
-import { checkDesktopUpdate, onDesktopUpdate, DesktopUpdateResult } from "./utils/prefetch";
-import {
-  getDesktopDownloadUrl,
-  getSupportedDesktopDownloadTarget,
-} from "./utils/desktopDownload";
-import { DownloadSimple } from "@phosphor-icons/react";
 import { ScreenSaverOverlay } from "./components/screensavers/ScreenSaverOverlay";
 import { DesktopErrorBoundary } from "@/components/errors/ErrorBoundaries";
 import { useFilesStore } from "@/stores/useFilesStore";
@@ -64,11 +56,10 @@ function bootUiReducer(state: BootUiState, action: BootUiAction): BootUiState {
 
 export function App() {
   const { t } = useTranslation();
-  const { isFirstBoot, setHasBooted, setLastSeenDesktopVersion } = useAppStoreShallow(
+  const { isFirstBoot, setHasBooted } = useAppStoreShallow(
     (state) => ({
       isFirstBoot: state.isFirstBoot,
       setHasBooted: state.setHasBooted,
-      setLastSeenDesktopVersion: state.setLastSeenDesktopVersion,
     })
   );
   const displayMode = useDisplaySettingsStoreShallow((state) => state.displayMode);
@@ -160,74 +151,6 @@ export function App() {
     setShowBootScreen,
   ]);
 
-  // Show download toast for supported desktop platforms when a new shell is available
-  // For web: show on first visit and updates
-  // For desktop shell: only show on updates (not first time)
-  useEffect(() => {
-    const desktopDownloadTarget = getSupportedDesktopDownloadTarget();
-    const isInDesktop = isDesktop();
-
-    if (!desktopDownloadTarget) {
-      return;
-    }
-
-    // Handler for showing the desktop update toast
-    const showDesktopUpdateToast = (result: DesktopUpdateResult) => {
-      if (result.type === 'update' && result.version) {
-        const downloadUrl = getDesktopDownloadUrl(result.version, desktopDownloadTarget);
-        if (!downloadUrl) {
-          return;
-        }
-        // Mark as seen immediately so dismissing the toast won't show it again
-        setLastSeenDesktopVersion(result.version);
-        // New version available - show update toast (both web and desktop shell)
-        toast(`ryOS ${result.version} for ${desktopDownloadTarget.platformLabel} is available`, {
-          id: 'desktop-update',
-          icon: <DownloadSimple className="size-4" weight="bold" />,
-          duration: Infinity,
-          action: {
-            label: "Download",
-            onClick: () => {
-              window.open(downloadUrl, "_blank");
-            },
-          },
-        });
-      } else if (result.type === 'first-time' && result.version && !isInDesktop) {
-        const downloadUrl = getDesktopDownloadUrl(result.version, desktopDownloadTarget);
-        if (!downloadUrl) {
-          return;
-        }
-        // Mark as seen immediately so dismissing the toast won't show it again
-        setLastSeenDesktopVersion(result.version);
-        // First time user on web - show initial download toast (not in desktop shell)
-        toast(`ryOS is available as a ${desktopDownloadTarget.platformLabel} app`, {
-          id: 'desktop-update',
-          icon: <DownloadSimple className="size-4" weight="bold" />,
-          duration: Infinity,
-          action: {
-            label: "Download",
-            onClick: () => {
-              window.open(downloadUrl, "_blank");
-            },
-          },
-        });
-      } else if (result.type === 'first-time' && result.version && isInDesktop) {
-        // First time in desktop shell - just store the version without showing toast
-        setLastSeenDesktopVersion(result.version);
-      }
-    };
-
-    // Register callback for periodic/manual update checks
-    onDesktopUpdate(showDesktopUpdateToast);
-
-    // Initial check on load (delayed to let app render first)
-    const timer = setTimeout(async () => {
-      const result = await checkDesktopUpdate();
-      showDesktopUpdateToast(result);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [setLastSeenDesktopVersion]);
 
   if (showBootScreen) {
     return (

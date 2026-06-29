@@ -28,7 +28,6 @@ import {
 import { shouldPrefetchNow } from "@/utils/network";
 import { track, SYSTEM_ANALYTICS } from "@/utils/analytics";
 import { createVisibilityGatedInterval } from "@/utils/backgroundTask";
-import { getSupportedDesktopDownloadTarget } from "@/utils/desktopDownload";
 
 // Storage key for manifest timestamp (for cache invalidation)
 const MANIFEST_KEY = 'ryos:manifest-timestamp';
@@ -197,64 +196,6 @@ async function fetchServerVersion(forceRemote: boolean = false): Promise<ServerV
   }
 }
 
-export interface DesktopUpdateResult {
-  type: 'first-time' | 'update' | 'none';
-  version: string | null;
-}
-
-/**
- * Check for desktop app updates
- * Returns info about whether this is a first time visit, update available, or no changes
- */
-export async function checkDesktopUpdate(): Promise<DesktopUpdateResult> {
-  const serverVersion = await fetchServerVersion();
-  if (!serverVersion?.desktopVersion) {
-    return { type: 'none', version: null };
-  }
-  
-  const lastSeenVersion = useAppStore.getState().lastSeenDesktopVersion;
-  
-  // If never seen before, this is the first time
-  if (!lastSeenVersion) {
-    return { type: 'first-time', version: serverVersion.desktopVersion };
-  }
-  
-  // Check if desktop version has changed
-  if (serverVersion.desktopVersion !== lastSeenVersion) {
-    return { type: 'update', version: serverVersion.desktopVersion };
-  }
-  
-  return { type: 'none', version: null };
-}
-
-// Callback for desktop update notifications (set by App.tsx)
-let desktopUpdateCallback: ((result: DesktopUpdateResult) => void) | null = null;
-
-/**
- * Register a callback to be called when a desktop update is found
- * Used by App.tsx to show the download toast
- */
-export function onDesktopUpdate(callback: (result: DesktopUpdateResult) => void): void {
-  desktopUpdateCallback = callback;
-}
-
-/**
- * Check for desktop updates and notify via callback
- * Called during periodic checks and manual "Check for Updates"
- */
-async function checkAndNotifyDesktopUpdate(): Promise<void> {
-  // Check supported desktop download targets (both web and desktop shell).
-  if (!getSupportedDesktopDownloadTarget()) {
-    return;
-  }
-  
-  const result = await checkDesktopUpdate();
-  
-  if (result.type !== 'none' && desktopUpdateCallback) {
-    desktopUpdateCallback(result);
-  }
-}
-
 type CheckResult = 
   | { action: 'none'; server?: ServerVersion }  // Already up to date, or version unavailable
   | { action: 'first-time'; server: ServerVersion }
@@ -357,8 +298,6 @@ async function checkAndUpdate(isManual: boolean = false): Promise<void> {
 export async function forceRefreshCache(): Promise<void> {
   console.log('[Prefetch] Manual update check triggered...');
   
-  // Also check for desktop updates when manually checking
-  await checkAndNotifyDesktopUpdate();
   
   if (isUpdateInProgress) {
     console.log('[Prefetch] Update already in progress, skipping');
@@ -823,8 +762,6 @@ function startPeriodicUpdateCheck(): void {
     console.log('[Prefetch] Periodic update check...');
     void (async () => {
       await checkAndUpdate(false);
-      // Also check for desktop updates during periodic checks
-      await checkAndNotifyDesktopUpdate();
     })();
   }, UPDATE_CHECK_INTERVAL);
 }
