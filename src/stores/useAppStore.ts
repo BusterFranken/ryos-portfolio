@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 import { AppId, getWindowConfig, getMobileWindowSize } from "@/config/appRegistry";
 import { prefetchAppChunk } from "@/config/lazyAppComponent";
 import { resolveAppId } from "@/config/appRegistryData";
+import type { BootEntry } from "@/config/bootLayout";
 import { AppState } from "@/apps/base/types";
 import { AIModel } from "@/types/aiModels";
 import { APP_ANALYTICS, track } from "@/utils/analytics";
@@ -89,6 +90,8 @@ interface AppStoreState {
   setAiModel: (m: AIModel) => void;
   isFirstBoot: boolean;
   setHasBooted: () => void;
+  seedBootLayout: (entries: BootEntry[]) => void;
+  resetToBootLayout: (entries: BootEntry[]) => void;
   macAppToastShown: boolean;
   setMacAppToastShown: () => void;
   lastSeenDesktopVersion: string | null;
@@ -201,6 +204,37 @@ const createUseAppStore = () =>
       // Boot state
       isFirstBoot: true,
       setHasBooted: () => set({ isFirstBoot: false }),
+      seedBootLayout: (entries) => {
+        const isMobile =
+          typeof window !== "undefined" && window.innerWidth < 768;
+        const { createAppInstance, updateInstanceWindowState } = get();
+        let lastId = "";
+        for (const entry of entries) {
+          const id = createAppInstance(
+            entry.appId,
+            entry.initialData,
+            entry.title
+          );
+          if (!id) continue;
+          // Desktop: spread windows into the curated layout. Mobile: keep the
+          // store's own near-fullscreen sizing (explicit desktop coordinates
+          // would push windows off a narrow screen).
+          if (!isMobile) {
+            updateInstanceWindowState(id, entry.position, entry.size);
+          }
+          lastId = id;
+        }
+        set((state) => ({
+          isFirstBoot: false,
+          foregroundInstanceId: lastId || state.foregroundInstanceId,
+        }));
+      },
+      resetToBootLayout: (entries) => {
+        // Close every open window, then re-seed the boot mess. Leaves theme,
+        // recents, aiModel and isFirstBoot untouched (unlike a full reset).
+        set({ instances: {}, instanceOrder: [], foregroundInstanceId: null });
+        get().seedBootLayout(entries);
+      },
       macAppToastShown: false,
       setMacAppToastShown: () => set({ macAppToastShown: true }),
       lastSeenDesktopVersion: null,

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useReducer, useCallback } from "react";
 import { applyDisplayMode } from "./utils/displayMode";
 import { Toaster } from "./components/ui/sonner";
 import { useAppStoreShallow } from "@/stores/useAppStore";
+import { bootLayout } from "@/config/bootLayout";
 import { useDisplaySettingsStoreShallow } from "@/stores/useDisplaySettingsStore";
 import { BootScreen } from "./components/dialogs/BootScreen";
 import { getNextBootMessage, clearNextBootMessage, isBootDebugMode } from "./utils/bootMessage";
@@ -56,10 +57,10 @@ function bootUiReducer(state: BootUiState, action: BootUiAction): BootUiState {
 
 export function App() {
   const { t } = useTranslation();
-  const { isFirstBoot, setHasBooted } = useAppStoreShallow(
+  const { isFirstBoot, seedBootLayout } = useAppStoreShallow(
     (state) => ({
       isFirstBoot: state.isFirstBoot,
-      setHasBooted: state.setHasBooted,
+      seedBootLayout: state.seedBootLayout,
     })
   );
   const displayMode = useDisplaySettingsStoreShallow((state) => state.displayMode);
@@ -139,15 +140,16 @@ export function App() {
       setShowBootScreen(true);
     }
 
-    // Set first boot flag without showing boot screen
+    // Curated-chaos boot: on a visitor's very first load, open the boot-layout
+    // windows once. seedBootLayout also flips isFirstBoot:false atomically.
     if (isFirstBoot) {
-      setHasBooted();
+      seedBootLayout(bootLayout);
     }
   }, [
     isFirstBoot,
     setBootDebugMode,
     setBootScreenMessage,
-    setHasBooted,
+    seedBootLayout,
     setShowBootScreen,
   ]);
 
