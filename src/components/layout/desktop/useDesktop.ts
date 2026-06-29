@@ -1,5 +1,6 @@
 import type { AnyApp } from "@/apps/base/types";
 import type { AppId } from "@/config/appRegistry";
+import { resolveAppId } from "@/config/appRegistryData";
 import {
   useState,
   useRef,
@@ -137,7 +138,14 @@ export function useDesktop({
             item.path.startsWith("/Desktop/") &&
             !item.isDirectory &&
             (!item.hiddenOnThemes ||
-              !item.hiddenOnThemes.includes(currentTheme))
+              !item.hiddenOnThemes.includes(currentTheme)) &&
+            // Drop stale app-aliases whose target app no longer exists
+            // (e.g. desktop shortcuts left over from removed apps like
+            // Chats / Karaoke / Applet Store).
+            !(
+              item.aliasType === "app" &&
+              (!item.aliasTarget || !resolveAppId(item.aliasTarget))
+            )
         )
         .sort((a, b) => compareDesktopShortcuts(a, b, isSystem7Theme)),
     [desktopAndTrashItems, currentTheme, isSystem7Theme]
