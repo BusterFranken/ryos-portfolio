@@ -15,9 +15,7 @@ export function FinderHiddenFileInput({
       ref={fileInputRef}
       className="hidden"
       accept={
-        currentPath === "/Applets"
-          ? ".app,.gz,.html,.htm"
-          : currentPath === "/Books"
+        currentPath === "/Books"
           ? ".epub,application/epub+zip"
           : ".app,.gz,.txt,.md,text/*"
       }

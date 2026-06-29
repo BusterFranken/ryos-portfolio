@@ -185,13 +185,4 @@ describe("source wiring", () => {
     expect(source).toContain("fetchSongsVersion");
     expect(source).toContain("lastInSyncVersionRef");
   });
-
-  test("songs API exposes the lightweight version probe", () => {
-    const source = readFileSync(
-      resolve(process.cwd(), "api/songs/index.ts"),
-      "utf-8"
-    );
-    expect(source).toContain('includes.includes("version")');
-    expect(source).toContain("getSongsVersionInfo");
-  });
 });

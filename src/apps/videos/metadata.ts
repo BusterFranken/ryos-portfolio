@@ -20,11 +20,6 @@ export const helpItems = [
     description: "Toggle shuffle to randomize playlist order without losing your queue",
   },
   {
-    icon: "📺",
-    title: "Powers Ryo TV",
-    description: "Your playlist also feeds the TV app's curated channel lineup",
-  },
-  {
     icon: "🔗",
     title: "Share Deep Links",
     description: "Generate share URLs that reopen the same clip directly in Videos",

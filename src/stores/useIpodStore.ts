@@ -18,18 +18,16 @@ import { getCachedSongMetadata } from "@/utils/songMetadataCache";
 import { ApiRequestError } from "@/api/core";
 import {
   clearSongCachedData,
-  fetchSongLyrics,
   listSongs,
   patchSongMetadata,
 } from "@/api/songs";
 import i18n from "@/lib/i18n";
-import { useChatsStore } from "./useChatsStore";
+import { useAuthStore } from "./useAuthStore";
 import {
   fetchYouTubeOembed,
   parseYouTubeTitle,
 } from "@/utils/youtubeMetadata";
 import { parseYouTubeVideoId } from "@/utils/youtubeUrl";
-import { emitCloudSyncDomainChange } from "@/utils/cloudSyncEvents";
 import { sortTracksLikeServerOrder } from "@/stores/ipodTrackOrder";
 import { shouldUpdatePlaybackTime } from "@/stores/playbackTime";
 import { createDebouncedPersistStorage } from "@/utils/debouncedPersistStorage";
@@ -946,7 +944,7 @@ async function saveLyricOffsetToServer(
   lyricOffset: number
 ): Promise<boolean> {
   // Get auth state from chats store
-  const { username, isAuthenticated } = useChatsStore.getState();
+  const { username, isAuthenticated } = useAuthStore.getState();
   
   // Skip if not authenticated
   if (!username || !isAuthenticated) {
@@ -1044,7 +1042,7 @@ async function saveLyricsSourceToServer(
   lyricsSource: LyricsSource | null
 ): Promise<void> {
   // Get auth state from chats store
-  const { username, isAuthenticated } = useChatsStore.getState();
+  const { username, isAuthenticated } = useAuthStore.getState();
   
   // Skip if not authenticated
   if (!username || !isAuthenticated) {
@@ -1491,7 +1489,6 @@ export const useIpodStore = create<IpodState>()(
       setShowVideo: (show) => set({ showVideo: show }),
       toggleLyrics: () => {
         set((state) => ({ showLyrics: !state.showLyrics }));
-        emitCloudSyncDomainChange("settings");
       },
       refreshLyrics: () =>
         set((state) => ({
@@ -1591,14 +1588,12 @@ export const useIpodStore = create<IpodState>()(
           return;
         }
         set({ lyricsAlignment: alignment });
-        emitCloudSyncDomainChange("settings");
       },
       setLyricsFont: (font) => {
         if (get().lyricsFont === font) {
           return;
         }
         set({ lyricsFont: font });
-        emitCloudSyncDomainChange("settings");
       },
       setRomanization: (settings) => {
         const nextRomanization = { ...get().romanization, ...settings };
@@ -1606,13 +1601,11 @@ export const useIpodStore = create<IpodState>()(
           return;
         }
         set({ romanization: nextRomanization });
-        emitCloudSyncDomainChange("settings");
       },
       toggleRomanization: () => {
         set((state) => ({
           romanization: { ...state.romanization, enabled: !state.romanization.enabled },
         }));
-        emitCloudSyncDomainChange("settings");
       },
       setLyricsTranslationLanguage: (language) => {
         if (get().lyricsTranslationLanguage === language) {
@@ -1621,7 +1614,6 @@ export const useIpodStore = create<IpodState>()(
         set({
           lyricsTranslationLanguage: language,
         });
-        emitCloudSyncDomainChange("settings");
       },
       importLibrary: (json: string) => {
         try {
@@ -1768,34 +1760,10 @@ export const useIpodStore = create<IpodState>()(
           } | undefined,
         };
 
-        // Single call to fetch-lyrics with returnMetadata: searches Kugou, fetches lyrics+cover, returns metadata
-        // This consolidates search + fetch into one call
-        try {
-          const fetchData = await fetchSongLyrics(videoId, {
-            title: rawTitle,
-            returnMetadata: true,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          });
-
-          // Use metadata from server (Kugou source) if available
-          if (fetchData.metadata?.lyricsSource) {
-            const meta = fetchData.metadata;
-            debug(`[iPod Store] Got metadata from Kugou for ${videoId}:`, {
-              title: meta.title,
-              artist: meta.artist,
-              cover: meta.cover,
-            });
-            
-            trackInfo.title = meta.title || trackInfo.title;
-            trackInfo.artist = meta.artist;
-            trackInfo.album = meta.album;
-            trackInfo.cover = meta.cover;
-            trackInfo.coverColor = meta.coverColor;
-            trackInfo.lyricsSource = meta.lyricsSource;
-          }
-        } catch (error) {
-          console.warn(`[iPod Store] Failed to fetch lyrics for ${videoId}:`, error);
-        }
+        // STUBBED: the lyrics/metadata catalog backend (`/api/songs`
+        // fetch-lyrics) was removed for the static portfolio build. Resolve
+        // to no Kugou match so the flow falls back to local title parsing.
+        // `trackInfo.lyricsSource` stays undefined.
 
         // If no Kugou match found (no lyricsSource), fall back to AI title parsing
         if (!trackInfo.lyricsSource) {

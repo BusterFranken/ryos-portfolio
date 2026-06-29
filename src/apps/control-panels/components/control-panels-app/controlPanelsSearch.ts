@@ -131,46 +131,6 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
     ],
   },
 
-  // Security
-  {
-    paneId: "security",
-    labelKey: `${CP}.panes.security`,
-    keywords: ["security", "privacy", "lock"],
-  },
-  {
-    paneId: "security",
-    labelKey: `${CP}.password`,
-    keywords: ["password", "passcode", "lock", "change password", "set password"],
-  },
-  {
-    paneId: "security",
-    labelKey: `${CP}.recoveryEmailTitle`,
-    keywords: ["recovery", "email", "reset"],
-  },
-  {
-    paneId: "security",
-    labelKey: `${CP}.logOut`,
-    keywords: ["log out", "logout", "sign out", "signout", "exit"],
-  },
-  {
-    paneId: "security",
-    labelKey: `${CP}.logOutOfAllDevices`,
-    keywords: [
-      "log out all",
-      "logout all",
-      "sign out all",
-      "all devices",
-      "everywhere",
-      "revoke",
-      "sessions",
-    ],
-  },
-  {
-    paneId: "security",
-    labelKey: `${CP}.deleteAccount.title`,
-    keywords: ["delete account", "remove account", "erase account", "close account"],
-  },
-
   // Displays
   {
     paneId: "displays",
@@ -229,7 +189,7 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
   {
     paneId: "sound",
     labelKey: `${CP}.chatSynth`,
-    keywords: ["chat synth", "synth", "typing", "preset", "chats"],
+    keywords: ["chat synth", "synth", "typing", "preset"],
   },
   {
     paneId: "sound",
@@ -255,28 +215,6 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
     paneId: "sound",
     labelKey: `${CP}.ipodVolume`,
     keywords: ["volume", "ipod volume", "music", "mute"],
-  },
-
-  // Cloud Sync (.mac)
-  {
-    paneId: "dot-mac",
-    labelKey: `${CP}.panes.dotMac`,
-    keywords: ["cloud", "sync", "icloud", ".mac", "backup"],
-  },
-  {
-    paneId: "dot-mac",
-    labelKey: `${CP}.autoSync.title`,
-    keywords: ["auto sync", "sync", "devices"],
-  },
-  {
-    paneId: "dot-mac",
-    labelKey: `${CP}.cloudSync.backupToCloud`,
-    keywords: ["cloud backup", "backup", "upload", "cloud"],
-  },
-  {
-    paneId: "dot-mac",
-    labelKey: `${CP}.cloudSync.restoreFromCloud`,
-    keywords: ["cloud restore", "restore", "download", "cloud"],
   },
 
   // Backup & Restore (sharing)
@@ -311,63 +249,6 @@ export const CONTROL_PANEL_SEARCH_ENTRIES: ControlPanelSearchEntry[] = [
       "reset disk",
       "clear files",
     ],
-  },
-
-  // Accounts
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.panes.accounts`,
-    keywords: ["account", "user", "login", "profile", "sign in"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.email.title`,
-    keywords: ["email", "recovery email", "mail", "address"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.telegram.title`,
-    keywords: ["telegram", "link", "bot"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.systemFont`,
-    keywords: ["font", "typeface", "ui font"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.aiModel`,
-    keywords: ["ai", "model", "chat", "llm"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.ttsModel`,
-    keywords: ["tts", "text to speech", "voice", "openai", "elevenlabs"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.ttsVoice`,
-    keywords: ["tts", "voice", "speech"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.debugMode`,
-    keywords: ["debug", "developer"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.showResizers`,
-    keywords: ["resizers", "resize handles", "debug", "developer"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.bootScreen`,
-    keywords: ["boot", "boot screen", "startup", "splash", "debug"],
-  },
-  {
-    paneId: "accounts",
-    labelKey: `${CP}.errorBoundaries`,
-    keywords: ["error", "crash", "boundary", "test", "debug"],
   },
 
   // Software Update

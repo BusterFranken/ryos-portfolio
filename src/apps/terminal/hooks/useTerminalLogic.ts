@@ -10,16 +10,12 @@ import { STORES, dbOperations } from "@/utils/indexedDB";
 import { useTerminalStoreShallow } from "@/stores/useTerminalStore";
 import { useTerminalStore } from "@/stores/useTerminalStore";
 import { useLaunchApp } from "@/hooks/useLaunchApp";
-import { useAiChat } from "@/apps/chats/hooks/useAiChat";
 import { useAppStore } from "@/stores/useAppStore";
 import { useTerminalSounds } from "@/hooks/useTerminalSounds";
-import { getTextAnalytics, track } from "@/utils/analytics";
-import { useChatsStore } from "@/stores/useChatsStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useFilesStore } from "@/stores/useFilesStore";
-import { TERMINAL_ANALYTICS } from "@/utils/analytics";
 import i18n from "@/lib/i18n";
-import { CommandHistory, CommandContext, ToolInvocationData } from "../types";
-import { abortableFetch } from "@/utils/abortableFetch";
+import { CommandHistory, CommandContext } from "../types";
 
 // Maximum number of rendered command entries to keep in memory
 const MAX_RENDERED_HISTORY = 200;
@@ -27,9 +23,6 @@ import { parseCommand } from "../utils/commandParser";
 import { commands, AVAILABLE_COMMANDS } from "../commands";
 import { helpItems } from "../index";
 import { useVimLogic } from "./useVimLogic";
-import type { AIChatMessage } from "@/types/chat";
-import { getSystemState } from "@/apps/chats/utils/systemState";
-
 
 // Helper function to check if a message is urgent (starts with "!!!!")
 export const isUrgentMessage = (content: string): boolean =>
@@ -65,20 +58,10 @@ export const useTerminalLogic = ({
   const [historyCommands, setHistoryCommands] = useState<string[]>([]);
   const [fontSize, setFontSize] = useState(12); // Default font size in pixels
   // Get state from terminal store
-  const {
-    isInAiMode,
-    setIsInAiMode,
-    initialAiPrompt,
-    setInitialAiPrompt,
-    currentPath: storedPath,
-  } = useTerminalStoreShallow((state) => ({
-    isInAiMode: state.isInAiMode,
-    setIsInAiMode: state.setIsInAiMode,
-    initialAiPrompt: state.initialAiPrompt,
-    setInitialAiPrompt: state.setInitialAiPrompt,
+  const { currentPath: storedPath } = useTerminalStoreShallow((state) => ({
     currentPath: state.currentPath,
   }));
-  const [spinnerIndex, setSpinnerIndex] = useState(0);
+  const spinnerIndex = 0;
   const [isInteractingWithPreview, setIsInteractingWithPreview] =
     useState(false);
   const [inputFocused, setInputFocused] = useState(false); // Add state for input focus
@@ -91,20 +74,6 @@ export const useTerminalLogic = ({
   const isAtBottomRef = useRef(true);
   const hasScrolledRef = useRef(false);
   const previousCommandHistoryLength = useRef(0);
-
-  // Keep track of the last processed message ID to avoid duplicates
-  const lastProcessedMessageIdRef = useRef<string | null>(null);
-  // Keep track of apps already launched in the current session
-  const launchedAppsRef = useRef<Set<string>>(new Set());
-  // Shared AI chat hook
-  const {
-    messages: aiMessages,
-    append: appendAiMessage,
-    isLoading: isAiLoading,
-    stop: stopAiResponse,
-  } = useAiChat();
-
-  const setAiChatMessages = useChatsStore((state) => state.setAiMessages);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -156,7 +125,6 @@ export const useTerminalLogic = ({
   const {
     playCommandSound,
     playErrorSound,
-    playAiResponseSound,
     toggleMute,
     isMuted,
     playElevatorMusic,
@@ -165,7 +133,7 @@ export const useTerminalLogic = ({
     playMooSound,
   } = useTerminalSounds();
 
-  const username = useChatsStore((state) => state.username);
+  const username = useAuthStore((state) => state.username);
   const { isWindowsTheme } = useThemeFlags();
 
   // Load command history from store
@@ -248,17 +216,6 @@ export const useTerminalLogic = ({
     useTerminalStore.getState().setCurrentPath(currentPath);
   }, [currentPath]);
 
-  // Spinner animation effect
-  useEffect(() => {
-    if (isAiLoading) {
-      const interval = setInterval(() => {
-        setSpinnerIndex((prevIndex) => (prevIndex + 1) % spinnerChars.length);
-      }, 100);
-
-      return () => clearInterval(interval);
-    }
-  }, [isAiLoading, spinnerChars.length]);
-
   const [isClearingTerminal, setIsClearingTerminal] = useState(false);
 
   const handleCommandSubmit = (e: React.FormEvent) => {
@@ -268,12 +225,6 @@ export const useTerminalLogic = ({
 
     if (isInVimMode) {
       handleVimInput(currentCommand);
-      return;
-    }
-
-    if (isInAiMode) {
-      // Handle AI mode commands
-      handleAiCommand(currentCommand);
       return;
     }
 
@@ -339,7 +290,6 @@ export const useTerminalLogic = ({
         const savedCommands = useTerminalStore.getState().commandHistory;
         const commandEntry = savedCommands[savedCommands.length - 1 - newIndex];
         if (
-          !isInAiMode &&
           commandEntry &&
           commandEntry.command.startsWith("ryo ") &&
           !historicCommand.startsWith("ryo ")
@@ -362,7 +312,6 @@ export const useTerminalLogic = ({
         const savedCommands = useTerminalStore.getState().commandHistory;
         const commandEntry = savedCommands[savedCommands.length - 1 - newIndex];
         if (
-          !isInAiMode &&
           commandEntry &&
           commandEntry.command.startsWith("ryo ") &&
           !historicCommand.startsWith("ryo ")
@@ -381,23 +330,7 @@ export const useTerminalLogic = ({
       setCurrentCommand(completedCommand);
     } else if (e.key === "c" && e.ctrlKey) {
       e.preventDefault();
-      // Cancel current AI response if loading
-      if (isAiLoading) {
-        stopAiResponse();
-      }
-      // Exit AI mode if active
-      if (isInAiMode) {
-        setIsInAiMode(false);
-        setCommandHistory((prev) => [
-          ...prev,
-          {
-            command: "",
-            output: "^C - exited ai mode",
-            path: currentPath,
-            isSystemMessage: true,
-          },
-        ]);
-      } else if (currentCommand) {
+      if (currentCommand) {
         // Clear current input with ^C indicator
         setCommandHistory((prev) => [
           ...prev,
@@ -522,15 +455,9 @@ export const useTerminalLogic = ({
       if (cmd === "clear") {
         // Trigger clearing animation
         setIsClearingTerminal(true);
-        // Stop any ongoing AI responses
-        if (isInAiMode) {
-          stopAiResponse();
-        }
         setTimeout(() => {
           setIsClearingTerminal(false);
           setCommandHistory([]);
-          // Reset tracking refs for AI responses
-          lastProcessedMessageIdRef.current = null;
         }, 500); // Animation duration
       }
 
@@ -838,102 +765,12 @@ export const useTerminalLogic = ({
       }
 
       case "su": {
-        if (args.length === 0) {
-          return {
-            output: "usage: su <username> [password]",
-            isError: true,
-          };
-        }
-
-        const targetUsername = args[0].trim();
-        const passwordArg = args[1] ? args[1].trim() : undefined;
-        const tempOutput = `switching to ${targetUsername}...`;
-
-        class SuHandler {
-          async perform() {
-            try {
-              const store = useChatsStore.getState();
-
-              // If already that user, nothing to do
-              if (store.username === targetUsername) {
-                this.updateOutput(`already user ${targetUsername}`);
-                return;
-              }
-
-              // Logout current user if different
-              if (store.username && store.username !== targetUsername) {
-                await store.logout();
-              }
-
-              // If password provided, attempt authentication first
-              if (passwordArg) {
-                const authResp = await abortableFetch("/api/auth/login", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    username: targetUsername,
-                    password: passwordArg,
-                  }),
-                  timeout: 15000,
-                  throwOnHttpError: false,
-                  retry: { maxAttempts: 1, initialDelayMs: 250 },
-                });
-
-                if (authResp.ok) {
-                  const data = await authResp.json();
-                  const uname = data.username || targetUsername;
-                  store.setUsername(uname);
-                  store.setAuthenticated(true);
-                  this.updateOutput(`logged in as ${uname}`);
-                  return;
-                }
-                // fallthrough if auth failed -> will attempt create
-              }
-
-              // Attempt to create user; password is required by server
-              if (!passwordArg) {
-                this.updateOutput(
-                  "su failed: password required for new user creation"
-                );
-                return;
-              }
-
-              const createResult = await store.createUser(
-                targetUsername,
-                passwordArg
-              );
-
-              if (createResult.ok) {
-                this.updateOutput(`created and logged in as ${targetUsername}`);
-              } else {
-                // If creation failed and we didn't succeed auth, show error
-                this.updateOutput(
-                  `su failed: ${createResult.error || "unknown error"}`
-                );
-              }
-            } catch (err) {
-              const errorMsg =
-                err instanceof Error ? err.message : "unknown error";
-              this.updateOutput(`su failed: ${errorMsg}`);
-            }
-          }
-
-          updateOutput(content: string) {
-            setCommandHistory((prev) => {
-              const last = prev[prev.length - 1];
-              if (last.output === tempOutput) {
-                return [...prev.slice(0, -1), { ...last, output: content }];
-              }
-              return prev;
-            });
-          }
-        }
-
-        setTimeout(() => {
-          new SuHandler().perform();
-        }, 50);
-
-        return { output: tempOutput, isError: false };
+        // Accounts/authentication were removed for the static, no-backend
+        // portfolio build. Always respond as an anonymous guest.
+        return {
+          output: "su: authentication not available",
+          isError: true,
+        };
       }
 
       case "logout": {
@@ -946,7 +783,7 @@ export const useTerminalLogic = ({
         class LogoutHandler {
           async perform() {
             try {
-              await useChatsStore.getState().logout();
+              await useAuthStore.getState().logout();
               this.updateOutput("logged out");
             } catch (err) {
               const errorMsg =
@@ -979,284 +816,6 @@ export const useTerminalLogic = ({
           isError: true,
         };
     }
-  };
-
-  // New simple pass-through processor (still keeps urgent prefix for styling elsewhere)
-  const processMessageContent = useCallback(
-    (messageContent: string) => messageContent,
-    []
-  );
-
-  // Reset launched apps when leaving AI mode
-  useEffect(() => {
-    if (!isInAiMode) {
-      launchedAppsRef.current.clear();
-    }
-  }, [isInAiMode]);
-
-  // Handle initial AI prompt when entering AI mode
-  useEffect(() => {
-    if (isInAiMode && initialAiPrompt) {
-      // Send the initial prompt
-      appendAiMessage(
-        { text: initialAiPrompt },
-        { body: { systemState: getSystemState() } }
-      );
-
-      // Clear the initial prompt after using it
-      setInitialAiPrompt(undefined);
-    }
-  }, [isInAiMode, initialAiPrompt, appendAiMessage, setInitialAiPrompt]);
-
-  // Memoize the AI response sound function to prevent dependency changes
-  const playAiResponseSoundMemoized = useCallback(() => {
-    playAiResponseSound();
-  }, [playAiResponseSound]);
-
-  const handleAiMessagesUpdate = useCallback(
-    (messages: AIChatMessage[]) => {
-      if (!isInAiMode || messages.length <= 1) return;
-
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.role !== "assistant") return;
-
-      const messageKey = `${lastMessage.id}-${JSON.stringify(
-        (lastMessage as { parts?: unknown[] }).parts ??
-          (lastMessage as { text?: string }).text
-      )}`;
-      if (messageKey === lastProcessedMessageIdRef.current) return;
-
-      const parts = (lastMessage as { parts?: unknown[] }).parts as
-        | unknown[]
-        | undefined;
-      const lines: string[] = [];
-      let hasAquarium = false;
-      const toolInvocations: ToolInvocationData[] = [];
-
-      if (parts && parts.length > 0) {
-        parts.forEach((part) => {
-          const partType = (part as { type: string }).type;
-          if (partType === "text") {
-            const processed = processMessageContent(
-              (part as { text: string }).text
-            );
-            if (processed) lines.push(processed);
-          } else if (partType.startsWith("tool-")) {
-            // AI SDK v5 tool parts have type like "tool-launchApp", "tool-ipodControl", etc.
-            const toolName = partType.slice(5); // Remove "tool-" prefix
-            const toolPart = part as {
-              type: string;
-              toolCallId: string;
-              state:
-                | "input-streaming"
-                | "input-available"
-                | "output-available"
-                | "output-error";
-              input?: Record<string, unknown>;
-              output?: unknown;
-            };
-
-            if (toolName === "aquarium") {
-              hasAquarium = true;
-            } else {
-              // Store tool invocation for visual rendering
-              toolInvocations.push({
-                toolName,
-                state: toolPart.state,
-                input: toolPart.input,
-                output: toolPart.output,
-              });
-            }
-          }
-        });
-      } else {
-        lines.push(
-          processMessageContent((lastMessage as { text?: string }).text || "")
-        );
-      }
-
-      const cleanedContent = lines.join("\n");
-      if (isClearingTerminal) return;
-
-      setCommandHistory((prev) => {
-        const filteredHistory = prev.filter(
-          (item) => item.path !== "ai-thinking"
-        );
-        const existingIndex = filteredHistory.findIndex(
-          (item) =>
-            item.path === "ai-assistant" && item.messageId === lastMessage.id
-        );
-
-        if (existingIndex !== -1) {
-          const existing = filteredHistory[existingIndex];
-          if (
-            existing.output === cleanedContent &&
-            existing.hasAquarium === hasAquarium &&
-            JSON.stringify(existing.toolInvocations) ===
-              JSON.stringify(toolInvocations)
-          )
-            return prev;
-
-          const updated = [...filteredHistory];
-          updated[existingIndex] = {
-            command: "",
-            output: cleanedContent,
-            path: "ai-assistant",
-            messageId: lastMessage.id,
-            hasAquarium,
-            toolInvocations:
-              toolInvocations.length > 0 ? toolInvocations : undefined,
-          };
-          return updated;
-        }
-
-        playAiResponseSoundMemoized();
-
-        return [
-          ...filteredHistory,
-          {
-            command: "",
-            output: cleanedContent,
-            path: "ai-assistant",
-            messageId: lastMessage.id,
-            hasAquarium,
-            toolInvocations:
-              toolInvocations.length > 0 ? toolInvocations : undefined,
-          },
-        ];
-      });
-
-      lastProcessedMessageIdRef.current = messageKey;
-    },
-    [
-      isInAiMode,
-      isClearingTerminal,
-      processMessageContent,
-      playAiResponseSoundMemoized,
-    ]
-  );
-
-  useEffect(() => {
-    const unsubscribe = useChatsStore.subscribe((state, prevState) => {
-      if (state.aiMessages === prevState.aiMessages) return;
-      handleAiMessagesUpdate(state.aiMessages);
-    });
-
-    handleAiMessagesUpdate(useChatsStore.getState().aiMessages);
-
-    return unsubscribe;
-  }, [handleAiMessagesUpdate]);
-
-  // Function to handle AI mode commands
-  const handleAiCommand = (command: string) => {
-    const lowerCommand = command.trim().toLowerCase();
-
-    // Play command sound for AI mode commands too
-    playCommandSound();
-
-    // Add command to history commands array (for up/down arrow navigation)
-    const newHistoryCommands = [...historyCommands, command];
-    setHistoryCommands(newHistoryCommands);
-    setHistoryIndex(-1);
-
-    // Store in Zustand (including AI commands)
-    useTerminalStore
-      .getState()
-      .addCommand(command.startsWith("ryo ") ? command : `ryo ${command}`);
-
-    // Reset animated lines to ensure only new content gets animated
-    setAnimatedLines(new Set());
-
-    // If user types 'exit' or 'quit', leave AI mode
-    if (lowerCommand === "exit" || lowerCommand === "quit") {
-      track(TERMINAL_ANALYTICS.CHAT_EXIT);
-      setIsInAiMode(false);
-      stopAiResponse();
-      // Reset to empty (system message handled on backend)
-      setAiChatMessages([]);
-
-      // Reset tracking refs
-      lastProcessedMessageIdRef.current = null;
-      launchedAppsRef.current.clear();
-
-      // Add exit command to history
-      setCommandHistory([
-        ...commandHistory,
-        {
-          command: command,
-          output: "Bye! ♥",
-          path: currentPath,
-        },
-      ]);
-
-      setCurrentCommand("");
-      return;
-    }
-
-    // If user types 'clear', clear the chat history
-    if (lowerCommand === "clear") {
-      track(TERMINAL_ANALYTICS.CHAT_CLEAR);
-      // Stop any ongoing AI response
-      stopAiResponse();
-
-      // Reset AI messages (system message handled on backend)
-      setAiChatMessages([]);
-
-      // Trigger clearing animation
-      setIsClearingTerminal(true);
-
-      // Reset animated lines to prevent typewriter effect on old content
-      setAnimatedLines(new Set());
-
-      // Reset tracking refs
-      lastProcessedMessageIdRef.current = null;
-
-      // Clear launched apps tracking
-      launchedAppsRef.current.clear();
-
-      setTimeout(() => {
-        setIsClearingTerminal(false);
-        // Set command history to just the welcome message
-        setCommandHistory([
-          {
-            command: "",
-            output: i18n.t("apps.terminal.output.chatCleared"),
-            path: "ai-assistant",
-          },
-        ]);
-      }, 300); // Short delay for animation
-
-      setCurrentCommand("");
-      return;
-    }
-
-    // Track AI command
-    track(TERMINAL_ANALYTICS.AI_COMMAND, getTextAnalytics(command));
-
-    // Add user command to chat history with special AI mode formatting
-    // Remove any existing thinking messages
-    const filteredHistory = commandHistory.filter(
-      (item) => item.path !== "ai-thinking"
-    );
-
-    // Add only the user message - no thinking message in history
-    setCommandHistory([
-      ...filteredHistory,
-      {
-        command: command,
-        output: "",
-        path: "ai-user", // Special marker for AI mode user message
-      },
-    ]);
-
-    // Send the message using useAiChat hook
-    appendAiMessage(
-      { text: command },
-      { body: { systemState: getSystemState() } }
-    );
-
-    // Clear current command
-    setCurrentCommand("");
   };
 
   const increaseFontSize = () => {
@@ -1398,9 +957,6 @@ export const useTerminalLogic = ({
     fontSize,
     spinnerIndex,
     spinnerChars,
-    isInAiMode,
-    isAiLoading,
-    aiMessages,
     handleCommandSubmit,
     handleKeyDown,
     inputFocused,

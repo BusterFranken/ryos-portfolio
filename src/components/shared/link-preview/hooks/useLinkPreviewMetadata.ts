@@ -1,5 +1,4 @@
 import { useEffect, useReducer, type Dispatch } from "react";
-import { abortableFetch } from "@/utils/abortableFetch";
 import {
   createInitialLinkPreviewState,
   linkPreviewReducer,
@@ -26,6 +25,9 @@ export function useLinkPreviewMetadata(url: string): [
     let isActive = true;
 
     const fetchMetadata = async () => {
+      // STATIC BUILD: the `/api/link-preview` backend (server-side OG scraping)
+      // was removed. For ryOS song deep links we can still derive a YouTube
+      // thumbnail locally; everything else falls back to showing the raw URL.
       try {
         if (!isActive || abortController.signal.aborted) return;
         dispatch({ type: "fetchStart" });
@@ -33,48 +35,6 @@ export function useLinkPreviewMetadata(url: string): [
         if (url.includes("/ipod/") || url.includes("/karaoke/")) {
           const videoId = extractYouTubeVideoId(url);
           if (videoId) {
-            try {
-              const youtubeResponse = await abortableFetch(
-                `/api/link-preview?url=${encodeURIComponent(
-                  `https://www.youtube.com/watch?v=${videoId}`
-                )}`,
-                {
-                  signal: abortController.signal,
-                  timeout: 15000,
-                  retry: { maxAttempts: 2, initialDelayMs: 500 },
-                }
-              );
-
-              const youtubeData = await youtubeResponse.json();
-              if (!youtubeData.error && isActive && !abortController.signal.aborted) {
-                dispatch({
-                  type: "fetchSuccess",
-                  metadata: {
-                    title: youtubeData.title,
-                    description: youtubeData.description,
-                    image:
-                      youtubeData.image ||
-                      `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-                    siteName: "YouTube",
-                    url: url,
-                  },
-                });
-                return;
-              }
-            } catch (youtubeError) {
-              if (
-                youtubeError instanceof Error &&
-                youtubeError.name === "AbortError"
-              ) {
-                return;
-              }
-              console.warn(
-                "Failed to fetch YouTube metadata, using fallback:",
-                youtubeError
-              );
-            }
-
-            if (!isActive || abortController.signal.aborted) return;
             dispatch({
               type: "fetchSuccess",
               metadata: {
@@ -89,29 +49,11 @@ export function useLinkPreviewMetadata(url: string): [
           }
         }
 
-        const response = await abortableFetch(
-          `/api/link-preview?url=${encodeURIComponent(url)}`,
-          {
-            signal: abortController.signal,
-            timeout: 15000,
-            retry: { maxAttempts: 2, initialDelayMs: 500 },
-          }
-        );
-
-        const data = await response.json();
-        if (!isActive || abortController.signal.aborted) return;
-
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
         dispatch({
-          type: "fetchSuccess",
+          type: "fetchFailure",
+          error: "Preview unavailable",
           metadata: {
-            title: data.title,
-            description: data.description,
-            image: data.image,
-            siteName: data.siteName,
+            title: url,
             url: url,
           },
         });

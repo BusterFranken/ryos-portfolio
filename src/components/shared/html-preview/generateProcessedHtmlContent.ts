@@ -1,11 +1,8 @@
-import { APPLET_AUTH_BRIDGE_SCRIPT } from "@/utils/appletAuthBridge";
-
 export interface GenerateProcessedHtmlOptions {
   htmlContent: string;
   contentTimestamp: number;
   normalizedBaseUrl: string | null;
   isMacOsXTheme: boolean;
-  isTrustedApplet: boolean;
   useFallbackFonts: boolean;
 }
 
@@ -20,17 +17,10 @@ const shouldUseMacFonts = !options.useFallbackFonts && options.isMacOsXTheme;
 
 // Define the script tags and styles that should be added ONLY after streaming
 // Font link MUST be first for potentially faster loading/application
-// Only trusted (ryo-authored) HTML receives the auth bridge.
-// For untrusted previews, the iframe also runs without
-// `allow-same-origin`, so even if a malicious script tried to
-// postMessage the parent, it cannot read the response.
-const authBridge = options.isTrustedApplet ? APPLET_AUTH_BRIDGE_SCRIPT : "";
-
 const postStreamHeadContent = `
 <link rel="stylesheet" href="/fonts/fonts.css">
-${timestamp} 
+${timestamp}
 ${baseTag}
-${authBridge}
 <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.174.0/three.module.min.js"></script>
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <script>

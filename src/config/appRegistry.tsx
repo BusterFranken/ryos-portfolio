@@ -9,7 +9,6 @@ import type {
   VideosInitialData,
   BooksInitialData,
 } from "@/apps/base/types";
-import type { AppletViewerInitialData } from "@/apps/applet-viewer";
 import { createLazyComponent } from "./lazyAppComponent";
 
 export type { AppId };
@@ -55,11 +54,6 @@ const LazyInternetExplorerApp = createLazyComponent<InternetExplorerInitialData>
   "internet-explorer"
 );
 
-const LazyChatsApp = createLazyComponent<unknown>(
-  () => import("@/apps/chats/components/chats-app/ChatsAppComponent").then(m => ({ default: m.ChatsAppComponent })),
-  "chats"
-);
-
 const LazyControlPanelsApp = createLazyComponent<ControlPanelsInitialData>(
   () => import("@/apps/control-panels/components/control-panels-app/ControlPanelsAppComponent").then(m => ({ default: m.ControlPanelsAppComponent })),
   "control-panels"
@@ -85,11 +79,6 @@ const LazyVideosApp = createLazyComponent<VideosInitialData>(
   "videos"
 );
 
-const LazyTvApp = createLazyComponent<unknown>(
-  () => import("@/apps/tv/components/tv-app/TvAppComponent").then(m => ({ default: m.TvAppComponent })),
-  "tv"
-);
-
 const LazyPhotoBoothApp = createLazyComponent<unknown>(
   () => import("@/apps/photo-booth/components/PhotoBoothComponent").then(m => ({ default: m.PhotoBoothComponent })),
   "photo-booth"
@@ -105,25 +94,11 @@ const LazyIpodApp = createLazyComponent<IpodInitialData>(
   "ipod"
 );
 
-const LazyKaraokeApp = createLazyComponent<IpodInitialData>(
-  () => import("@/apps/karaoke/components/karaoke-app/KaraokeAppComponent").then(m => ({ default: m.KaraokeAppComponent })),
-  "karaoke"
-);
-
 const LazyTerminalApp = createLazyComponent<unknown>(
   () => import("@/apps/terminal/components/TerminalAppComponent").then(m => ({ default: m.TerminalAppComponent })),
   "terminal"
 );
 
-const LazyAppletViewerApp = createLazyComponent<AppletViewerInitialData>(
-  () => import("@/apps/applet-viewer/components/AppletViewerAppComponent").then(m => ({ default: m.AppletViewerAppComponent })),
-  "applet-viewer"
-);
-
-const LazyAdminApp = createLazyComponent<unknown>(
-  () => import("@/apps/admin/components/admin-app/AdminAppComponent").then(m => ({ default: m.AdminAppComponent })),
-  "admin"
-);
 
 const LazyStickiesApp = createLazyComponent<unknown>(
   () => import("@/apps/stickies/components/StickiesAppComponent").then(m => ({ default: m.StickiesAppComponent })),
@@ -178,20 +153,15 @@ const LazyBooksApp = createLazyComponent<BooksInitialData>(
 import { appMetadata as finderMetadata, helpItems as finderHelpItems } from "@/apps/finder/metadata";
 import { appMetadata as soundboardMetadata, helpItems as soundboardHelpItems } from "@/apps/soundboard/metadata";
 import { appMetadata as internetExplorerMetadata, helpItems as internetExplorerHelpItems } from "@/apps/internet-explorer/metadata";
-import { appMetadata as chatsMetadata, helpItems as chatsHelpItems } from "@/apps/chats/metadata";
 import { appMetadata as texteditMetadata, helpItems as texteditHelpItems } from "@/apps/textedit/metadata";
 import { appMetadata as paintMetadata, helpItems as paintHelpItems } from "@/apps/paint";
 import { appMetadata as photoboothMetadata, helpItems as photoboothHelpItems } from "@/apps/photo-booth/metadata";
 import { appMetadata as minesweeperMetadata, helpItems as minesweeperHelpItems } from "@/apps/minesweeper";
 import { appMetadata as videosMetadata, helpItems as videosHelpItems } from "@/apps/videos/metadata";
-import { appMetadata as tvMetadata, helpItems as tvHelpItems } from "@/apps/tv/metadata";
 import { appMetadata as ipodMetadata, helpItems as ipodHelpItems } from "@/apps/ipod/metadata";
-import { appMetadata as karaokeMetadata, helpItems as karaokeHelpItems } from "@/apps/karaoke/metadata";
 import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/apps/synth/metadata";
 import { appMetadata as terminalMetadata, helpItems as terminalHelpItems } from "@/apps/terminal";
-import { appMetadata as appletViewerMetadata, helpItems as appletViewerHelpItems } from "@/apps/applet-viewer";
 import { appMetadata as controlPanelsMetadata, helpItems as controlPanelsHelpItems } from "@/apps/control-panels";
-import { appMetadata as adminMetadata, helpItems as adminHelpItems } from "@/apps/admin/metadata";
 import { appMetadata as stickiesMetadata, helpItems as stickiesHelpItems } from "@/apps/stickies";
 import {
   appMetadata as infiniteMacMetadata,
@@ -255,19 +225,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 300 },
     } as WindowConstraints,
   } as BaseApp<InternetExplorerInitialData> & { windowConfig: WindowConstraints },
-  ["chats"]: {
-    id: "chats",
-    name: "Chats",
-    icon: { type: "image", src: chatsMetadata.icon },
-    description: "Chat with AI",
-    component: LazyChatsApp,
-    helpItems: chatsHelpItems,
-    metadata: chatsMetadata,
-    windowConfig: {
-      defaultSize: { width: 560, height: 360 },
-      minSize: { width: 300, height: 320 },
-    } as WindowConstraints,
-  },
   ["textedit"]: {
     id: "textedit",
     name: "TextEdit",
@@ -336,19 +293,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 340 },
     } as WindowConstraints,
   } as BaseApp<VideosInitialData> & { windowConfig: WindowConstraints },
-  ["tv"]: {
-    id: "tv",
-    name: "TV",
-    icon: { type: "image", src: tvMetadata.icon },
-    description: "Channel surf YouTube",
-    component: LazyTvApp,
-    helpItems: tvHelpItems,
-    metadata: tvMetadata,
-    windowConfig: {
-      defaultSize: { width: 480, height: 520 },
-      minSize: { width: 320, height: 360 },
-    } as WindowConstraints,
-  } as BaseApp<unknown> & { windowConfig: WindowConstraints },
   ["ipod"]: {
     id: "ipod",
     name: "iPod",
@@ -360,20 +304,6 @@ export const appRegistry = {
     windowConfig: {
       defaultSize: { width: 300, height: 480 },
       minSize: { width: 300, height: 480 },
-    } as WindowConstraints,
-  } as BaseApp<IpodInitialData> & { windowConfig: WindowConstraints },
-  ["karaoke"]: {
-    id: "karaoke",
-    name: "Karaoke",
-    icon: { type: "image", src: karaokeMetadata.icon },
-    description: "Karaoke player with synced lyrics",
-    component: LazyKaraokeApp,
-    helpItems: karaokeHelpItems,
-    metadata: karaokeMetadata,
-    windowConfig: {
-      defaultSize: { width: 560, height: 560 },
-      minSize: { width: 400, height: 300 },
-      mobileSquare: true,
     } as WindowConstraints,
   } as BaseApp<IpodInitialData> & { windowConfig: WindowConstraints },
   ["synth"]: {
@@ -402,19 +332,6 @@ export const appRegistry = {
       minSize: { width: 400, height: 300 },
     } as WindowConstraints,
   },
-  ["applet-viewer"]: {
-    id: "applet-viewer",
-    name: "Applet Store",
-    icon: { type: "image", src: appletViewerMetadata.icon },
-    description: "View and run applets",
-    component: LazyAppletViewerApp,
-    helpItems: appletViewerHelpItems,
-    metadata: appletViewerMetadata,
-    windowConfig: {
-      defaultSize: { width: 320, height: 450 },
-      minSize: { width: 300, height: 200 },
-    } as WindowConstraints,
-  } as BaseApp<AppletViewerInitialData> & { windowConfig: WindowConstraints },
   ["control-panels"]: {
     id: "control-panels",
     name: "Control Panels",
@@ -429,20 +346,6 @@ export const appRegistry = {
       maxSize: { width: 560, height: 600 },
     } as WindowConstraints,
   } as BaseApp<ControlPanelsInitialData> & { windowConfig: WindowConstraints },
-  ["admin"]: {
-    id: "admin",
-    name: "Admin",
-    icon: { type: "image", src: adminMetadata.icon },
-    description: "System administration panel",
-    component: LazyAdminApp,
-    helpItems: adminHelpItems,
-    metadata: adminMetadata,
-    adminOnly: true, // Only visible to admin user (ryo)
-    windowConfig: {
-      defaultSize: { width: 800, height: 500 },
-      minSize: { width: 600, height: 400 },
-    } as WindowConstraints,
-  },
   ["stickies"]: {
     id: "stickies",
     name: "Stickies",

@@ -41,15 +41,6 @@ export interface BooksInitialData {
   path?: string;
 }
 
-/** Applet Viewer initial data - for opening applets */
-export interface AppletViewerInitialData {
-  path?: string;
-  content?: string;
-  shareCode?: string;
-  icon?: string;
-  name?: string;
-}
-
 /** Finder initial data - for opening specific paths */
 export interface FinderInitialData {
   path?: string;
@@ -66,7 +57,6 @@ export interface AppInitialDataMap {
   ipod: IpodInitialData;
   videos: VideosInitialData;
   books: BooksInitialData;
-  "applet-viewer": AppletViewerInitialData;
   finder: FinderInitialData;
 }
 
@@ -89,7 +79,6 @@ export type AnyAppInitialData =
   | IpodInitialData
   | VideosInitialData
   | BooksInitialData
-  | AppletViewerInitialData
   | FinderInitialData
   | undefined;
 
@@ -147,17 +136,3 @@ export function isIpodInitialData(data: unknown): data is IpodInitialData {
   );
 }
 
-/**
- * Type guard to check if initialData is for Applet Viewer.
- */
-export function isAppletViewerInitialData(
-  data: unknown
-): data is AppletViewerInitialData {
-  if (typeof data !== "object" || data === null) return false;
-  const av = data as AppletViewerInitialData;
-  return (
-    ("path" in av && typeof av.path === "string") ||
-    ("content" in av && typeof av.content === "string") ||
-    ("shareCode" in av && typeof av.shareCode === "string")
-  );
-}

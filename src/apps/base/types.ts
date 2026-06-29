@@ -1,5 +1,3 @@
-import type { AppletViewerInitialData } from "@/apps/applet-viewer";
-
 export interface AppProps<TInitialData = unknown> {
   isWindowOpen: boolean;
   onClose: () => void;
@@ -23,21 +21,16 @@ export interface BaseApp<TInitialData = unknown> {
   id:
     | "soundboard"
     | "internet-explorer"
-    | "chats"
     | "textedit"
     | "control-panels"
     | "minesweeper"
     | "finder"
     | "paint"
     | "videos"
-    | "tv"
     | "photo-booth"
     | "synth"
     | "ipod"
-    | "karaoke"
     | "terminal"
-    | "applet-viewer"
-    | "admin"
     | "stickies"
     | "infinite-mac"
     | "pc"
@@ -95,12 +88,6 @@ export interface InternetExplorerInitialData {
 
 export interface IpodInitialData {
   videoId?: string;
-  listenSessionId?: string;
-}
-
-export interface KaraokeInitialData {
-  videoId?: string;
-  listenSessionId?: string;
 }
 
 export interface PaintInitialData {
@@ -124,24 +111,15 @@ export interface TerminalInitialData {
   prefillCommand?: string;
 }
 
-export interface ChatsInitialData {
-  prefillMessage?: string;
-  autoSend?: boolean;
-  prefillRequestId?: string;
-}
-
 // Union type for all possible app configurations
 export type AnyApp =
   | BaseApp<ControlPanelsInitialData>
   | BaseApp<InternetExplorerInitialData>
   | BaseApp<IpodInitialData>
-  | BaseApp<KaraokeInitialData>
   | BaseApp<PaintInitialData>
   | BaseApp<VideosInitialData>
   | BaseApp<BooksInitialData>
-  | BaseApp<AppletViewerInitialData>
   | BaseApp<TerminalInitialData>
-  | BaseApp<ChatsInitialData>
   | BaseApp<unknown>; // For apps without specific initialData
 
 // Type for the initialData that could be any of the specific types
@@ -149,14 +127,11 @@ export type AnyInitialData =
   | ControlPanelsInitialData
   | InternetExplorerInitialData
   | IpodInitialData
-  | KaraokeInitialData
   | PaintInitialData
   | VideosInitialData
   | BooksInitialData
   | FinderInitialData
-  | AppletViewerInitialData
   | TerminalInitialData
-  | ChatsInitialData
   | unknown;
 
 // Theme-aware menu bar pattern:

@@ -2,7 +2,6 @@ export const MAX_DYNAMIC_RESULTS_PER_TYPE = 4;
 
 export type SpotlightDynamicResultType =
   | "document"
-  | "applet"
   | "music"
   | "site"
   | "video"
@@ -75,14 +74,6 @@ export type SpotlightWorkerResultPayload =
       type: "document";
       title: string;
       path: string;
-    }
-  | {
-      id: string;
-      type: "applet";
-      title: string;
-      path: string;
-      icon?: string;
-      isEmoji: boolean;
     }
   | {
       id: string;

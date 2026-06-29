@@ -1,4 +1,4 @@
-import { appIds, appNames, resolveAppId, type AppId } from "@/config/appRegistryData";
+import { appIds, appNames, resolveAppId } from "@/config/appRegistryData";
 import type { AppLaunchRequest } from "@/utils/appEventBus";
 
 export interface RouteToastDescriptor {
@@ -47,31 +47,11 @@ function createLaunchAction(
 }
 
 export function resolveInitialRoute(
-  pathname: string,
-  search?: string
+  pathname: string
 ): RouteAction | null {
   pathname = normalizePathname(pathname);
   if (!pathname || pathname === "/") {
     return null;
-  }
-
-  const searchParams =
-    typeof search === "string" && search.length > 0
-      ? new URLSearchParams(search.startsWith("?") ? search.slice(1) : search)
-      : null;
-
-  if (pathname === "/applet-viewer") {
-    return createLaunchAction(
-      { appId: "applet-viewer" },
-      {
-        delayMs: 100,
-        toast: {
-          type: "translation",
-          message: "common.loading.openingAppletStore",
-        },
-        urlCleanupTiming: "after-dispatch",
-      },
-    );
   }
 
   const internetExplorerMatch = pathname.match(/^\/internet-explorer\/([^/]+)$/);
@@ -94,30 +74,6 @@ export function resolveInitialRoute(
     );
   }
 
-  const appletViewerShareMatch = pathname.match(/^\/applet-viewer\/([^/]+)$/);
-  if (appletViewerShareMatch) {
-    return createLaunchAction(
-      {
-        appId: "applet-viewer",
-        initialData: {
-          shareCode: appletViewerShareMatch[1],
-          path: "",
-          content: "",
-          icon: undefined,
-          name: undefined,
-        },
-      },
-      {
-        delayMs: 0,
-        toast: {
-          type: "translation",
-          message: "common.loading.openingSharedApplet",
-        },
-        urlCleanupTiming: "immediate",
-      },
-    );
-  }
-
   const ipodMatch = pathname.match(/^\/ipod\/(.+)$/);
   if (ipodMatch) {
     return createLaunchAction(
@@ -132,52 +88,6 @@ export function resolveInitialRoute(
         toast: {
           type: "translation",
           message: "common.loading.openingSharedIpodTrack",
-        },
-        urlCleanupTiming: "immediate",
-      },
-    );
-  }
-
-  const listenMatch = pathname.match(/^\/listen\/([^/?#]+)$/);
-  if (listenMatch) {
-    const listenSessionId = listenMatch[1];
-    const appHint = searchParams?.get("app")?.toLowerCase();
-    const targetAppId: AppId = appHint === "ipod" ? "ipod" : "karaoke";
-
-    return createLaunchAction(
-      {
-        appId: targetAppId,
-        initialData: {
-          listenSessionId,
-        },
-      },
-      {
-        delayMs: 100,
-        toast: {
-          type: "text",
-          message: "Opening live session...",
-        },
-        // Must not use "immediate": URL is cleared before the delayed launch runs.
-        // React Strict Mode remounts with pathname "/" and the join never fires.
-        urlCleanupTiming: "after-dispatch",
-      },
-    );
-  }
-
-  const karaokeMatch = pathname.match(/^\/karaoke\/(.+)$/);
-  if (karaokeMatch) {
-    return createLaunchAction(
-      {
-        appId: "karaoke",
-        initialData: {
-          videoId: karaokeMatch[1],
-        },
-      },
-      {
-        delayMs: 0,
-        toast: {
-          type: "translation",
-          message: "common.loading.openingSharedKaraokeTrack",
         },
         urlCleanupTiming: "immediate",
       },
@@ -206,10 +116,7 @@ export function resolveInitialRoute(
 
   if (
     pathname.startsWith("/internet-explorer/") ||
-    pathname.startsWith("/applet-viewer/") ||
     pathname.startsWith("/ipod/") ||
-    pathname.startsWith("/listen/") ||
-    pathname.startsWith("/karaoke/") ||
     pathname.startsWith("/videos/")
   ) {
     return null;

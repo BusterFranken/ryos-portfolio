@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence, useDragControls } from "motion/react";
-import { ArrowsIn, Copy, Check, DownloadSimple, Code, Export, DotsSixVertical, Plus } from "@phosphor-icons/react";
+import { ArrowsIn, Copy, Check, Code, Export, DotsSixVertical, Plus } from "@phosphor-icons/react";
 import { createPortal } from "react-dom";
 import {
   loadHtmlPreviewSplit,
@@ -9,25 +9,23 @@ import {
 import { useAudioSettingsStore } from "@/stores/useAudioSettingsStore";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { InputDialog } from "@/components/dialogs/InputDialog";
-import { getAppletSandboxAttribute } from "@/utils/appletAuthBridge";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "@/hooks/useEventListener";
 import type { HtmlPreviewProps } from "./types";
-import { APPLET_ICON_STYLES } from "./constants";
-import { useAppletAuthMessaging } from "./hooks/useAppletAuthMessaging";
 import { useHtmlPreviewSounds } from "./hooks/useHtmlPreviewSounds";
 import { useProcessedHtml } from "./hooks/useProcessedHtml";
 import { useStreamPreview } from "./hooks/useStreamPreview";
 import { useHtmlPreviewSave } from "./hooks/useHtmlPreviewSave";
 import { HtmlPreviewLoadingPulse } from "./components/HtmlPreviewLoadingPulse";
-import { HtmlPreviewAppletBanner } from "./components/HtmlPreviewAppletBanner";
 import { HtmlPreviewCornerToolbar } from "./components/HtmlPreviewCornerToolbar";
+
+// Iframe sandbox for all HTML previews (IE AI-rendered pages, terminal output).
+// No `allow-same-origin`: previews run in an opaque origin and cannot read
+// parent state.
+const HTML_PREVIEW_SANDBOX = "allow-scripts allow-forms allow-popups allow-modals";
 
 function HtmlPreview({
   htmlContent,
-  appletTitle = "",
-  appletIcon = "",
   onInteractionChange,
   isStreaming = false,
   maxHeight = "800px",
@@ -43,7 +41,6 @@ function HtmlPreview({
   isInternetExplorer = false,
   baseUrlForAiContent,
   mode = "now",
-  appletCreatedBy = null,
 }: HtmlPreviewProps) {
   const [isFullScreen, setIsFullScreen] = useState(initialFullScreen);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -81,20 +78,15 @@ function HtmlPreview({
       : `https://${baseUrlForAiContent}`
     : null;
 
-  const { isTrustedApplet, sendAuthPayload } = useAppletAuthMessaging(
-    appletCreatedBy,
-    iframeRef,
-    fullscreenIframeRef
-  );
-  const sandboxAttribute = getAppletSandboxAttribute(isTrustedApplet);
+  const sandboxAttribute = HTML_PREVIEW_SANDBOX;
 
   const { maximizeSound, minimizeSound } = useHtmlPreviewSounds(
     propMaximizeSound,
     propMinimizeSound
   );
 
-  const { processedHtmlContent, getProcessedHtmlContentForSave } =
-    useProcessedHtml(htmlContent, normalizedBaseUrl, isTrustedApplet, isStreaming);
+  const { processedHtmlContent } =
+    useProcessedHtml(htmlContent, normalizedBaseUrl, isStreaming);
 
   const streamPreviewHtml = useStreamPreview(htmlContent, isStreaming);
 
@@ -104,18 +96,9 @@ function HtmlPreview({
   );
 
   const {
-    isSaveAppletDialogOpen,
-    setIsSaveAppletDialogOpen,
-    appletFileName,
-    setAppletFileName,
-    handleSaveAppletSubmit,
-    handleSaveAsApplet,
     handleSaveToDisk,
   } = useHtmlPreviewSave(
-    appletTitle,
-    appletIcon,
-    getProcessedHtmlContent,
-    getProcessedHtmlContentForSave
+    getProcessedHtmlContent
   );
 
   useEffect(() => {
@@ -142,28 +125,19 @@ function HtmlPreview({
   );
 
   // Function to update iframe content (now only called after streaming)
-  const updateIframeContent = useCallback(
-    (finalContent: string) => {
-      requestAnimationFrame(() => {
-        // Update inline iframe
-        if (iframeRef.current) {
-          iframeRef.current.srcdoc = finalContent;
-          setTimeout(() => {
-            sendAuthPayload(iframeRef.current?.contentWindow || null);
-          }, 0);
-        }
+  const updateIframeContent = useCallback((finalContent: string) => {
+    requestAnimationFrame(() => {
+      // Update inline iframe
+      if (iframeRef.current) {
+        iframeRef.current.srcdoc = finalContent;
+      }
 
-        // Update fullscreen iframe if it exists
-        if (fullscreenIframeRef.current) {
-          fullscreenIframeRef.current.srcdoc = finalContent;
-          setTimeout(() => {
-            sendAuthPayload(fullscreenIframeRef.current?.contentWindow || null);
-          }, 0);
-        }
-      });
-    },
-    [sendAuthPayload]
-  );
+      // Update fullscreen iframe if it exists
+      if (fullscreenIframeRef.current) {
+        fullscreenIframeRef.current.srcdoc = finalContent;
+      }
+    });
+  }, []);
 
   // NEW: Effect to update iframe *after* streaming finishes or when content changes while not streaming
   useEffect(() => {
@@ -318,18 +292,13 @@ function HtmlPreview({
   // Normal inline display with optional maximized height
   return (
     <>
-      {!isInternetExplorer && (appletTitle || appletIcon) && (
-        <style>{APPLET_ICON_STYLES}</style>
-      )}
       <motion.div
         ref={previewRef}
         className={`${
           isInternetExplorer ? "" : "rounded"
         } bg-white dark:bg-neutral-950 m-0 relative ${className} ${
           isStreaming ? "loading-pulse" : ""
-        } ${
-          !isInternetExplorer && (appletTitle || appletIcon) ? "flex flex-col overflow-hidden" : isInternetExplorer ? "overflow-hidden" : "overflow-auto"
-        }`}
+        } ${isInternetExplorer ? "overflow-hidden" : "overflow-auto"}`}
         style={{
           maxHeight: isInternetExplorer
             ? "100%"
@@ -370,21 +339,11 @@ function HtmlPreview({
         {/* Loading PULSE overlay (now breathing effect) */}
         {isStreaming && <HtmlPreviewLoadingPulse />}
 
-        {!isInternetExplorer && (appletTitle || appletIcon) && (
-          <HtmlPreviewAppletBanner
-            appletIcon={appletIcon}
-            appletTitle={appletTitle}
-            isStreaming={isStreaming}
-            onSave={handleSaveAsApplet}
-          />
-        )}
-
-        {!isInternetExplorer && !(appletTitle || appletIcon) && (
+        {!isInternetExplorer && (
           <HtmlPreviewCornerToolbar
             isStreaming={isStreaming}
             isFullScreen={isFullScreen}
             copySuccess={copySuccess}
-            onSaveAsApplet={handleSaveAsApplet}
             onSaveToDisk={handleSaveToDisk}
             onCopy={handleCopy}
             onToggleFullScreen={toggleFullScreen}
@@ -393,9 +352,7 @@ function HtmlPreview({
         {/* Conditional Rendering: Text Stream or Iframe */}
         {isStreaming && htmlContent ? (
           <div
-            className={`size-full relative overflow-auto ${
-              !isInternetExplorer && (appletTitle || appletIcon) ? "flex-1" : ""
-            }`}
+            className="size-full relative overflow-auto"
             style={{
               maxHeight: isInternetExplorer
                 ? "100%"
@@ -428,16 +385,12 @@ function HtmlPreview({
             // srcDoc is now set by useEffect after streaming finishes
             // srcDoc={processedHtmlContent()}
             title={t("common.htmlPreview.codePreviewTitle")}
-            className={`border-0 block ${
-              !isInternetExplorer && (appletTitle || appletIcon) ? "flex-1" : ""
-            }`}
+            className="border-0 block"
             sandbox={sandboxAttribute}
             style={{
               width: isInternetExplorer ? "calc(100% + 1px)" : "100%",
               height: isInternetExplorer
                 ? "calc(100% + 1px)"
-                : !isInternetExplorer && (appletTitle || appletIcon)
-                ? "100%"
                 : typeof minHeight === "string"
                 ? minHeight
                 : `${minHeight}px`,
@@ -449,9 +402,6 @@ function HtmlPreview({
               zIndex: 1,
               }}
               onMouseDown={(e) => e.stopPropagation()}
-              onLoad={() =>
-                sendAuthPayload(iframeRef.current?.contentWindow || null)
-              }
           />
         )}
       </motion.div>
@@ -585,11 +535,6 @@ function HtmlPreview({
                         sandbox={sandboxAttribute}
                         onClick={(e) => e.stopPropagation()}
                         onMouseDown={(e) => e.stopPropagation()}
-                        onLoad={() =>
-                          sendAuthPayload(
-                            fullscreenIframeRef.current?.contentWindow || null
-                          )
-                        }
                         style={{
                           display: "block",
                           margin: 0,
@@ -765,16 +710,6 @@ function HtmlPreview({
                           />
                         </button>
                         <button
-                          onClick={handleSaveAsApplet}
-                          className="flex items-center justify-center size-8 hover:bg-white/10 rounded-full group"
-                          aria-label={t("common.htmlPreview.saveApplet")}
-                        >
-                          <DownloadSimple
-                            size={20}
-                            className="text-white/70 group-hover:text-white"
-                          />
-                        </button>
-                        <button
                           onClick={handleSaveToDisk}
                           className="flex items-center justify-center size-8 hover:bg-white/10 rounded-full group"
                           aria-label={t("common.htmlPreview.downloadHtml")}
@@ -825,15 +760,6 @@ function HtmlPreview({
         </AnimatePresence>,
         document.body
       )}
-      <InputDialog
-        isOpen={isSaveAppletDialogOpen}
-        onOpenChange={setIsSaveAppletDialogOpen}
-        onSubmit={handleSaveAppletSubmit}
-        title={t("common.htmlPreview.saveApplet")}
-        description={t("common.htmlPreview.saveAppletDescription")}
-        value={appletFileName}
-        onChange={setAppletFileName}
-      />
     </>
   );
 }

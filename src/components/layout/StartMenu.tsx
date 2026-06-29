@@ -223,12 +223,8 @@ export function StartMenu({ apps }: StartMenuProps) {
                   style={{ borderColor: "#9e9e9e" }}
                 />
 
-                {/* Apps — filter out admin-only apps */}
+                {/* Apps */}
                 {apps.reduce<ReactElement[]>((acc, app) => {
-                  if (app.id === "admin") {
-                    return acc;
-                  }
-
                   acc.push(
                     <DropdownMenuItem
                       key={app.id}

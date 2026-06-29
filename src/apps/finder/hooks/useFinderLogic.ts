@@ -18,7 +18,6 @@ import { MenuItem } from "@/components/ui/right-click-menu";
 import { usePointerLongPress } from "@/hooks/usePointerLongPress";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { toast } from "sonner";
-import { importAppletFile } from "@/utils/appletImportExport";
 import { useTranslatedHelpItems } from "@/hooks/useTranslatedHelpItems";
 import { getTranslatedFolderNameFromName } from "@/utils/i18n";
 import {
@@ -33,8 +32,6 @@ import {
   emitFileSaved,
   emitFileUpdated,
 } from "@/utils/appEventBus";
-import { useAirDropStore } from "@/stores/useAirDropStore";
-import { useChatsStore } from "@/stores/useChatsStore";
 
 type FinderUndoAction =
   | { type: "moveToTrash"; fileName: string; originalPath: string }
@@ -46,7 +43,6 @@ const SIDEBAR_HIDDEN_FOLDERS = new Set(["/Trash", "/Sites"]);
 // natural order, appended after these.
 const SIDEBAR_FOLDER_ORDER = [
   "/Applications",
-  "/Applets",
   "/Documents",
   "/Images",
   "/Music",
@@ -111,7 +107,7 @@ const getFileType = (
     case "mov":
       return t("apps.finder.fileTypes.quicktimeMovie");
     case "html":
-      return t("apps.finder.fileTypes.htmlApplet");
+      return t("apps.finder.fileTypes.document");
     case "epub":
       return t("apps.finder.fileTypes.book");
     default:
@@ -638,84 +634,6 @@ export function useFinderLogic({
     const file = e.target.files?.[0];
     if (file) {
       const fileExtension = file.name.toLowerCase();
-      const isAppletFile =
-        fileExtension.endsWith(".app") || fileExtension.endsWith(".gz");
-      const isAppletsDir = currentPath === "/Applets";
-
-      // .app and .gz files always go to /Applets, regardless of current directory
-      if (isAppletFile) {
-        try {
-          // Use shared import function
-          const importedData = await importAppletFile(file);
-
-          const filePath = `/Applets/${importedData.name}`;
-
-          await saveFile({
-            name: importedData.name,
-            path: filePath,
-            content: importedData.content,
-            type: "html",
-            icon: importedData.icon,
-            shareId: importedData.shareId,
-            createdBy: importedData.createdBy,
-          });
-
-          // Update additional metadata if present
-          if (
-            importedData.windowWidth ||
-            importedData.windowHeight ||
-            importedData.createdAt ||
-            importedData.modifiedAt
-          ) {
-            updateItemMetadata(filePath, {
-              ...(importedData.windowWidth !== undefined && {
-                windowWidth: importedData.windowWidth,
-              }),
-              ...(importedData.windowHeight !== undefined && {
-                windowHeight: importedData.windowHeight,
-              }),
-              ...(importedData.createdAt !== undefined && {
-                createdAt: importedData.createdAt,
-              }),
-              ...(importedData.modifiedAt !== undefined && {
-                modifiedAt: importedData.modifiedAt,
-              }),
-            });
-          }
-
-          // Notify file was added
-          emitFileSaved({
-            name: importedData.name,
-            path: filePath,
-            content: importedData.content,
-            icon: importedData.icon,
-          });
-
-          toast.success(t("apps.finder.messages.appletImported"), {
-            description: t("apps.finder.messages.appletImportedDesc", {
-              name: importedData.name,
-              iconText: importedData.icon
-                ? t("apps.finder.messages.appletImportedIconText", {
-                    icon: importedData.icon,
-                  })
-                : "",
-            }),
-          });
-
-          // Navigate to /Applets if not already there
-          if (!isAppletsDir) {
-            navigateToPath("/Applets");
-          }
-        } catch (error) {
-          console.error("Import failed:", error);
-          toast.error(t("apps.finder.messages.importFailed"), {
-            description: t("apps.finder.messages.importFailedAppletDesc"),
-          });
-        } finally {
-          e.target.value = "";
-        }
-        return;
-      }
 
       // EPUB books: store the binary as a Blob in /Books
       const isBooksDir = currentPath === "/Books";
@@ -756,102 +674,30 @@ export function useFinderLogic({
         return;
       }
 
-      // Check if we're in Applets directory for HTML files
-      if (isAppletsDir) {
-        // In Applets: accept .html and .htm files
-        if (!fileExtension.endsWith(".html") && !fileExtension.endsWith(".htm")) {
-          toast.error(t("apps.finder.messages.invalidFileType"), {
-            description: t("apps.finder.messages.invalidFileTypeDesc"),
-          });
-          e.target.value = "";
-          return;
-        }
-      } else {
-        // In other directories: accept text and markdown files
-        if (!file.type.startsWith("text/") && !file.name.endsWith(".md")) {
-          e.target.value = "";
-          return;
-        }
+      // Accept text and markdown files
+      if (!file.type.startsWith("text/") && !file.name.endsWith(".md")) {
+        e.target.value = "";
+        return;
       }
 
       try {
-        // Handle applet HTML files (when in /Applets directory)
-        if (isAppletsDir) {
-          // Use shared import function
-          const importedData = await importAppletFile(file);
+        // Handle regular text files
+        const text = await file.text();
+        const fileName = file.name;
+        const basePath = currentPath === "/" ? "" : currentPath;
+        const filePath = `${basePath}/${fileName}`;
 
-          const filePath = `/Applets/${importedData.name}`;
+        await saveFile({
+          name: fileName,
+          path: filePath,
+          content: text,
+        });
 
-          await saveFile({
-            name: importedData.name,
-            path: filePath,
-            content: importedData.content,
-            type: "html",
-            icon: importedData.icon,
-            shareId: importedData.shareId,
-            createdBy: importedData.createdBy,
-          });
-
-          // Update additional metadata if present
-          if (
-            importedData.windowWidth ||
-            importedData.windowHeight ||
-            importedData.createdAt ||
-            importedData.modifiedAt
-          ) {
-            updateItemMetadata(filePath, {
-              ...(importedData.windowWidth !== undefined && {
-                windowWidth: importedData.windowWidth,
-              }),
-              ...(importedData.windowHeight !== undefined && {
-                windowHeight: importedData.windowHeight,
-              }),
-              ...(importedData.createdAt !== undefined && {
-                createdAt: importedData.createdAt,
-              }),
-              ...(importedData.modifiedAt !== undefined && {
-                modifiedAt: importedData.modifiedAt,
-              }),
-            });
-          }
-
-          // Notify file was added
-          emitFileSaved({
-            name: importedData.name,
-            path: filePath,
-            content: importedData.content,
-            icon: importedData.icon,
-          });
-
-          toast.success(t("apps.finder.messages.appletImported"), {
-            description: t("apps.finder.messages.appletImportedDesc", {
-              name: importedData.name,
-              iconText: importedData.icon
-                ? t("apps.finder.messages.appletImportedIconText", {
-                    icon: importedData.icon,
-                  })
-                : "",
-            }),
-          });
-        } else {
-          // Handle regular text files
-          const text = await file.text();
-          const fileName = file.name;
-          const basePath = currentPath === "/" ? "" : currentPath;
-          const filePath = `${basePath}/${fileName}`;
-
-          await saveFile({
-            name: fileName,
-            path: filePath,
-            content: text,
-          });
-
-          // Notify file was added
-          emitFileUpdated({
-            name: fileName,
-            path: filePath,
-          });
-        }
+        // Notify file was added
+        emitFileUpdated({
+          name: fileName,
+          path: filePath,
+        });
 
         // Clear the input
         e.target.value = "";
@@ -1066,9 +912,6 @@ export function useFinderLogic({
     e.stopPropagation();
     setContextMenuPos({ x: e.clientX, y: e.clientY });
     setContextMenuFile(file);
-    if (canShareViaAirDrop(file)) {
-      void fetchNearbyUsers();
-    }
     if (!selectedFiles.includes(file.path)) {
       handleFileSelect(file);
     }
@@ -1154,7 +997,7 @@ export function useFinderLogic({
     const desktopItems = getItemsInPath("/Desktop");
     let aliasExists = false;
 
-    // Determine if this is an app or a file/applet
+    // Determine if this is an app or a file
     if (file.path.startsWith("/Applications/") && file.appId) {
       // Check if alias already exists for this app
       const existingShortcut = desktopItems.find(
@@ -1190,7 +1033,7 @@ export function useFinderLogic({
       );
 
       if (!aliasExists) {
-        // It's a file or applet
+        // It's a file
         createAlias(file.path, file.name, "file");
       }
     }
@@ -1247,77 +1090,6 @@ export function useFinderLogic({
     return false;
   };
 
-  // AirDrop state
-  const [isAirDropView, setIsAirDropView] = useState(false);
-  const isAuthenticated = useChatsStore((s) => s.isAuthenticated);
-  const chatUsername = useChatsStore((s) => s.username);
-  const nearbyUsers = useAirDropStore((s) => s.nearbyUsers);
-  const isDiscovering = useAirDropStore((s) => s.isDiscovering);
-  const fetchNearbyUsers = useAirDropStore((s) => s.fetchNearbyUsers);
-  const sendFileToUser = useAirDropStore((s) => s.sendFile);
-
-  const navigateToAirDrop = useCallback(() => {
-    setIsAirDropView(true);
-  }, []);
-
-  const navigateAwayFromAirDrop = useCallback(() => {
-    setIsAirDropView(false);
-  }, []);
-
-  const canShareViaAirDrop = (file: FileItem): boolean => {
-    if (file.isDirectory) return false;
-    if (file.path.startsWith("/Applications")) return false;
-    if (!isAuthenticated || !chatUsername) return false;
-    return true;
-  };
-
-  const handleShareViaAirDrop = useCallback(() => {
-    navigateToAirDrop();
-  }, [navigateToAirDrop]);
-
-  const availableAirDropUsers = useMemo(() => {
-    if (!chatUsername) {
-      return nearbyUsers;
-    }
-
-    return [chatUsername, ...nearbyUsers.filter((user) => user !== chatUsername)];
-  }, [nearbyUsers, chatUsername]);
-
-  const getAirDropMenuItems = (file: FileItem): MenuItem[] => {
-    const recipientItems: MenuItem[] =
-      availableAirDropUsers.length > 0
-        ? availableAirDropUsers.map((recipient) => ({
-            type: "item" as const,
-            label: `@${recipient}`,
-            onSelect: () =>
-              void handleAirDropSendFile(
-                recipient,
-                file.name,
-                file.path,
-                getFileType(file, t)
-              ),
-          }))
-        : [
-            {
-              type: "item",
-              label: isDiscovering
-                ? t("apps.finder.contextMenu.searchingForAirDropUsers")
-                : t("apps.finder.contextMenu.noAirDropUsersAvailable"),
-              disabled: true,
-            },
-          ];
-
-    return [
-      ...recipientItems,
-      { type: "separator" },
-      {
-        type: "item",
-        label: t("apps.finder.contextMenu.openAirDrop"),
-        onSelect: handleShareViaAirDrop,
-      },
-    ];
-  };
-
   const fileMenuItems = (file: FileItem): MenuItem[] => {
     const isTrashedItem = currentPath === "/Trash" || file.status === "trashed";
 
@@ -1326,13 +1098,6 @@ export function useFinderLogic({
         type: "item",
         label: t("apps.finder.contextMenu.open"),
         onSelect: () => handleFileOpen(file),
-      },
-      { type: "separator" },
-      {
-        type: "submenu",
-        label: t("apps.finder.contextMenu.shareViaAirDrop"),
-        items: getAirDropMenuItems(file),
-        disabled: !canShareViaAirDrop(file),
       },
       { type: "separator" },
       {
@@ -1383,56 +1148,6 @@ export function useFinderLogic({
 
   const [showSidebar, setShowSidebar] = useState(() => window.innerWidth >= 500);
 
-  const handleAirDropSendFile = useCallback(
-    async (
-      recipient: string,
-      fileName: string,
-      filePath: string,
-      fileType: string
-    ) => {
-      const fileMetadata = getFileItem(filePath);
-      if (!fileMetadata) {
-        toast.error(t("apps.finder.airdrop.fileNotFound"));
-        return;
-      }
-
-      let content: string = "";
-      if (fileMetadata.uuid) {
-        const storeName = filePath.startsWith("/Documents")
-          ? STORES.DOCUMENTS
-          : filePath.startsWith("/Images")
-            ? STORES.IMAGES
-            : filePath.startsWith("/Applets")
-              ? STORES.APPLETS
-              : null;
-        if (storeName) {
-          const doc = await dbOperations.get<DocumentContent>(
-            storeName,
-            fileMetadata.uuid
-          );
-          if (doc?.content) {
-            if (typeof doc.content === "string") {
-              content = doc.content;
-            } else if (doc.content instanceof Blob) {
-              const buf = await doc.content.arrayBuffer();
-              content = btoa(
-                String.fromCharCode(...new Uint8Array(buf))
-              );
-            }
-          }
-        }
-      }
-
-      if (!content) {
-        toast.error(t("apps.finder.airdrop.noContent"));
-        return;
-      }
-
-      await sendFileToUser(recipient, fileName, content, fileType);
-    },
-    [getFileItem, sendFileToUser, t]
-  );
-
   const sidebarItems = useMemo(() => {
     const visibleRootFolders = rootFolders.filter(
       (f) => !SIDEBAR_HIDDEN_FOLDERS.has(f.path)
@@ -1452,33 +1167,21 @@ export function useFinderLogic({
         path: f.path,
         icon: f.icon,
         divider: false,
-        isAirDrop: false,
       }));
     return [
-      { name: t("apps.finder.window.macintoshHd"), path: "/", icon: "/icons/default/disk.png", divider: false, isAirDrop: false },
-      {
-        name: t("apps.finder.airdrop.title"),
-        path: "__airdrop__",
-        icon: "/icons/default/airdrop.png",
-        divider: true,
-        isAirDrop: true,
-      },
+      { name: t("apps.finder.window.macintoshHd"), path: "/", icon: "/icons/default/disk.png", divider: false },
       ...places,
     ];
   }, [rootFolders, t]);
 
   const activeSidebarPath = useMemo(() => {
-    if (isAirDropView) return "__airdrop__";
     if (currentPath === "/") return "/";
     const firstSegment = currentPath.split("/").filter(Boolean)[0];
     return "/" + firstSegment;
-  }, [currentPath, isAirDropView]);
+  }, [currentPath]);
 
   // Computed window title
   const windowTitle = useMemo(() => {
-    if (isAirDropView) {
-      return t("apps.finder.airdrop.title");
-    }
     if (currentPath === "/") {
       return t("apps.finder.window.macintoshHd");
     }
@@ -1498,7 +1201,7 @@ export function useFinderLogic({
         t("apps.finder.window.finder")
       );
     }
-  }, [currentPath, isAirDropView, t]);
+  }, [currentPath, t]);
 
   // Drag handlers
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -1714,12 +1417,6 @@ export function useFinderLogic({
     // Helper functions
     getFileType: (file: FileItem) => getFileType(file, t),
     getDisplayPath,
-
-    // AirDrop
-    isAirDropView,
-    navigateToAirDrop,
-    navigateAwayFromAirDrop,
-    handleAirDropSendFile,
 
     // Props passed through
     isWindowOpen,

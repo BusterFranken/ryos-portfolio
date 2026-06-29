@@ -9,9 +9,7 @@ import {
 import { getAudioContext, resumeAudioContext } from "@/lib/audioContext";
 import { useAudioSettingsStore } from "@/stores/useAudioSettingsStore";
 import { useIpodStore } from "@/stores/useIpodStore";
-import { useKaraokeStore } from "@/stores/useKaraokeStore";
 import { checkOfflineAndShowError } from "@/utils/offline";
-import { abortableFetch } from "@/utils/abortableFetch";
 
 /**
  * Hook that turns short text chunks into speech and queues them in the same
@@ -87,10 +85,9 @@ export function useTtsQueue(endpoint: string = "/api/speech") {
 
   const duckingTokenRef = useRef<TtsDuckingToken | null>(null);
 
-  // Subscribe to iPod/Karaoke playing state so ducking reacts when playback starts/stops
+  // Subscribe to iPod playing state so ducking reacts when playback starts/stops
   const ipodIsPlaying = useIpodStore((s) => s.isPlaying);
-  const karaokeIsPlaying = useKaraokeStore((s) => s.isPlaying);
-  const musicIsPlaying = ipodIsPlaying || karaokeIsPlaying;
+  const musicIsPlaying = ipodIsPlaying;
 
   // Detect iOS (Safari) environment where programmatic volume control is restricted
   const isIOS =
@@ -138,62 +135,10 @@ export function useTtsQueue(endpoint: string = "/api/speech") {
       activeRequestsCountRef.current++;
 
       const executeRequest = async () => {
-        const controller = new AbortController();
-        controllersRef.current.add(controller);
+        // STATIC BUILD: the `/api/speech` TTS backend was removed. Resolve with
+        // no audio so each queued `speak()` still fires its `onEnd` callback and
+        // the scheduling chain drains normally. No request is fired.
         try {
-          // Prepare request body with TTS settings
-          const requestBody: {
-            text: string;
-            model?: "openai" | "elevenlabs" | null;
-            voice?: string | null;
-            voice_id?: string | null;
-            speed?: number;
-            voice_settings?: {
-              stability?: number;
-              similarity_boost?: number;
-              use_speaker_boost?: boolean;
-              speed?: number;
-            };
-          } = {
-            text: request.text,
-            model: ttsModelRef.current, // Send null if null, let server decide
-          };
-
-          // Add model-specific settings
-          if (ttsModelRef.current === "elevenlabs") {
-            requestBody.voice_id = ttsVoiceRef.current; // Send null if null
-          } else if (ttsModelRef.current === "openai") {
-            // OpenAI settings
-            requestBody.voice = ttsVoiceRef.current; // Send null if null
-          }
-          // If ttsModel is null, don't add voice settings - let server decide
-
-          const headers: Record<string, string> = {
-            "Content-Type": "application/json",
-          };
-
-          const res = await abortableFetch(endpoint, {
-            method: "POST",
-            headers,
-            body: JSON.stringify(requestBody),
-            signal: controller.signal,
-            timeout: 30000,
-            throwOnHttpError: false,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          });
-          controllersRef.current.delete(controller);
-          if (!res.ok) {
-            console.error("TTS request failed", await res.text());
-            request.resolve(null);
-            return;
-          }
-          const result = await res.arrayBuffer();
-          request.resolve(result);
-        } catch (err) {
-          controllersRef.current.delete(controller);
-          if ((err as DOMException)?.name !== "AbortError") {
-            console.error("TTS fetch error", err);
-          }
           request.resolve(null);
         } finally {
           activeRequestsCountRef.current--;

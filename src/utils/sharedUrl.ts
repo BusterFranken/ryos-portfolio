@@ -1,6 +1,3 @@
-import { getApiUrl } from "./platform";
-import { abortableFetch } from "./abortableFetch";
-
 interface SongShareTrack {
   id: string;
   url?: string;
@@ -13,31 +10,16 @@ interface SongShareTrack {
 }
 
 /**
- * Decodes a shared URL code from the /share/{code} path
+ * Decodes a shared URL code from the /share/{code} path.
+ *
+ * STATIC BUILD: the `/api/share-link` backend (short-code storage) was removed,
+ * so codes can no longer be resolved. Returns `null` (callers already treat
+ * `null` as "no shared URL"). Signature is preserved so consumers compile.
  */
-export async function decodeSharedUrl(code: string): Promise<{ url: string; year: string } | null> {
-  try {
-    const response = await abortableFetch(
-      getApiUrl(`/api/share-link?action=decode&code=${encodeURIComponent(code)}`),
-      {
-        method: "GET",
-        timeout: 15000,
-        throwOnHttpError: false,
-        retry: { maxAttempts: 1, initialDelayMs: 250 },
-      }
-    );
-    
-    if (!response.ok) {
-      console.error('Failed to decode shared URL:', await response.text());
-      return null;
-    }
-    
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error decoding shared URL:', error);
-    return null;
-  }
+export async function decodeSharedUrl(
+  _code: string
+): Promise<{ url: string; year: string } | null> {
+  return null;
 }
 
 /**
@@ -52,19 +34,6 @@ export function generateAppShareUrl(appId: string): string {
     return ''; // Or throw an error, depending on desired behavior
   }
   return `${window.location.origin}/${appId}`;
-}
-
-/**
- * Generates a shareable URL for an applet using its share ID.
- * @param id The share ID of the applet.
- * @returns The full shareable URL (e.g., 'https://hostname.com/applet-viewer/{id}').
- */
-export function generateAppletShareUrl(id: string): string {
-  if (typeof window === 'undefined') {
-    console.warn('Cannot generate applet share URL: window object is not available.');
-    return '';
-  }
-  return `${window.location.origin}/applet-viewer/${id}`;
 }
 
 function normalizeAppleMusicStorefront(

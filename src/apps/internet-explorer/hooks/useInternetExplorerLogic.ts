@@ -4,7 +4,6 @@ import React, {
   useReducer,
   useState,
   useCallback,
-  useMemo,
   CSSProperties,
   ReactNode,
 } from "react";
@@ -12,9 +11,7 @@ import { InternetExplorerInitialData } from "../../base/types";
 import {
   useInternetExplorerStore,
   DEFAULT_FAVORITES,
-  ErrorResponse,
   Favorite,
-  isDirectPassthrough,
 } from "@/stores/useInternetExplorerStore";
 import { useAiGeneration } from "./useAiGeneration";
 import { useTerminalSounds } from "@/hooks/useTerminalSounds";
@@ -30,7 +27,6 @@ import { toast } from "sonner";
 import { useTranslatedHelpItems } from "@/hooks/useTranslatedHelpItems";
 import { useAppHelpAboutDialogs } from "@/hooks/useAppHelpAboutDialogs";
 import { useInternetExplorerStoreShallow } from "@/stores/useInternetExplorerStore";
-import { abortableFetch } from "@/utils/abortableFetch";
 import { onAppUpdate } from "@/utils/appEventBus";
 import { decodeHtmlEntities } from "@/utils/decodeHtmlEntities";
 import {
@@ -48,11 +44,6 @@ import {
   urlBarUiReducer,
   urlBarUiInitialState,
 } from "../utils/urlBarUiReducer";
-
-// Debug helper to identify direct passthrough URLs
-const logDirectPassthrough = (url: string) => {
-  console.log(`[IE] Direct passthrough mode for: ${url}`);
-};
 
 interface UseInternetExplorerLogicProps {
   isWindowOpen: boolean;
@@ -103,9 +94,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen,
     language,
     location,
-    isTimeMachineViewOpen,
-    cachedYears,
-    isFetchingCachedYears,
 
     setUrl,
     setYear,
@@ -124,14 +112,11 @@ export function useInternetExplorerLogic({
     setClearFavoritesDialogOpen,
     setClearHistoryDialogOpen,
     handleNavigationError,
-    setPrefetchedTitle,
     clearErrorDetails,
     setResetFavoritesDialogOpen,
     setFutureSettingsDialogOpen,
     setLanguage,
     setLocation,
-    setTimeMachineViewOpen,
-    fetchCachedYears,
   } = useInternetExplorerStoreShallow((state) => ({
     url: state.url,
     year: state.year,
@@ -155,9 +140,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen: state.isFutureSettingsDialogOpen,
     language: state.language,
     location: state.location,
-    isTimeMachineViewOpen: state.isTimeMachineViewOpen,
-    cachedYears: state.cachedYears,
-    isFetchingCachedYears: state.isFetchingCachedYears,
 
     setUrl: state.setUrl,
     setYear: state.setYear,
@@ -176,14 +158,11 @@ export function useInternetExplorerLogic({
     setClearFavoritesDialogOpen: state.setClearFavoritesDialogOpen,
     setClearHistoryDialogOpen: state.setClearHistoryDialogOpen,
     handleNavigationError: state.handleNavigationError,
-    setPrefetchedTitle: state.setPrefetchedTitle,
     clearErrorDetails: state.clearErrorDetails,
     setResetFavoritesDialogOpen: state.setResetFavoritesDialogOpen,
     setFutureSettingsDialogOpen: state.setFutureSettingsDialogOpen,
     setLanguage: state.setLanguage,
     setLocation: state.setLocation,
-    setTimeMachineViewOpen: state.setTimeMachineViewOpen,
-    fetchCachedYears: state.fetchCachedYears,
   }));
 
   const { t } = useTranslation();
@@ -353,7 +332,6 @@ export function useInternetExplorerLogic({
   const favoritesContainerRef = useRef<HTMLDivElement>(null);
 
   const {
-    generateFuturisticWebsite,
     aiGeneratedHtml: generatedHtml,
     isAiLoading,
     isFetchingWebsiteContent,
@@ -462,13 +440,10 @@ export function useInternetExplorerLogic({
           finalUrl.startsWith("http") || finalUrl.startsWith("/")
             ? finalUrl
             : `https://${finalUrl}`;
-        const effectiveUrl = urlToParse.startsWith("/api/iframe-check")
-          ? url
-          : urlToParse;
         const hostname = new URL(
-          effectiveUrl.startsWith("http")
-            ? effectiveUrl
-            : `https://${effectiveUrl}`
+          urlToParse.startsWith("http")
+            ? urlToParse
+            : `https://${urlToParse}`
         ).hostname;
         newTitle = formatTitle(hostname);
       } catch {
@@ -489,24 +464,6 @@ export function useInternetExplorerLogic({
     setDisplayTitle(newTitle);
   }, [status, currentPageTitle, finalUrl, url, year, t, getLoadingTitle]);
 
-  const getWaybackUrl = useCallback(async (targetUrl: string, year: string) => {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const formattedUrl = targetUrl.startsWith("http")
-      ? targetUrl
-      : `https://${targetUrl}`;
-    console.log(
-      `[IE] Using Wayback Machine URL for ${formattedUrl} in ${year}`
-    );
-    const themeParam =
-      typeof currentTheme === "string"
-        ? `&theme=${encodeURIComponent(currentTheme)}`
-        : "";
-    return `/api/iframe-check?url=${encodeURIComponent(
-      formattedUrl
-    )}&year=${year}&month=${month}${themeParam}`;
-  }, [currentTheme]);
-
   // Ref to keep the most recent navigation token in sync without waiting for a render
   const navTokenRef = useRef<number>(0);
 
@@ -515,72 +472,6 @@ export function useInternetExplorerLogic({
       iframeRef.current &&
       iframeRef.current.dataset.navToken === navTokenRef.current.toString()
     ) {
-      const iframeSrc = iframeRef.current.src;
-      if (
-        iframeSrc.includes("/api/iframe-check") &&
-        iframeRef.current.contentDocument
-      ) {
-        try {
-          const textContent =
-            iframeRef.current.contentDocument.body?.textContent?.trim();
-          if (textContent) {
-            // Only try to parse as JSON if it looks like JSON (starts with { or [)
-            const looksLikeJson =
-              textContent.startsWith("{") || textContent.startsWith("[");
-            if (looksLikeJson) {
-              try {
-                const potentialErrorData = JSON.parse(
-                  textContent
-                ) as ErrorResponse;
-                if (
-                  potentialErrorData &&
-                  potentialErrorData.error === true &&
-                  potentialErrorData.type
-                ) {
-                  console.log(
-                    "[IE] Detected JSON error response in iframe body:",
-                    potentialErrorData
-                  );
-                  track(IE_ANALYTICS.NAVIGATION_ERROR, {
-                    ...normalizeUrlForAnalytics(iframeSrc),
-                    type: potentialErrorData.type,
-                    status: potentialErrorData.status || 500,
-                  });
-                  handleNavigationError(potentialErrorData, url);
-                  return;
-                }
-              } catch {
-                // Silently ignore - content looked like JSON but wasn't valid JSON
-                // This is expected for regular HTML pages
-              }
-            }
-          }
-
-          const contentType = iframeRef.current.contentDocument.contentType;
-          if (contentType === "application/json") {
-            const text = iframeRef.current.contentDocument.body.textContent;
-            if (text) {
-              const errorData = JSON.parse(text) as ErrorResponse;
-              if (errorData.error) {
-                console.log(
-                  "[IE] Detected error response (via content-type check):",
-                  errorData
-                );
-                track(IE_ANALYTICS.NAVIGATION_ERROR, {
-                  ...normalizeUrlForAnalytics(iframeSrc),
-                  type: errorData.type,
-                  status: errorData.status || 500,
-                });
-                handleNavigationError(errorData, url);
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          console.warn("[IE] Error processing iframe content:", error);
-        }
-      }
-
       clearErrorDetails();
 
       setTimeout(() => {
@@ -608,19 +499,6 @@ export function useInternetExplorerLogic({
               "[IE] Failed to read iframe document title directly:",
               error
             );
-          }
-
-          if (!loadedTitle && finalUrl?.startsWith("/api/iframe-check")) {
-            try {
-              const metaTitle = iframeRef.current?.contentDocument
-                ?.querySelector('meta[name="page-title"]')
-                ?.getAttribute("content");
-              if (metaTitle) {
-                loadedTitle = decodeURIComponent(metaTitle);
-              }
-            } catch (error) {
-              console.warn("[IE] Failed to read page-title meta tag:", error);
-            }
           }
 
           const favicon = `https://www.google.com/s2/favicons?domain=${
@@ -701,9 +579,12 @@ export function useInternetExplorerLogic({
   const handleNavigate = useCallback(
     async (
       targetUrlParam: string = localUrl || url,
-      targetYearParam: string = year,
-      forceRegenerate = false,
-      currentHtmlContent: string | null = null
+      // Time-travel was removed in the static portfolio build. The year / mode
+      // / HTML params are accepted for call-site compatibility but ignored:
+      // every navigation now loads the real URL directly in the iframe.
+      _targetYearParam: string = year,
+      _forceRegenerate = false,
+      _currentHtmlContent: string | null = null
     ) => {
       // Check if offline and show error
       if (
@@ -722,19 +603,10 @@ export function useInternetExplorerLogic({
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      if (isAiLoading) {
-        stopGeneration();
-      }
       if (iframeRef.current && status === "loading") {
         iframeRef.current.src = "about:blank";
       }
 
-      const newMode =
-        targetYearParam === "current"
-          ? "now"
-          : parseInt(targetYearParam) > new Date().getFullYear()
-          ? "future"
-          : "past";
       const newToken = Date.now();
 
       // --- Trim the URL from input before navigating ---
@@ -752,231 +624,30 @@ export function useInternetExplorerLogic({
 
       track(IE_ANALYTICS.NAVIGATION_START, {
         ...normalizeUrlForAnalytics(urlToNavigate),
-        year: targetYearParam,
-        mode: newMode,
+        year: "current",
+        mode: "now",
       });
 
-      navigateStart(urlToNavigate, targetYearParam, newMode, newToken);
+      navigateStart(urlToNavigate, "current", "now", newToken);
 
       const normalizedTargetUrl = urlToNavigate.startsWith("http")
         ? urlToNavigate
         : `https://${urlToNavigate}`;
 
-      try {
-        if (
-          newMode === "future" ||
-          (newMode === "past" && parseInt(targetYearParam) <= 1995)
-        ) {
-          // Local caching removed to save localStorage space
+      // Load the real URL straight into the iframe. Append a cache-busting
+      // query param when re-navigating to the same finalUrl so it reloads.
+      let urlToLoad = normalizedTargetUrl;
+      if (urlToLoad === finalUrl) {
+        urlToLoad = `${urlToLoad}${
+          urlToLoad.includes("?") ? "&" : "?"
+        }_t=${Date.now()}`;
+      }
 
-          let remoteCacheHit = false;
-          if (!forceRegenerate) {
-            try {
-              console.log(
-                `[IE] Checking REMOTE cache for ${normalizedTargetUrl} in ${targetYearParam}...`
-              );
-              const res = await abortableFetch(
-                `/api/iframe-check?mode=ai&url=${encodeURIComponent(
-                  normalizedTargetUrl
-                )}&year=${targetYearParam}`,
-                {
-                  signal: abortController.signal,
-                  timeout: 15000,
-                  throwOnHttpError: false,
-                  retry: { maxAttempts: 1, initialDelayMs: 250 },
-                }
-              );
-              if (abortController.signal.aborted) return;
-              console.log(
-                `[IE] Remote cache response status: ${res.status}, ok: ${
-                  res.ok
-                }, content-type: ${res.headers.get("content-type")}`
-              );
+      setFinalUrl(urlToLoad);
 
-              if (
-                res.ok &&
-                (res.headers.get("content-type") || "").includes("text/html")
-              ) {
-                remoteCacheHit = true;
-                const html = await res.text();
-                console.log(
-                  `[IE] REMOTE cache HIT. Processing content (length: ${html.length})`
-                );
-                const titleMatch = html.match(/^<!--\s*TITLE:\s*(.*?)\s*-->/);
-                const parsedTitle = titleMatch ? titleMatch[1].trim() : null;
-                const cleanHtml = html.replace(
-                  /^<!--\s*TITLE:.*?-->\s*\n?/,
-                  ""
-                );
-
-                // Local caching removed to save localStorage space
-                // Refresh cached years to update the count
-                fetchCachedYears(normalizedTargetUrl);
-
-                const favicon = `https://www.google.com/s2/favicons?domain=${
-                  new URL(normalizedTargetUrl).hostname
-                }&sz=32`;
-                loadSuccess({
-                  aiGeneratedHtml: cleanHtml,
-                  title: parsedTitle || normalizedTargetUrl,
-                  targetUrl: normalizedTargetUrl,
-                  targetYear: targetYearParam,
-                  favicon,
-                  addToHistory: true,
-                });
-                console.log("[IE] Returning early after remote cache hit.");
-                return;
-              } else {
-                console.log(`[IE] REMOTE cache MISS or invalid response.`);
-              }
-            } catch (e) {
-              if (e instanceof Error && e.name === "AbortError") return;
-              console.warn("[IE] AI remote cache fetch failed", e);
-            }
-          }
-
-          if (remoteCacheHit) {
-            console.error(
-              "[IE] Logic error: Should have returned on remote cache hit, but didn't!"
-            );
-            return;
-          }
-
-          console.log(
-            `[IE] No cache hit (Remote: ${remoteCacheHit}, Force: ${forceRegenerate}). Proceeding to generate...`
-          );
-          if (playElevatorMusic && terminalSoundsEnabled) {
-            playElevatorMusic(newMode);
-          }
-
-          try {
-            await generateFuturisticWebsite(
-              normalizedTargetUrl,
-              targetYearParam,
-              abortController.signal,
-              null,
-              currentHtmlContent
-            );
-            if (abortController.signal.aborted) return;
-          } catch (error) {
-            if (abortController.signal.aborted) return;
-            console.error("[IE] AI generation error:", error);
-            handleNavigationError(
-              {
-                error: true,
-                type: "ai_generation_error",
-                message:
-                  "Failed to generate futuristic website. AI model may not be selected.",
-                details: error instanceof Error ? error.message : String(error),
-              },
-              normalizedTargetUrl
-            );
-            return;
-          }
-        } else {
-          let urlToLoad = normalizedTargetUrl;
-
-          if (newMode === "past") {
-            try {
-              const waybackUrl = await getWaybackUrl(
-                normalizedTargetUrl,
-                targetYearParam
-              );
-              if (abortController.signal.aborted) return;
-              if (waybackUrl) {
-                urlToLoad = waybackUrl;
-              } else {
-                await generateFuturisticWebsite(
-                  normalizedTargetUrl,
-                  targetYearParam,
-                  abortController.signal,
-                  null,
-                  currentHtmlContent
-                );
-                if (abortController.signal.aborted) return;
-                return;
-              }
-            } catch (waybackError) {
-              if (abortController.signal.aborted) return;
-              console.warn(
-                `[IE] Wayback Machine error for ${normalizedTargetUrl}:`,
-                waybackError
-              );
-              await generateFuturisticWebsite(
-                normalizedTargetUrl,
-                targetYearParam,
-                abortController.signal,
-                null,
-                currentHtmlContent
-              );
-              if (abortController.signal.aborted) return;
-              return;
-            }
-          } else if (newMode === "now") {
-            // Check if domain should bypass proxy
-            const isDirectBypass = isDirectPassthrough(normalizedTargetUrl);
-
-            if (isDirectBypass) {
-              logDirectPassthrough(normalizedTargetUrl);
-              urlToLoad = normalizedTargetUrl;
-            } else {
-              // Proxy current year sites through iframe-check
-              urlToLoad = `/api/iframe-check?url=${encodeURIComponent(
-                normalizedTargetUrl
-              )}&theme=${encodeURIComponent(currentTheme)}`;
-            }
-
-            try {
-              const checkRes = await abortableFetch(
-                `/api/iframe-check?mode=check&url=${encodeURIComponent(
-                  normalizedTargetUrl
-                )}&theme=${encodeURIComponent(currentTheme)}`,
-                {
-                  signal: abortController.signal,
-                  timeout: 15000,
-                  retry: { maxAttempts: 1, initialDelayMs: 250 },
-                }
-              );
-              if (abortController.signal.aborted) return;
-
-              const checkData = await checkRes.json();
-              if (checkData.title) {
-                setPrefetchedTitle(checkData.title);
-              }
-            } catch (error) {
-              if (error instanceof Error && error.name === "AbortError") return;
-              console.warn(`[IE] iframe-check fetch failed:`, error);
-            }
-          }
-
-          if (urlToLoad === finalUrl) {
-            urlToLoad = `${urlToLoad}${
-              urlToLoad.includes("?") ? "&" : "?"
-            }_t=${Date.now()}`;
-          }
-
-          setFinalUrl(urlToLoad);
-
-          if (iframeRef.current) {
-            iframeRef.current.dataset.navToken = newToken.toString();
-            iframeRef.current.src = urlToLoad;
-          }
-        }
-      } catch (error) {
-        if (!abortController.signal.aborted) {
-          console.error(`[IE] Navigation error:`, error);
-          handleNavigationError(
-            {
-              error: true,
-              type: "navigation_error",
-              message: `Failed to navigate: ${
-                error instanceof Error ? error.message : String(error)
-              }`,
-              details: error instanceof Error ? error.stack : undefined,
-            },
-            normalizedTargetUrl
-          );
-        }
+      if (iframeRef.current) {
+        iframeRef.current.dataset.navToken = newToken.toString();
+        iframeRef.current.src = urlToLoad;
       }
     },
     [
@@ -984,22 +655,11 @@ export function useInternetExplorerLogic({
       year,
       finalUrl,
       status,
-      isAiLoading,
       navigateStart,
       setFinalUrl,
-      generateFuturisticWebsite,
-      stopGeneration,
-      loadSuccess,
       clearErrorDetails,
-      handleNavigationError,
-      setPrefetchedTitle,
       setUrl,
-      fetchCachedYears,
-      currentTheme,
-      getWaybackUrl,
       localUrl,
-      playElevatorMusic,
-      terminalSoundsEnabled,
     ]
   );
 
@@ -1221,7 +881,7 @@ export function useInternetExplorerLogic({
           if (finalUrl && finalUrl.startsWith("http")) {
             return new URL(finalUrl).hostname;
           }
-          // If finalUrl is a relative path (e.g. starts with /api/iframe-check), fall back to the main url.
+          // If finalUrl is a relative path, fall back to the main url.
           const candidate =
             finalUrl && !finalUrl.startsWith("/") ? finalUrl : url;
           if (candidate) {
@@ -1833,25 +1493,6 @@ export function useInternetExplorerLogic({
     }
   };
 
-  // --- Add custom sorting logic for TimeMachineView ---
-  const chronologicallySortedYears = useMemo(() => {
-    const parseYear = (yearStr: string): number => {
-      if (yearStr === "current")
-        return new Date().getFullYear() + 0.5; // Place 'current' slightly after the current year number
-      if (yearStr.endsWith(" BC")) {
-        return -parseInt(yearStr.replace(" BC", ""), 10);
-      }
-      if (yearStr.endsWith(" CE")) {
-        return parseInt(yearStr.replace(" CE", ""), 10);
-      }
-      const yearNum = parseInt(yearStr, 10);
-      return isNaN(yearNum) ? Infinity : yearNum; // Handle potential non-numeric strings
-    };
-
-    return [...cachedYears].sort((a, b) => parseYear(a) - parseYear(b));
-  }, [cachedYears]);
-  // --- End custom sorting logic ---
-
   const handleSharePage = useCallback(() => {
     setIsShareDialogOpen(true);
   }, []);
@@ -1884,9 +1525,6 @@ export function useInternetExplorerLogic({
     isFutureSettingsDialogOpen,
     language,
     location,
-    isTimeMachineViewOpen,
-    cachedYears,
-    isFetchingCachedYears,
 
     // Store actions
     setUrl,
@@ -1903,7 +1541,6 @@ export function useInternetExplorerLogic({
     setFutureSettingsDialogOpen,
     setLanguage,
     setLocation,
-    setTimeMachineViewOpen,
     clearHistory,
     addFavorite,
     clearFavorites,
@@ -1954,7 +1591,6 @@ export function useInternetExplorerLogic({
     pastYears,
     futureYears,
     isFutureYear,
-    chronologicallySortedYears,
 
     // Loading state
     isLoading,

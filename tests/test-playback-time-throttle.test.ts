@@ -3,9 +3,9 @@
  *
  * `elapsedTime` updates ~20x/sec during playback. Two invariants keep that
  * cheap:
- *   1. Both media stores (iPod, Karaoke) gate `setElapsedTime` behind the
- *      shared `shouldUpdatePlaybackTime` epsilon so redundant ticks never
- *      notify subscribers.
+ *   1. The iPod store gates `setElapsedTime` behind the shared
+ *      `shouldUpdatePlaybackTime` epsilon so redundant ticks never notify
+ *      subscribers.
  *   2. The big iPod logic hook never subscribes to `elapsedTime` — only leaf
  *      components do (via `useIpodElapsedTime`), so a tick re-renders the
  *      screen subtree instead of the whole app.
@@ -52,14 +52,6 @@ describe("store wiring", () => {
     );
     expect(source).toMatch(
       /setTotalTime: \(time\) =>\s*set\(\(state\) =>\s*shouldUpdatePlaybackTime\(state\.totalTime, time\)/
-    );
-  });
-
-  test("Karaoke store gates setElapsedTime behind the shared epsilon", () => {
-    const source = readSource("src/stores/useKaraokeStore.ts");
-    expect(source).toContain('from "./playbackTime"');
-    expect(source).toMatch(
-      /shouldUpdatePlaybackTime\(state\.elapsedTime, next\)/
     );
   });
 });

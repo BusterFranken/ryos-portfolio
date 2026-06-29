@@ -16,7 +16,6 @@ import { Clock } from "./MenuBarClock";
 import { VolumeControl } from "./VolumeControl";
 import { OfflineIndicator } from "./OfflineIndicator";
 import { getAppName } from "./menuBarUtils";
-import { getAppletDisplayInfo } from "./getAppletDisplayInfo";
 import { useTaskbarOverflow } from "./useTaskbarOverflow";
 
 export interface WindowsTaskbarProps {
@@ -36,7 +35,6 @@ export function WindowsTaskbar({
   foregroundInstanceId,
   bringInstanceToForeground,
   restoreInstance,
-  getFileItem,
   currentTheme,
   isWindowsTheme,
 }: WindowsTaskbarProps) {
@@ -98,13 +96,10 @@ export function WindowsTaskbar({
 
                 const isForeground = instanceId === foregroundInstanceId;
                 const isMinimized = instance.isMinimized ?? false;
-                const isApplet = instance.appId === "applet-viewer";
-                
-                // Get icon and label based on app type
-                const appletInfo = isApplet ? getAppletDisplayInfo(instance, getFileItem) : null;
-                const displayIcon = appletInfo?.icon || getAppIconPath(instance.appId);
-                const displayLabel = appletInfo?.label || instance.title || getAppName(instance.appId);
-                const isEmoji = appletInfo?.isEmoji || false;
+
+                const displayIcon = getAppIconPath(instance.appId);
+                const displayLabel = instance.title || getAppName(instance.appId);
+                const isEmoji = false;
 
                 return (
                   <motion.button
@@ -290,11 +285,10 @@ export function WindowsTaskbar({
                     if (!instance || !instance.isOpen) return null;
                     
                     const isMinimized = instance.isMinimized ?? false;
-                    const isApplet = instance.appId === "applet-viewer";
-                    const appletInfo = isApplet ? getAppletDisplayInfo(instance, getFileItem) : null;
-                    const displayIcon = appletInfo?.icon || getAppIconPath(instance.appId);
-                    const displayLabel = appletInfo?.label || instance.title || getAppName(instance.appId);
-                    const isEmoji = appletInfo?.isEmoji || false;
+
+                    const displayIcon = getAppIconPath(instance.appId);
+                    const displayLabel = instance.title || getAppName(instance.appId);
+                    const isEmoji = false;
                     
                     return (
                       <DropdownMenuItem

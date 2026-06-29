@@ -59,9 +59,6 @@ const {
   getIpodTracksForLibrary,
   getIpodChatContextTrack,
 } = await import("../src/stores/useIpodStore");
-const { handleIpodControl } = await import("../src/apps/chats/tools/ipodHandler");
-const { handleKaraokeControl } = await import("../src/apps/chats/tools/karaokeHandler");
-const { useKaraokeStore } = await import("../src/stores/useKaraokeStore");
 const {
   shouldFireEndedForPlaybackState,
   isWithinEndedFanoutDedupWindow,
@@ -73,11 +70,6 @@ const {
   "../src/apps/ipod/components/appleMusicPlayerBridgeUtils"
 );
 type Track = import("../src/stores/useIpodStore").Track;
-const {
-  isValidAppleMusicSongId,
-  isValidYouTubeVideoId,
-  isValidSongId,
-} = await import("../api/songs/_utils");
 const {
   generateAppleMusicSongShareUrl,
   generateIpodSongShareUrl,
@@ -104,28 +96,7 @@ describe("MusicKit configuration", () => {
   });
 });
 
-describe("Apple Music song ID validation", () => {
-  test("accepts the canonical YouTube video ID format", () => {
-    expect(isValidYouTubeVideoId("dQw4w9WgXcQ")).toBe(true);
-    expect(isValidSongId("dQw4w9WgXcQ")).toBe(true);
-  });
-
-  test("accepts numeric Apple Music catalog IDs prefixed with am:", () => {
-    expect(isValidAppleMusicSongId("am:1616228595")).toBe(true);
-    expect(isValidSongId("am:1616228595")).toBe(true);
-  });
-
-  test("accepts library-style Apple Music IDs (i.<hash>)", () => {
-    expect(isValidAppleMusicSongId("am:i.uUZAkT3")).toBe(true);
-    expect(isValidSongId("am:i.uUZAkT3")).toBe(true);
-  });
-
-  test("rejects malformed IDs", () => {
-    expect(isValidSongId("not-a-real-id")).toBe(false);
-    expect(isValidSongId("am:")).toBe(false);
-    expect(isValidSongId("am:foo bar")).toBe(false);
-  });
-
+describe("Apple Music song ID normalization", () => {
   test("normalizes MusicKit ids for lyrics API paths", () => {
     expect(appleMusicKitIdToLyricsSongId(undefined)).toBe("");
     expect(appleMusicKitIdToLyricsSongId("1616228595")).toBe("am:1616228595");
@@ -376,14 +347,6 @@ describe("useIpodStore Apple Music slice", () => {
       loopAll: false,
       loopCurrent: false,
       isShuffled: false,
-    });
-    useKaraokeStore.setState({
-      currentSongId: null,
-      isPlaying: false,
-      loopAll: true,
-      loopCurrent: false,
-      isShuffled: false,
-      playbackHistory: [],
     });
   });
 
@@ -779,117 +742,6 @@ describe("useIpodStore Apple Music slice", () => {
     ).toEqual(["yt1"]);
   });
 
-  test("ipodControl playKnown selects Apple Music tracks when Apple Music is active", async () => {
-    useIpodStore.setState({
-      tracks: [{ id: "yt1", url: "youtube:1", title: "YouTube One" }],
-      currentSongId: "yt1",
-      appleMusicTracks: [
-        { id: "am:1", url: "applemusic:1", title: "Apple One", source: "appleMusic" },
-        {
-          id: "am:2",
-          url: "applemusic:2",
-          title: "Apple Two",
-          artist: "Apple Artist",
-          source: "appleMusic",
-        },
-      ],
-      appleMusicCurrentSongId: "am:1",
-      librarySource: "appleMusic",
-      appleMusicPlaybackQueue: ["am:1"],
-    });
-    const results: unknown[] = [];
-
-    await handleIpodControl(
-      { action: "playKnown", id: "am:2" },
-      "call-1",
-      {
-        launchApp: () => "ipod-instance",
-        addToolOutput: (result) => results.push(result),
-        detectUserOS: () => "Linux",
-      }
-    );
-
-    const state = useIpodStore.getState();
-    expect(state.appleMusicCurrentSongId).toBe("am:2");
-    expect(state.appleMusicPlaybackQueue).toBeNull();
-    expect(state.currentSongId).toBe("yt1");
-    expect(state.isPlaying).toBe(true);
-    expect(results).toHaveLength(1);
-  });
-
-  test("ipodControl next follows Apple Music navigation when Apple Music is active", async () => {
-    useIpodStore.setState({
-      tracks: [{ id: "yt1", url: "youtube:1", title: "YouTube One" }],
-      currentSongId: "yt1",
-      appleMusicTracks: [
-        { id: "am:1", url: "applemusic:1", title: "Apple One", source: "appleMusic" },
-        { id: "am:2", url: "applemusic:2", title: "Apple Two", source: "appleMusic" },
-      ],
-      appleMusicCurrentSongId: "am:1",
-      librarySource: "appleMusic",
-      loopAll: true,
-      isShuffled: false,
-    });
-
-    await handleIpodControl(
-      { action: "next" },
-      "call-2",
-      {
-        launchApp: () => "ipod-instance",
-        addToolOutput: () => {},
-        detectUserOS: () => "Linux",
-      }
-    );
-
-    const state = useIpodStore.getState();
-    expect(state.appleMusicCurrentSongId).toBe("am:2");
-    expect(state.currentSongId).toBe("yt1");
-  });
-
-  test("karaokeControl playKnown uses YouTube tracks while iPod is in Apple Music", async () => {
-    useIpodStore.setState({
-      tracks: [
-        {
-          id: "yt2",
-          url: "https://www.youtube.com/watch?v=yt2",
-          title: "YouTube Two",
-          artist: "Tube Artist",
-        },
-      ],
-      currentSongId: null,
-      appleMusicTracks: [
-        {
-          id: "am:2",
-          url: "applemusic:2",
-          title: "Apple Two",
-          artist: "Apple Artist",
-          source: "appleMusic",
-        },
-      ],
-      appleMusicCurrentSongId: "am:2",
-      librarySource: "appleMusic",
-    });
-    const results: unknown[] = [];
-
-    await handleKaraokeControl(
-      { action: "playKnown", id: "yt2" },
-      "call-karaoke-1",
-      {
-        launchApp: () => "karaoke-instance",
-        addToolOutput: (result) => results.push(result),
-        detectUserOS: () => "Linux",
-      }
-    );
-
-    const ipodState = useIpodStore.getState();
-    const karaokeState = useKaraokeStore.getState();
-    expect(karaokeState.currentSongId).toBe("yt2");
-    expect(karaokeState.isPlaying).toBe(true);
-    expect(ipodState.librarySource).toBe("appleMusic");
-    expect(ipodState.appleMusicCurrentSongId).toBe("am:2");
-    expect(ipodState.currentSongId).toBeNull();
-    expect(results).toHaveLength(1);
-  });
 });
 
 describe("Apple Music opportunistic playlist refresh", () => {

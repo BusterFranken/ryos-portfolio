@@ -31,7 +31,6 @@ export interface InternetExplorerMenuBarProps
   canGoBack?: boolean;
   canGoForward?: boolean;
   onClearHistory?: () => void;
-  onOpenTimeMachine?: () => void;
   onEditFuture?: () => void;
   language?: LanguageOption;
   location?: LocationOption;

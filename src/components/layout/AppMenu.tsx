@@ -17,10 +17,10 @@ import { appRegistry, type AppId } from "@/config/appRegistry";
 import { getTranslatedAppName } from "@/utils/i18n";
 
 // Apps that support multiple windows
-const MULTI_INSTANCE_APPS: AppId[] = ["textedit", "finder", "applet-viewer"];
+const MULTI_INSTANCE_APPS: AppId[] = ["textedit", "finder"];
 
 // Apps that support fullscreen mode
-const FULLSCREEN_APPS: AppId[] = ["ipod", "karaoke", "videos", "pc"];
+const FULLSCREEN_APPS: AppId[] = ["ipod", "videos", "pc"];
 
 interface AppMenuProps {
   appId: AppId;

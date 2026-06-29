@@ -11,7 +11,6 @@ const KNOWN_APPS = new Set<string>([
   "finder",
   "chats",
   "textedit",
-  "applet-viewer",
 ]);
 const isValidAppId = (appId: AppId) => KNOWN_APPS.has(appId);
 
@@ -79,27 +78,6 @@ describe("computeDockOpenItems", () => {
     expect(result).toEqual([]);
   });
 
-  test("emits one entry per applet-viewer instance", () => {
-    const instances = toRecord([
-      makeInstance({
-        instanceId: "applet-1",
-        appId: "applet-viewer",
-        createdAt: 10,
-      }),
-      makeInstance({
-        instanceId: "applet-2",
-        appId: "applet-viewer",
-        createdAt: 20,
-      }),
-    ]);
-
-    const result = computeDockOpenItems(instances, [], isValidAppId);
-
-    expect(result).toHaveLength(2);
-    expect(result.every((i) => i.type === "applet")).toBe(true);
-    expect(result.map((i) => i.instanceId)).toEqual(["applet-1", "applet-2"]);
-  });
-
   // Regression: stale/unknown app ids (e.g. from old localStorage or cloud
   // sync) must not become a dock slot — they previously threw in
   // getAppIconPath / rendered an empty slot.
@@ -118,19 +96,6 @@ describe("computeDockOpenItems", () => {
     expect(result.map((i) => i.appId)).toEqual(["chats"]);
   });
 
-  // Regression: an applet entry with no instanceId can't be matched to a live
-  // window, so it must be skipped rather than render an empty slot.
-  test("drops applet instances missing an instanceId", () => {
-    const instances: Record<string, AppInstance> = {
-      bad: makeInstance({
-        instanceId: "" as string,
-        appId: "applet-viewer",
-        createdAt: 1,
-      }),
-    };
-
-    expect(computeDockOpenItems(instances, [], isValidAppId)).toEqual([]);
-  });
 });
 
 describe("computeDockPinnedItems", () => {

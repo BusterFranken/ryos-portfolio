@@ -1,8 +1,6 @@
 import { useReducer, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
-import { getApiUrl } from "@/utils/platform";
-import { abortableFetch } from "@/utils/abortableFetch";
 import {
   createSongSearchInitialState,
   songSearchReducer,
@@ -123,41 +121,15 @@ export function useSongSearchDialog({
         return;
       }
 
-      const response = await abortableFetch(getApiUrl("/api/youtube-search"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), maxResults: 15 }),
-        timeout: 15000,
-        throwOnHttpError: false,
-        retry: { maxAttempts: 1, initialDelayMs: 250 },
+      // STATIC BUILD: the `/api/youtube-search` backend was removed. Resolve to
+      // the empty-results state instead of firing a request. Direct YouTube
+      // URLs still work via `onAddUrl` above.
+      dispatch({
+        type: "searchFinish",
+        mode: "youtube",
+        results: [],
+        error: t("apps.ipod.dialogs.songSearchNoResults"),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        let errorMsg =
-          errorData.error || `Failed to search (status ${response.status})`;
-        if (errorData.hint) errorMsg += ` - ${errorData.hint}`;
-        throw new Error(
-          response.status === 404
-            ? t("apps.ipod.dialogs.songSearchNoResults")
-            : errorMsg
-        );
-      }
-
-      const data = await response.json();
-      if (data.results && Array.isArray(data.results)) {
-        dispatch({
-          type: "searchFinish",
-          mode: "youtube",
-          results: data.results,
-          error:
-            data.results.length === 0
-              ? t("apps.ipod.dialogs.songSearchNoResults")
-              : null,
-        });
-      } else {
-        throw new Error(t("apps.ipod.dialogs.songSearchInvalidResponse"));
-      }
     } catch (err) {
       console.error("Song search error:", err);
       dispatch({

@@ -190,8 +190,10 @@ export function renderDockPinnedItems({
                 width: rect.width,
                 height: rect.height,
               };
-              launchApp("applet-viewer", {
-                initialData: { path: item.path },
+              launchApp("finder", {
+                initialData: {
+                  path: item.path.substring(0, item.path.lastIndexOf("/")) || "/",
+                },
                 launchOrigin,
               });
             }
@@ -210,7 +212,6 @@ export function renderDockPinnedItems({
           isDragging={draggingItemId === item.id}
           isDraggedOutside={draggingItemId === item.id && isDraggedOutside}
           baseSize={scaledButtonSize}
-          intentPrefetchAppId="applet-viewer"
         />,
       );
     }

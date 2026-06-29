@@ -420,144 +420,6 @@
         "user": "usuario"
       }
     },
-    "applet-viewer": {
-      "description": "Ver y ejecutar applets",
-      "dialogs": {
-        "addedToFeatured": "Añadido a destacados",
-        "allAppletsUpToDate": "Todos los applets están actualizados",
-        "appletAlreadyShared": "Applet ya compartido",
-        "appletDeleted": "Applet eliminado",
-        "appletExported": "Applet exportado!",
-        "appletExportedDescription": "{{fileName}}.app exportado correctamente.",
-        "appletImported": "Applet importado!",
-        "appletImportedDescription": "{{fileName}} guardado en /Applets{{iconText}}",
-        "appletImportedIconSuffix": " con el icono {{icon}}",
-        "appletNotFound": "Applet no encontrado",
-        "appletNotFoundDescription": "El applet compartido puede haber sido eliminado o el enlace es inválido.",
-        "appletSaved": "Applet guardado",
-        "appletSavedDescription": "Guardado en /Applets/{{fileName}}",
-        "appletShared": "¡Applet compartido!",
-        "appletStore": "Tienda de Applets",
-        "appletUpdateAvailable": "Actualización de Applet disponible",
-        "appletUpdateAvailableDescription": "{{appletName}} tiene una actualización disponible.",
-        "appletUpdated": "Applet actualizado",
-        "appletUpdatedShare": "¡Applet actualizado!",
-        "appletsUpdated": "{{count}} applets actualizados",
-        "areYouSureDeleteApplet": "¿Está seguro de que desea eliminar este applet?",
-        "couldNotCompressAppletFile": "No se pudo comprimir el archivo del applet.",
-        "couldNotImportFile": "No se pudo importar el archivo.",
-        "exportFailed": "Error de exportación",
-        "failedToDeleteApplet": "No se pudo eliminar el applet",
-        "failedToFetchSharedApplet": "Error al obtener el applet compartido",
-        "failedToLoadSharedApplet": "Error al cargar el applet compartido",
-        "failedToSaveApplet": "Error al guardar applet",
-        "failedToShareApplet": "Error al compartir applet",
-        "failedToUpdateApplet": "Error al actualizar el applet",
-        "failedToUpdateApplets": "Error al actualizar los applets",
-        "failedToUpdateFeaturedStatus": "No se pudo actualizar el estado de destacado",
-        "importFailed": "Error de importación",
-        "loading": "Cargando...",
-        "loginRequired": "Inicio de sesión requerido",
-        "mustBeLoggedInToShare": "Debe iniciar sesión para compartir applets.",
-        "newAppletUpdates": "{{count}} nueva actualización de applet",
-        "newAppletUpdatesPlural": "{{count}} nuevas actualizaciones de applet",
-        "noAppletToShare": "No hay applet para compartir",
-        "noAppletsAvailable": "No hay applets disponibles en este momento.",
-        "noAppletsFound": "No se encontraron applets que coincidan con \"{{query}}\".",
-        "pleaseCheckConnection": "Por favor, compruebe su conexión e inténtelo de nuevo.",
-        "pleaseOpenAppletFirst": "Por favor, abra un applet primero.",
-        "pleaseTryAgainLater": "Inténtelo de nuevo más tarde.",
-        "removedFromFeatured": "Eliminado de destacados",
-        "shareLinkGeneratedSuccessfully": "Enlace para compartir generado correctamente.",
-        "shareLinkUpdatedSuccessfully": "Enlace para compartir actualizado correctamente.",
-        "sharedApplet": "Applet compartido",
-        "sharedAppletLoaded": "Applet compartido cargado",
-        "showingExistingShareLink": "Mostrando enlace para compartir existente.",
-        "untitled": "Sin título",
-        "untitledApplet": "Applet sin título",
-        "updatingApplet": "Actualizando applet...",
-        "updatingAppletSingle": "Actualizando 1 applet...",
-        "updatingApplets": "Actualizando {{count}} applets...",
-        "updatingAppletsPlural": "Actualizando {{count}} applets..."
-      },
-      "help": {
-        "appletStore": {
-          "description": "Abre la pestaña Tienda para descubrir aplicaciones creadas por la comunidad e instálalas con un solo clic",
-          "title": "Explorar la Tienda"
-        },
-        "createWithRyosChat": {
-          "description": "Pide a Ryo en Chats que cree un applet personalizado: obtén una aplicación HTML funcional al instante",
-          "title": "Crear con Chats"
-        },
-        "keepUpdated": {
-          "description": "Tienda ▸ Buscar actualizaciones descarga las últimas versiones de tus applets instalados",
-          "title": "Búsqueda automática de actualizaciones"
-        },
-        "openFromFinder": {
-          "description": "Arrastra paquetes de applets .app o .gz al Finder y aparecerán en /Applets",
-          "title": "Abrir desde el Finder"
-        },
-        "shareApplets": {
-          "description": "Usa Archivo ▸ Compartir Applet para copiar un enlace o código corto que otros puedan pegar",
-          "title": "Compartir mediante código"
-        },
-        "viewApplets": {
-          "description": "El ejecutor en entorno aislado ejecuta de forma segura cualquier applet HTML guardado en tu sistema",
-          "title": "Ejecutar cualquier cosa"
-        }
-      },
-      "labels": {
-        "addToFeatured": "Añadir a destacados",
-        "deleteApplet": "Eliminar applet",
-        "discover": "Descubrir",
-        "removeFromFeatured": "Quitar de destacados",
-        "searchApplets": "Buscar applets",
-        "showAll": "Mostrar todo"
-      },
-      "menu": {
-        "aboutApplets": "Acerca de Applets",
-        "appletStore": "Tienda de Applets",
-        "appletsHelp": "Ayuda de Applets",
-        "checkForUpdates": "Buscar actualizaciones",
-        "createAccount": "Crear cuenta...",
-        "exportAs": "Exportar como...",
-        "html": "HTML",
-        "importFromDevice": "Importar desde Dispositivo...",
-        "logOut": "Cerrar sesión",
-        "login": "Iniciar sesión...",
-        "noAppletsOpen": "No hay applets abiertos",
-        "open": "Abrir...",
-        "openAppletStore": "Abrir Tienda de Applets",
-        "ryosApp": "App de ryOS",
-        "shareApplet": "Compartir Applet...",
-        "store": "Tienda",
-        "untitled": "Sin título",
-        "updateApplets": "Actualizar {{count}} applet",
-        "updateAppletsPlural": "Actualizar {{count}} applets",
-        "window": "Ventana"
-      },
-      "name": "Tienda de Applets",
-      "sections": {
-        "featured": "Destacados",
-        "installed": "Instalados",
-        "newApplets": "Nuevos Applets",
-        "updatesAvailable": "Actualizaciones disponibles"
-      },
-      "status": {
-        "get": "Obtener",
-        "open": "Abrir",
-        "save": "Guardar",
-        "update": "Actualizar",
-        "updatedDaysAgo": "Actualizado hace {{days}}d",
-        "updatedHoursAgo": "Actualizado hace {{hours}}h",
-        "updatedJustNow": "Actualizado ahora mismo",
-        "updatedMinutesAgo": "Actualizado hace {{minutes}} min",
-        "updatedMonthsAgo": "Actualizado hace {{months}}m",
-        "updatedWeeksAgo": "Actualizado hace {{weeks}}s",
-        "updatedYearsAgo": "Actualizado hace {{years}}a",
-        "updatedYesterday": "Actualizado ayer"
-      }
-    },
     "books": {
       "columns": {
         "auto": "Automático",
@@ -2086,7 +1948,6 @@
         "file": "Archivo",
         "folder": "Carpeta",
         "gifImage": "Imagen GIF",
-        "htmlApplet": "Applet HTML",
         "internetShortcut": "Acceso directo a Internet",
         "jpegImage": "Imagen JPEG",
         "mp3Audio": "Audio MP3",
@@ -4479,7 +4340,6 @@
     "noResults": "Sin resultados",
     "placeholder": "Buscar en ryOS",
     "sections": {
-      "applets": "Applets",
       "apps": "Aplicaciones",
       "calendar": "Calendario",
       "commands": "Comandos",

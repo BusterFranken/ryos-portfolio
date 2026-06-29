@@ -1,5 +1,5 @@
 import type { MouseEvent, TouchEvent } from "react";
-import { ArrowSquareOut, Microphone, MusicNote } from "@phosphor-icons/react";
+import { ArrowSquareOut, MusicNote } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { isYouTubeUrl } from "../utils";
@@ -37,7 +37,6 @@ export function LinkPreviewActionButtons({
   isMacOSTheme,
   layout,
   handleAddToIpod,
-  handleOpenInKaraoke,
   handleOpenYouTube,
   handleOpenExternally,
 }: {
@@ -45,7 +44,6 @@ export function LinkPreviewActionButtons({
   isMacOSTheme: boolean;
   layout: LayoutVariant;
   handleAddToIpod: (e: MouseEvent | TouchEvent) => void;
-  handleOpenInKaraoke: (e: MouseEvent | TouchEvent) => void;
   handleOpenYouTube: (e: MouseEvent | TouchEvent) => void;
   handleOpenExternally: (e: MouseEvent | TouchEvent) => void;
 }) {
@@ -81,33 +79,6 @@ export function LinkPreviewActionButtons({
               <MusicNote className="size-3" weight="bold" />
             )}
             <span>{t("components.linkPreview.openIpod")}</span>
-          </button>
-          <button
-            onClick={handleOpenYouTube}
-            onTouchStart={stopTouch}
-            className={actionButtonClass(isMacOSTheme, "pair")}
-            title={t("components.linkPreview.openYouTube")}
-            data-link-preview
-          >
-            {!isMacOSTheme && (
-              <ArrowSquareOut className="size-3" weight="bold" />
-            )}
-            <span>{t("components.linkPreview.openYouTube")}</span>
-          </button>
-        </>
-      ) : url.includes("/karaoke/") ? (
-        <>
-          <button
-            onClick={handleOpenInKaraoke}
-            onTouchStart={stopTouch}
-            className={actionButtonClass(isMacOSTheme, "pair")}
-            title={t("components.linkPreview.openKaraoke")}
-            data-link-preview
-          >
-            {!isMacOSTheme && (
-              <Microphone className="size-3" weight="bold" />
-            )}
-            <span>{t("components.linkPreview.openKaraoke")}</span>
           </button>
           <button
             onClick={handleOpenYouTube}

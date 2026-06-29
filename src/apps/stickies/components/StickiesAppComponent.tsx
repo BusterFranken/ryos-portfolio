@@ -10,7 +10,6 @@ import { AppHelpAboutDialogs } from "@/components/shared/AppHelpAboutDialogs";
 import { appMetadata } from "..";
 import { useAppStore } from "@/stores/useAppStore";
 import { useMenuShortcuts } from "@/hooks/useMenuShortcuts";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 
 export function StickiesAppComponent({
   isWindowOpen,
@@ -18,8 +17,6 @@ export function StickiesAppComponent({
   isForeground,
   instanceId,
 }: AppProps) {
-  useEffect(() => { requestCloudSyncDomainCheck("stickies"); }, []);
-
   const closeAppInstance = useAppStore((state) => state.closeAppInstance);
   
   const {

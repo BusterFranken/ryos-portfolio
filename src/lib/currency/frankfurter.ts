@@ -1,4 +1,8 @@
-/** Prefer `/api/currency-rate` (server proxy + fallbacks); see `api/currency-rate.ts`. */
+/**
+ * Currency rates come directly from the public Frankfurter API
+ * (https://frankfurter.dev/) — an EXTERNAL service, allowed in the static
+ * build. The `/api/currency-rate` server proxy was removed.
+ */
 
 const FRANKFURTER_V2 = "https://api.frankfurter.dev/v2";
 
@@ -8,12 +12,6 @@ export interface FrankfurterV2RateResponse {
   base: string;
   quote: string;
   rate: number;
-}
-
-interface CurrencyRateApiOk {
-  rate: number;
-  rateDate: string;
-  source?: string;
 }
 
 function normalizePair(from: string, to: string) {
@@ -219,18 +217,7 @@ export async function fetchCurrencyRateForWidget(
     return { rate: 1, rateDate: new Date().toISOString().slice(0, 10) };
   }
 
-  try {
-    const url = `/api/currency-rate?from=${encodeURIComponent(f)}&to=${encodeURIComponent(t)}`;
-    const res = await fetch(url, { signal, headers: { Accept: "application/json" } });
-    if (res.ok) {
-      const data = (await res.json()) as CurrencyRateApiOk;
-      if (typeof data.rate === "number" && Number.isFinite(data.rate) && data.rateDate) {
-        return { rate: data.rate, rateDate: data.rateDate };
-      }
-    }
-  } catch {
-    // Vite-only dev (no API) or network — fall through to direct Frankfurter
-  }
-
+  // STATIC BUILD: the `/api/currency-rate` proxy was removed — call the public
+  // (external) Frankfurter API directly.
   return fetchFrankfurterPairRateDirect(f, t, signal);
 }

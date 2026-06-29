@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { useStoreShallow } from "./helpers";
 import { persist } from "zustand/middleware";
-import { abortableFetch } from "@/utils/abortableFetch";
 
 // Define types
 export interface Favorite {
@@ -448,11 +447,6 @@ interface InternetExplorerStore {
   // Title management
   currentPageTitle: string | null;
 
-  // Time Machine Feature
-  isTimeMachineViewOpen: boolean;
-  cachedYears: string[];
-  isFetchingCachedYears: boolean;
-
   // New state for pending navigation from Finder
   pendingUrl: string | null;
   pendingYear: string | null;
@@ -520,10 +514,6 @@ interface InternetExplorerStore {
   setLanguage: (language: LanguageOption) => void;
   setLocation: (location: LocationOption) => void;
 
-  // Time Machine Actions
-  setTimeMachineViewOpen: (isOpen: boolean) => void;
-  fetchCachedYears: (url: string) => Promise<void>;
-
   // New actions for pending navigation
   setPendingNavigation: (url: string, year?: string) => void;
   clearPendingNavigation: () => void;
@@ -535,18 +525,6 @@ interface InternetExplorerStore {
 // Helper function to get hostname (copied from component)
 const getHostname = (targetUrl: string): string => {
   try {
-    // Special handling: our proxy path starts with /api/iframe-check?url=<encoded>
-    if (targetUrl.startsWith("/")) {
-      const query = targetUrl.split("?")[1] || "";
-      const params = new URLSearchParams(query);
-      const inner = params.get("url");
-      if (inner) {
-        return new URL(inner.startsWith("http") ? inner : `https://${inner}`)
-          .hostname;
-      }
-      // Fallback to unknown for other internal paths
-      return "unknown";
-    }
     return new URL(
       targetUrl.startsWith("http") ? targetUrl : `https://${targetUrl}`
     ).hostname;
@@ -588,9 +566,6 @@ const getInitialState = () => ({
   isFutureSettingsDialogOpen: false,
   timelineSettings: {} as { [year: string]: string },
   currentPageTitle: null as string | null,
-  isTimeMachineViewOpen: false,
-  cachedYears: [] as string[],
-  isFetchingCachedYears: false,
   // Add initial state for pending navigation
   pendingUrl: null as string | null,
   pendingYear: null as string | null,
@@ -618,9 +593,6 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
           currentPageTitle: null,
           errorDetails: null,
           prefetchedTitle: null,
-          // Clear cached years on new navigation
-          cachedYears: [],
-          isFetchingCachedYears: false,
         }),
 
       setFinalUrl: (finalUrl) => set({ finalUrl }),
@@ -645,8 +617,6 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
             aiGeneratedHtml: aiGeneratedHtml ?? state.aiGeneratedHtml,
             prefetchedTitle: null,
           };
-
-          let addedToHistory = false; // Flag to track if a new entry was actually added/updated
 
           if (addToHistory && targetUrl) {
             const normalizedTargetUrl = normalizeUrlForHistory(targetUrl);
@@ -679,7 +649,6 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
                   title: newEntry.title,
                 };
                 newState.history = updatedHistory;
-                addedToHistory = true; // Considered an update
               }
               // No need to update historyIndex here, it's set by handleGoBack/Forward
               newState.historyIndex = state.historyIndex;
@@ -710,14 +679,10 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
                 };
                 newState.history = updatedHistory;
                 newState.historyIndex = 0;
-                // History changed if the title changed or we dropped a forward stack
-                addedToHistory =
-                  currentEntry.title !== newEntry.title || currentIndex > 0;
               } else {
                 // Add new entry, discarding any forward stack
                 newState.history = [newEntry, ...trimmedHistory].slice(0, 100);
                 newState.historyIndex = 0;
-                addedToHistory = true; // New entry added
               }
             }
 
@@ -727,19 +692,6 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
             }
           } else if (!addToHistory) {
             newState.historyIndex = state.historyIndex;
-          }
-
-          // Fetch cached years after successful navigation if history was added/updated
-          if (addedToHistory && targetUrl) {
-            // Trigger fetch, but don't block state update
-            get().fetchCachedYears(targetUrl);
-          }
-          // If no history update occurred (duplicate) and cachedYears is empty, still fetch
-          else if (!addedToHistory && targetUrl) {
-            const existingCachedYears = get().cachedYears;
-            if (!existingCachedYears || existingCachedYears.length === 0) {
-              get().fetchCachedYears(targetUrl);
-            }
           }
 
           get().updateBrowserState();
@@ -848,57 +800,6 @@ export const useInternetExplorerStore = create<InternetExplorerStore>()(
 
       setLanguage: (language) => set({ language }),
       setLocation: (location) => set({ location }),
-
-      setTimeMachineViewOpen: (isOpen) =>
-        set({ isTimeMachineViewOpen: isOpen }),
-      fetchCachedYears: async (url) => {
-        if (!url) return;
-        set({ isFetchingCachedYears: true, cachedYears: [] });
-        try {
-          const normalizedUrl = url.startsWith("http") ? url : `https://${url}`;
-          const response = await abortableFetch(
-            `/api/iframe-check?mode=list-cache&url=${encodeURIComponent(
-              normalizedUrl
-            )}`,
-            {
-              timeout: 15000,
-              retry: { maxAttempts: 2, initialDelayMs: 500 },
-            }
-          );
-          const data = await response.json();
-          const fetchedYears: string[] = data.years || [];
-          const currentActualYear = new Date().getFullYear();
-
-          const futureYearsApi = fetchedYears
-            .filter(
-              (year) =>
-                !isNaN(parseInt(year)) && parseInt(year) > currentActualYear
-            )
-            .sort((a, b) => parseInt(b) - parseInt(a));
-
-          const pastYearsApi = fetchedYears
-            .filter(
-              (year) =>
-                !isNaN(parseInt(year)) && parseInt(year) <= currentActualYear
-            )
-            .sort((a, b) => parseInt(b) - parseInt(a));
-
-          const nonNumericPastYears = fetchedYears.filter(
-            (year) => isNaN(parseInt(year)) && year !== "current"
-          );
-
-          const sortedYears = [
-            ...futureYearsApi,
-            "current",
-            ...pastYearsApi,
-            ...nonNumericPastYears,
-          ];
-          set({ cachedYears: sortedYears, isFetchingCachedYears: false });
-        } catch (error) {
-          console.error("Error fetching cached years:", error);
-          set({ isFetchingCachedYears: false, cachedYears: ["current"] });
-        }
-      },
 
       // Add implementations for new actions
       setPendingNavigation: (url, year) =>

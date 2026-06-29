@@ -8,7 +8,6 @@ import {
 } from "../../hooks/useFinderLogic";
 import { useRegisterUndoRedo } from "@/hooks/useUndoRedo";
 import { useMenuShortcuts } from "@/hooks/useMenuShortcuts";
-import { useAuth } from "@/hooks/useAuth";
 import { FinderHiddenFileInput } from "./FinderHiddenFileInput";
 import { FinderWindowBody } from "./FinderWindowBody";
 import { FinderAppDialogs } from "./FinderAppDialogs";
@@ -24,7 +23,6 @@ export function FinderAppComponent({
   onNavigateNext,
   onNavigatePrevious,
 }: AppProps<FinderInitialData>) {
-  const auth = useAuth();
   const logic = useFinderLogic({
     isWindowOpen,
     isForeground,
@@ -122,10 +120,6 @@ export function FinderAppComponent({
     translatedHelpItems,
     getFileType,
     getDisplayPath,
-    isAirDropView,
-    navigateToAirDrop,
-    navigateAwayFromAirDrop,
-    handleAirDropSendFile,
   } = logic;
 
   useRegisterUndoRedo(instanceId!, {
@@ -179,7 +173,6 @@ export function FinderAppComponent({
       instanceId={instanceId}
       showSidebar={showSidebar}
       onToggleSidebar={() => setShowSidebar((s) => !s)}
-      onNavigateToAirDrop={navigateToAirDrop}
     />
   );
 
@@ -251,25 +244,6 @@ export function FinderAppComponent({
           newFolderName={newFolderName}
           setNewFolderName={setNewFolderName}
           handleNewFolderSubmit={handleNewFolderSubmit}
-          isUsernameDialogOpen={auth.isUsernameDialogOpen}
-          setIsUsernameDialogOpen={auth.setIsUsernameDialogOpen}
-          newUsername={auth.newUsername}
-          setNewUsername={auth.setNewUsername}
-          newPassword={auth.newPassword}
-          setNewPassword={auth.setNewPassword}
-          submitUsernameDialog={auth.submitUsernameDialog}
-          isSettingUsername={auth.isSettingUsername}
-          usernameError={auth.usernameError}
-          isVerifyDialogOpen={auth.isVerifyDialogOpen}
-          setVerifyDialogOpen={auth.setVerifyDialogOpen}
-          verifyPasswordInput={auth.verifyPasswordInput}
-          setVerifyPasswordInput={auth.setVerifyPasswordInput}
-          verifyUsernameInput={auth.verifyUsernameInput}
-          setVerifyUsernameInput={auth.setVerifyUsernameInput}
-          isVerifyingToken={auth.isVerifyingToken}
-          verifyError={auth.verifyError}
-          handleVerifyTokenSubmit={auth.handleVerifyTokenSubmit}
-          promptSetUsername={auth.promptSetUsername}
           contextMenuPos={contextMenuPos}
           setContextMenuPos={setContextMenuPos}
           contextMenuFile={contextMenuFile}
@@ -292,7 +266,6 @@ export function FinderAppComponent({
           blankLongPressHandlers={blankLongPressHandlers}
           macToolbarProps={{
             t,
-            isAirDropView,
             currentPath,
             searchQuery,
             setSearchQuery,
@@ -303,7 +276,6 @@ export function FinderAppComponent({
             canCreateFolder,
             navigateBack,
             navigateForward,
-            navigateAwayFromAirDrop,
             navigateUp,
             handleNewFolder,
             handleImportFile,
@@ -313,7 +285,6 @@ export function FinderAppComponent({
             t,
             isWindowsTheme,
             currentTheme,
-            isAirDropView,
             currentPath,
             pathInputRef,
             displayPath: getDisplayPath(currentPath),
@@ -321,7 +292,6 @@ export function FinderAppComponent({
             canNavigateForward,
             navigateBack,
             navigateForward,
-            navigateAwayFromAirDrop,
             navigateUp,
             handlePathInputChange,
             handlePathInputKeyDown,
@@ -334,24 +304,16 @@ export function FinderAppComponent({
             showSidebar,
             sidebarItems,
             activeSidebarPath,
-            isAirDropView,
             sortedFilesCount: sortedFiles.length,
             storageSpaceAvailable: storageSpace.available,
             fileListContentProps,
-            navigateToAirDrop,
-            navigateAwayFromAirDrop,
             navigateToPath,
-            handleAirDropSendFile,
-            promptVerifyToken: auth.promptVerifyToken,
           }}
           legacyContentProps={{
             t,
-            isAirDropView,
             sortedFilesCount: sortedFiles.length,
             storageSpaceAvailable: storageSpace.available,
             fileListContentProps,
-            handleAirDropSendFile,
-            promptVerifyToken: auth.promptVerifyToken,
           }}
         />
     </AppWindowShell>

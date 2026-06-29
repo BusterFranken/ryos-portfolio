@@ -5,20 +5,15 @@ export type AppId =
   | "finder"
   | "soundboard"
   | "internet-explorer"
-  | "chats"
   | "textedit"
   | "paint"
   | "photo-booth"
   | "minesweeper"
   | "videos"
-  | "tv"
   | "ipod"
-  | "karaoke"
   | "synth"
   | "terminal"
-  | "applet-viewer"
   | "control-panels"
-  | "admin"
   | "stickies"
   | "infinite-mac"
   | "pc"
@@ -139,20 +134,15 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     finder: ["browseNavigate", "fileManagement", "viewSort", "quickAccess", "storageInfo", "trash"],
     soundboard: ["recordSlot", "keyboardPlay", "waveformView", "customizeSlot", "multipleBoards", "importExport"],
     "internet-explorer": ["browseWeb", "travelThroughTime", "historyReimagined", "saveFavorites", "exploreTimeNodes", "shareJourney"],
-    chats: ["chatWithRyo", "createEditFiles", "controlApps", "joinChatRooms", "pushToTalk", "nudgeDjMode"],
     textedit: ["richEditing", "formatting", "listsTasks", "fileManagement", "voiceDictation", "slashCommands"],
     paint: ["drawingTools", "colors", "undo", "saving", "patterns", "filters"],
     "photo-booth": ["takingPhoto", "quickSnaps", "applyingEffects", "viewingPhotos", "downloadingPhotos", "switchingCameras"],
     minesweeper: ["desktopControls", "mobileControls", "gameRules", "timerCounter", "restart"],
     videos: ["addVideo", "playback", "loop", "shuffle", "playlist", "retroUi"],
-    tv: ["channels", "playback", "numbers", "shortcuts", "fullscreen", "helpAbout"],
     ipod: ["addSongs", "wheelNavigation", "playbackControls", "syncedLyrics", "playbackModes", "displayFullscreen"],
-    karaoke: ["addSearchSongs", "syncLyricsTiming", "styleLayout", "syncedWithIpod", "worksWithChats", "keyboardShortcuts"],
     synth: ["virtualKeyboard", "controlsPanel", "presets", "waveform3d", "effects", "midiInput"],
-    terminal: ["basicCommands", "navigation", "commandHistory", "aiAssistant", "fileEditing", "terminalSounds"],
-    "applet-viewer": ["appletStore", "createWithRyosChat", "viewApplets", "shareApplets", "openFromFinder", "keepUpdated"],
-    "control-panels": ["appearance", "sounds", "aiModel", "shaderEffects", "backupRestore", "system"],
-    admin: ["adminAccess", "userManagement", "roomManagement", "statistics"],
+    terminal: ["basicCommands", "navigation", "commandHistory", "fileEditing", "terminalSounds"],
+    "control-panels": ["appearance", "sounds", "shaderEffects", "backupRestore", "system"],
     stickies: ["createNote", "colors", "deleteNote", "autoSave"],
     "infinite-mac": ["classicMacEmulator", "selectSystem", "pauseResume", "backToSystems"],
     pc: [
@@ -170,7 +160,7 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     ],
     winamp: ["playMusic", "equalizer", "playlist", "skins", "shuffleRepeat", "controls"],
     calendar: ["navigateMonths", "createEvents", "dayView", "colorCoding", "deleteEvents", "autoSave"],
-    contacts: ["browseContacts", "createContacts", "editDetails", "importVCards", "useWithRyo", "cloudSync"],
+    contacts: ["browseContacts", "createContacts", "editDetails", "importVCards"],
     dashboard: ["openDashboard", "clockWidget", "calendarWidget", "weatherWidget", "moveWidgets", "closeDashboard"],
     maps: ["searchPlaces", "dropPins", "locateMe", "mapTypes", "poweredByApple", "switchMapStyle"],
     books: ["bookshelf", "import", "pageTurn", "progress", "fonts", "darkMode"],

@@ -1625,10 +1625,11 @@ export function useAppleMusicLibrary({
     [t]
   );
 
-  const refresh = useCallback(async () => {
-    if (!isAuthorized) return 0;
-    return runWithProgressToast(true);
-  }, [isAuthorized, runWithProgressToast]);
+  // STUBBED: Apple Music requires the removed `/api/musickit-token` backend
+  // and an authorized MusicKit instance (now permanently absent), so there
+  // is no library to (re)load. `refresh` is a no-op; the iPod runs on
+  // local / YouTube playback only.
+  const refresh = useCallback(async () => 0, []);
 
   // Hydrate from IndexedDB as soon as the iPod opens — auth not required.
   //

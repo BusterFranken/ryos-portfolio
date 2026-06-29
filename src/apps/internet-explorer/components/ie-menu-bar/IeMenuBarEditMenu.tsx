@@ -3,19 +3,15 @@ import {
   MenubarTrigger,
   MenubarContent,
   MenubarItem,
-  MenubarSeparator,
 } from "@/components/ui/menubar";
 import type { InternetExplorerMenuBarViewModel } from "./useInternetExplorerMenuBar";
-import { IeMenuBarYearSubmenu } from "./IeMenuBarYearSubmenu";
-import { IeMenuBarLanguageSubmenu } from "./IeMenuBarLanguageSubmenu";
-import { IeMenuBarLocationSubmenu } from "./IeMenuBarLocationSubmenu";
 
 export function IeMenuBarEditMenu({
   vm,
 }: {
   vm: InternetExplorerMenuBarViewModel;
 }) {
-  const { t, onRefresh, onStop, isLoading, onEditFuture } = vm;
+  const { t, onRefresh, onStop, isLoading } = vm;
 
   return (
     <MenubarMenu>
@@ -36,14 +32,6 @@ export function IeMenuBarEditMenu({
           }
         >
           {t("apps.internet-explorer.menu.stop")}
-        </MenubarItem>
-        <MenubarSeparator className="h-[2px] bg-black my-1" />
-        <IeMenuBarYearSubmenu vm={vm} />
-        <IeMenuBarLanguageSubmenu vm={vm} />
-        <IeMenuBarLocationSubmenu vm={vm} />
-        <MenubarSeparator className="h-[2px] bg-black my-1" />
-        <MenubarItem onClick={onEditFuture} className="text-md h-6 px-3">
-          {t("apps.internet-explorer.menu.editFuture")}
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>

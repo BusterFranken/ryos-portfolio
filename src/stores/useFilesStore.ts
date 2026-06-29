@@ -9,7 +9,6 @@ import type { StoredContent } from "@/utils/indexedDBOperations";
 import type { OsThemeId } from "@/themes/types";
 import { getAppBasicInfoList } from "@/config/appRegistryData";
 import { abortableFetch } from "@/utils/abortableFetch";
-import { useCloudSyncStore } from "@/stores/useCloudSyncStore";
 
 // Define the structure for a file system item (metadata)
 export interface FileSystemItem {
@@ -106,9 +105,7 @@ interface FilesStoreState {
 
 // In-memory cache for JSON data to avoid repeated fetches
 let cachedFileSystemData: FileSystemData | null = null;
-let cachedAppletsData: { applets: FileSystemItemData[] } | null = null;
 let fileSystemDataPromise: Promise<FileSystemData> | null = null;
-let appletsDataPromise: Promise<{ applets: FileSystemItemData[] }> | null = null;
 
 // Preload status tracking
 let preloadStarted = false;
@@ -138,9 +135,8 @@ export function preloadFileSystemData(): void {
   if (preloadStarted) return;
   preloadStarted = true;
   
-  // Start fetching both JSON files in parallel (non-blocking)
+  // Start fetching default filesystem JSON (non-blocking)
   loadDefaultFiles();
-  loadDefaultApplets();
 }
 
 // Function to load default files from JSON (with caching)
@@ -174,41 +170,6 @@ async function loadDefaultFiles(): Promise<FileSystemData> {
   })();
   
   return fileSystemDataPromise;
-}
-
-// Function to load default applets from JSON (with caching)
-async function loadDefaultApplets(): Promise<{
-  applets: FileSystemItemData[];
-}> {
-  // Return cached data immediately if available
-  if (cachedAppletsData) {
-    return cachedAppletsData;
-  }
-  
-  // Return existing promise if fetch is in progress (deduplication)
-  if (appletsDataPromise) {
-    return appletsDataPromise;
-  }
-  
-  // Start new fetch
-  appletsDataPromise = (async () => {
-    try {
-      const res = await abortableFetch("/data/applets.json", {
-        timeout: 15000,
-        retry: { maxAttempts: 2, initialDelayMs: 500 },
-      });
-      const data = await res.json();
-      cachedAppletsData = { applets: data.applets || [] };
-      return cachedAppletsData;
-    } catch (err) {
-      console.error("Failed to load applets.json", err);
-      return { applets: [] };
-    } finally {
-      appletsDataPromise = null;
-    }
-  })();
-  
-  return appletsDataPromise;
 }
 
 // Helper function to get parent path
@@ -556,9 +517,7 @@ const THEMES_WITH_SPARSE_DEFAULT_DESKTOP_SHORTCUTS: OsThemeId[] = [
 
 /** Extra desktop icons on System 7 only (after iPod); still hidden on macosx / Windows themes. */
 const SYSTEM7_PROMINENT_DESKTOP_APP_IDS: readonly string[] = [
-  "chats",
   "internet-explorer",
-  "karaoke",
 ];
 const SYSTEM7_PROMINENT_DESKTOP_APP_ID_SET = new Set<string>(
   SYSTEM7_PROMINENT_DESKTOP_APP_IDS
@@ -729,9 +688,6 @@ export const useFilesStore = create<FilesStoreState>()(
           createdAt: itemData.createdAt || now,
           modifiedAt: itemData.modifiedAt || now,
         };
-        useCloudSyncStore
-          .getState()
-          .clearDeletedKeys("fileMetadataPaths", [newItem.path]);
         debug(`[FilesStore:addItem] Attempting to add:`, newItem); // Log item being added
         set((state) => {
           const parentPath = getParentPath(newItem.path);
@@ -860,7 +816,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       restoreItem: (path) => {
-        useCloudSyncStore.getState().clearDeletedKeys("fileMetadataPaths", [path]);
         set((state) => {
           const itemToRestore = state.items[path];
           if (!itemToRestore || itemToRestore.status !== "trashed") {
@@ -916,12 +871,6 @@ export const useFilesStore = create<FilesStoreState>()(
 
       emptyTrash: () => {
         const trashedItems = get().getTrashItems();
-        useCloudSyncStore
-          .getState()
-          .markDeletedKeys(
-            "fileMetadataPaths",
-            trashedItems.map((item) => item.path)
-          );
         const contentUUIDsToDelete: string[] = [];
         trashedItems.forEach((item) => {
           get().removeItem(item.path, true); // Call internal remove with permanent flag
@@ -933,7 +882,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       renameItem: (oldPath, newPath, newName) => {
-        useCloudSyncStore.getState().clearDeletedKeys("fileMetadataPaths", [newPath]);
         set((state) => {
           const itemToRename = state.items[oldPath];
           // Only allow renaming active items
@@ -981,9 +929,6 @@ export const useFilesStore = create<FilesStoreState>()(
       },
 
       moveItem: (sourcePath, destinationPath) => {
-        useCloudSyncStore
-          .getState()
-          .clearDeletedKeys("fileMetadataPaths", [destinationPath]);
         let success = false;
         set((state) => {
           const sourceItem = state.items[sourcePath];
@@ -1230,7 +1175,6 @@ export const useFilesStore = create<FilesStoreState>()(
         if (current.libraryState === "uninitialized") {
           const data = await loadDefaultFiles();
           const normalizedData = withRequiredRootDirectories(data);
-          const appletsData = await loadDefaultApplets();
           const newItems: Record<string, FileSystemItem> = {};
           const now = Date.now();
 
@@ -1256,26 +1200,13 @@ export const useFilesStore = create<FilesStoreState>()(
             };
           });
 
-          // Add applets
-          appletsData.applets.forEach((applet) => {
-            newItems[applet.path] = {
-              ...applet,
-              status: "active",
-              // Generate UUID for applets
-              uuid: uuidv4(),
-              createdAt: now,
-              modifiedAt: now,
-            };
-          });
-
           set({
             items: newItems,
             libraryState: "loaded",
           });
 
-          // Save default contents for both files and applets
+          // Save default file contents
           await saveDefaultContents(normalizedData.files, newItems);
-          await saveDefaultContents(appletsData.applets, newItems);
 
           // Create default desktop shortcuts after directories are set up
           await get().ensureDefaultDesktopShortcuts();
@@ -1390,11 +1321,7 @@ export const useFilesStore = create<FilesStoreState>()(
             if (!hasActiveShortcut && !hasTrashedShortcut) {
               let hiddenOnThemes: OsThemeId[] = [];
               if (appId !== "ipod") {
-                if (appId === "applet-viewer") {
-                  hiddenOnThemes = [
-                    ...THEMES_HIDE_DEFAULT_APPLET_STORE_DESKTOP_SHORTCUT,
-                  ];
-                } else if (SYSTEM7_PROMINENT_DESKTOP_APP_ID_SET.has(appId)) {
+                if (SYSTEM7_PROMINENT_DESKTOP_APP_ID_SET.has(appId)) {
                   hiddenOnThemes = [
                     ...THEMES_HIDE_SYSTEM7_PROMINENT_DESKTOP_APPS,
                   ];
@@ -1822,9 +1749,6 @@ export const useFilesStore = create<FilesStoreState>()(
             Promise.all([
               loadDefaultFiles().then((data) => {
                 registerFilesForLazyLoad(data.files, state.items);
-              }),
-              loadDefaultApplets().then((data) => {
-                registerFilesForLazyLoad(data.applets, state.items);
               }),
               state.syncRootDirectoriesFromDefaults().then(() => {
                 if (state.ensureDefaultDesktopShortcuts) {

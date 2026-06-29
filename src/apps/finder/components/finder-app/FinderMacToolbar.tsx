@@ -20,7 +20,6 @@ import type { TFunction } from "i18next";
 
 export interface FinderMacToolbarProps {
   t: TFunction;
-  isAirDropView: boolean;
   currentPath: string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -31,7 +30,6 @@ export interface FinderMacToolbarProps {
   canCreateFolder: boolean;
   navigateBack: () => void;
   navigateForward: () => void;
-  navigateAwayFromAirDrop: () => void;
   navigateUp: () => void;
   handleNewFolder: () => void;
   handleImportFile: () => void;
@@ -40,7 +38,6 @@ export interface FinderMacToolbarProps {
 
 export function FinderMacToolbar({
   t,
-  isAirDropView,
   currentPath,
   searchQuery,
   setSearchQuery,
@@ -51,7 +48,6 @@ export function FinderMacToolbar({
   canCreateFolder,
   navigateBack,
   navigateForward,
-  navigateAwayFromAirDrop,
   navigateUp,
   handleNewFolder,
   handleImportFile,
@@ -66,14 +62,8 @@ export function FinderMacToolbar({
         <ToolbarButtonGroup>
           <ToolbarButton
             icon
-            onClick={() => {
-              if (isAirDropView) {
-                navigateAwayFromAirDrop();
-              } else {
-                navigateBack();
-              }
-            }}
-            disabled={!isAirDropView && !canNavigateBack()}
+            onClick={navigateBack}
+            disabled={!canNavigateBack()}
           >
             <CaretLeft size={14} weight="fill" className="scale-x-150 scale-y-90" />
           </ToolbarButton>

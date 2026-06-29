@@ -3,7 +3,6 @@ import type { SpotlightResult } from "@/hooks/useSpotlightSearch";
 export const SECTION_TYPE_ORDER: SpotlightResult["type"][] = [
   "app",
   "document",
-  "applet",
   "calendar",
   "contact",
   "music",
@@ -18,7 +17,6 @@ export function getSectionKey(type: SpotlightResult["type"]): string {
   const map: Record<SpotlightResult["type"], string> = {
     app: "spotlight.sections.apps",
     document: "spotlight.sections.documents",
-    applet: "spotlight.sections.applets",
     calendar: "spotlight.sections.calendar",
     contact: "spotlight.sections.contacts",
     music: "spotlight.sections.music",
@@ -40,8 +38,6 @@ export function getSpotlightPrefetchAppId(
       return result.id.startsWith("app-") ? result.id.slice(4) : null;
     case "document":
       return "textedit";
-    case "applet":
-      return "applet-viewer";
     case "music":
       return "ipod";
     case "site":
@@ -56,8 +52,6 @@ export function getSpotlightPrefetchAppId(
       return "control-panels";
     case "command":
       return "terminal";
-    case "ai":
-      return "chats";
     default:
       return null;
   }

@@ -4,7 +4,6 @@ import {
   type MenuDescriptor,
 } from "@/components/shared/menubar/AppMenuBarMenus";
 import { useAppMenuBarChrome } from "@/hooks/useAppMenuBarChrome";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 import { useTranslation } from "react-i18next";
 import type { CalendarView } from "@/stores/useCalendarStore";
 import { useInstanceUndoRedo } from "@/hooks/useUndoRedo";
@@ -82,14 +81,6 @@ export function CalendarMenuBar({
           type: "action",
           label: t("apps.calendar.menu.exportToIcs"),
           onClick: onExport,
-        },
-        { type: "separator" },
-        {
-          type: "action",
-          label: t("apps.calendar.menu.syncCalendar", {
-            defaultValue: "Sync Calendar",
-          }),
-          onClick: () => requestCloudSyncDomainCheck("calendar"),
         },
         { type: "separator" },
         {

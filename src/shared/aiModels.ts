@@ -1,10 +1,8 @@
-// Single source of truth for AI models, shared by the frontend (`@/shared/aiModels`)
-// and the API (`../../src/shared/aiModels.js`).
+// Single source of truth for AI model metadata used by the frontend
+// (`@/shared/aiModels`).
 //
 // Keep this module runtime-neutral: NO React / DOM / Zustand / ai-sdk imports,
-// so it can be imported by the Bun API server as well as the Vite frontend.
-// Server-only provider wiring (e.g. ai-sdk `getModelInstance`) lives in
-// `api/_utils/_aiModels.ts`.
+// so it stays a plain data module for the Vite frontend.
 
 export const AI_MODELS = {
   "sonnet-4.6": {

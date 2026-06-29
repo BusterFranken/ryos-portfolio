@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import { AppSidebarPanel } from "@/components/layout/AppSidebarPanel";
-import { AirDropView } from "../AirDropView";
 import { FinderSidebarItem } from "./FinderSidebarItem";
 import { FinderFileListContent, type FinderFileListContentProps } from "./FinderFileListContent";
 import type { TFunction } from "i18next";
@@ -11,7 +10,6 @@ export interface FinderSidebarEntry {
   name: string;
   icon: string;
   path: string;
-  isAirDrop?: boolean;
   divider?: boolean;
 }
 
@@ -20,20 +18,10 @@ export interface FinderMacContentAreaProps {
   showSidebar: boolean;
   sidebarItems: FinderSidebarEntry[];
   activeSidebarPath: string;
-  isAirDropView: boolean;
   sortedFilesCount: number;
   storageSpaceAvailable: number;
   fileListContentProps: FinderFileListContentProps;
-  navigateToAirDrop: () => void;
-  navigateAwayFromAirDrop: () => void;
   navigateToPath: (path: string) => void;
-  handleAirDropSendFile: (
-    recipient: string,
-    fileName: string,
-    filePath: string,
-    fileType: string
-  ) => void | Promise<void>;
-  promptVerifyToken: () => void;
 }
 
 export function FinderMacContentArea({
@@ -41,15 +29,10 @@ export function FinderMacContentArea({
   showSidebar,
   sidebarItems,
   activeSidebarPath,
-  isAirDropView,
   sortedFilesCount,
   storageSpaceAvailable,
   fileListContentProps,
-  navigateToAirDrop,
-  navigateAwayFromAirDrop,
   navigateToPath,
-  handleAirDropSendFile,
-  promptVerifyToken,
 }: FinderMacContentAreaProps) {
   return (
     <>
@@ -64,12 +47,7 @@ export function FinderMacContentArea({
                     icon={item.icon}
                     isActive={activeSidebarPath === item.path}
                     onClick={() => {
-                      if (item.isAirDrop) {
-                        navigateToAirDrop();
-                      } else {
-                        navigateAwayFromAirDrop();
-                        navigateToPath(item.path);
-                      }
+                      navigateToPath(item.path);
                     }}
                   />
                   {item.divider && (
@@ -81,25 +59,16 @@ export function FinderMacContentArea({
           </FinderPanel>
         )}
         <FinderPanel bordered className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
-          {isAirDropView ? (
-            <div className="finder-airdrop-surface flex-1 bg-gradient-to-b from-[#e8ecf0] to-[#d1d5db]">
-              <AirDropView
-                onSendFile={handleAirDropSendFile}
-                onRequestLogin={promptVerifyToken}
-              />
-            </div>
-          ) : (
-            <FinderFileListContent
-              {...fileListContentProps}
-              listClassName="flex-1 bg-white/90"
-              listStyle={
-                {
-                  "--os-color-selection-bg":
-                    "var(--os-accent-list-gradient, #3875d7)",
-                } as CSSProperties
-              }
-            />
-          )}
+          <FinderFileListContent
+            {...fileListContentProps}
+            listClassName="flex-1 bg-white/90"
+            listStyle={
+              {
+                "--os-color-selection-bg":
+                  "var(--os-accent-list-gradient, #3875d7)",
+              } as CSSProperties
+            }
+          />
         </FinderPanel>
       </div>
       <div

@@ -249,7 +249,7 @@ export function WordTimingHighlight({
       const rawTime = timeRef.current.propTime + clampedElapsed;
       
       // Monotonic time: ignore tiny backward jitter between progress ticks (~200ms). Keep at 100ms so local
-      // playback stays smooth; larger remote-only drift is smoothed in useListenSync, not here.
+      // playback stays smooth.
       const lastDisplayed = timeRef.current.lastDisplayedTime;
       const isSeek = lastDisplayed - rawTime >= 100;
       const interpolatedTime = isSeek || rawTime >= lastDisplayed ? rawTime : lastDisplayed;

@@ -1,7 +1,6 @@
 import { AppMenuBarShell } from "@/components/shared/menubar/AppMenuBarShell";
 import { AppMenuBarMenus } from "@/components/shared/menubar/AppMenuBarMenus";
 import { useAppMenuBarChrome } from "@/hooks/useAppMenuBarChrome";
-import { requestCloudSyncDomainCheck } from "@/utils/cloudSyncEvents";
 import { useTranslation } from "react-i18next";
 
 interface ContactsMenuBarProps {
@@ -64,14 +63,6 @@ export function ContactsMenuBar({
                 type: "action",
                 label: t("apps.contacts.menu.importVCard"),
                 onClick: onImport,
-              },
-              { type: "separator" },
-              {
-                type: "action",
-                label: t("apps.contacts.menu.syncContacts", {
-                  defaultValue: "Sync Contacts",
-                }),
-                onClick: () => requestCloudSyncDomainCheck("contacts"),
               },
               { type: "separator" },
               {

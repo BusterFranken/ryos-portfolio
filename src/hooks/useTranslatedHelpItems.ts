@@ -28,14 +28,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "exploreTimeNodes",
     "shareJourney",
   ],
-  chats: [
-    "chatWithRyo",
-    "createEditFiles",
-    "controlApps",
-    "joinChatRooms",
-    "pushToTalk",
-    "nudgeDjMode",
-  ],
   textedit: [
     "slashCommands",
     "formatting",
@@ -73,16 +65,7 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "playback",
     "loop",
     "shuffle",
-    "powersTv",
     "shareDeepLinks",
-  ],
-  tv: [
-    "channels",
-    "playback",
-    "numbers",
-    "aiChannels",
-    "mtvChannel",
-    "fullscreen",
   ],
   ipod: [
     "addSongs",
@@ -91,14 +74,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "coverFlow",
     "shareSongs",
     "displayFullscreen",
-  ],
-  karaoke: [
-    "addSearchSongs",
-    "syncLyricsTiming",
-    "stylePronunciation",
-    "listenParty",
-    "syncedWithIpod",
-    "keyboardShortcuts",
   ],
   synth: [
     "virtualKeyboard",
@@ -111,34 +86,16 @@ const HELP_KEYS: Record<AppId, string[]> = {
   terminal: [
     "basicCommands",
     "navigation",
-    "aiAssistant",
     "fileEditing",
     "commandHistory",
     "terminalSounds",
-  ],
-  "applet-viewer": [
-    "appletStore",
-    "createWithRyosChat",
-    "viewApplets",
-    "shareApplets",
-    "openFromFinder",
-    "keepUpdated",
   ],
   "control-panels": [
     "appearance",
     "shaderEffects",
     "sounds",
-    "aiModel",
     "sync",
     "backupRestore",
-  ],
-  admin: [
-    "adminAccess",
-    "userManagement",
-    "roomManagement",
-    "songLibrary",
-    "searchFilter",
-    "statistics",
   ],
   stickies: [
     "createNote",
@@ -154,7 +111,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "displayScaling",
     "pauseResume",
     "captureScreenshot",
-    "chatsCanDriveIt",
   ],
   pc: [
     "pcEmulator",
@@ -185,8 +141,6 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "createContacts",
     "importVCards",
     "smartGroups",
-    "useWithRyo",
-    "cloudSync",
   ],
   dashboard: [
     "openDashboard",

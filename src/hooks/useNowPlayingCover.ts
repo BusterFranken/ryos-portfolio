@@ -5,7 +5,6 @@ import {
   type Track,
   type AppleMusicKitNowPlaying,
 } from "@/stores/useIpodStore";
-import { useKaraokeStore } from "@/stores/useKaraokeStore";
 import {
   resolveAppleMusicArtworkUrl,
   resolveMediaCoverUrl,
@@ -15,7 +14,7 @@ export interface NowPlayingCover {
   coverUrl: string | null;
   title: string | null;
   /** Whichever player is currently driving the cover. */
-  source: "ipod" | "karaoke" | null;
+  source: "ipod" | null;
   isPlaying: boolean;
 }
 
@@ -39,9 +38,8 @@ function resolveCover(
 
 /**
  * Resolves the cover art that should be shown for the "Now Playing" dynamic
- * wallpaper. Prefers whichever of the iPod / Karaoke players is actively
- * playing (iPod wins ties); otherwise falls back to whichever has a current
- * track so the cover still shows while paused.
+ * wallpaper. Shows the iPod's cover while it is actively playing; otherwise
+ * falls back to its current track so the cover still shows while paused.
  */
 export function useNowPlayingCover(): NowPlayingCover {
   // iPod playback state.
@@ -53,10 +51,6 @@ export function useNowPlayingCover(): NowPlayingCover {
   const ipodAppleTracks = useIpodStore((s) => s.appleMusicTracks);
   const ipodNowPlaying = useIpodStore((s) => s.appleMusicKitNowPlaying);
 
-  // Karaoke playback state (library is shared with the iPod's YouTube tracks).
-  const karaokeIsPlaying = useKaraokeStore((s) => s.isPlaying);
-  const karaokeSongId = useKaraokeStore((s) => s.currentSongId);
-
   return useMemo<NowPlayingCover>(() => {
     const ipodTrack = getActiveIpodCurrentTrack({
       librarySource: ipodLibrarySource,
@@ -66,12 +60,8 @@ export function useNowPlayingCover(): NowPlayingCover {
       appleMusicCurrentSongId: ipodAppleSongId,
     });
 
-    const karaokeTrack = karaokeSongId
-      ? ipodTracks.find((t) => t.id === karaokeSongId) ?? null
-      : null;
-
     type Candidate = {
-      source: "ipod" | "karaoke";
+      source: "ipod";
       track: Track | null;
       nowPlaying: AppleMusicKitNowPlaying | null;
       isPlaying: boolean;
@@ -83,20 +73,12 @@ export function useNowPlayingCover(): NowPlayingCover {
       nowPlaying: ipodLibrarySource === "appleMusic" ? ipodNowPlaying : null,
       isPlaying: ipodIsPlaying,
     };
-    const karaokeCandidate: Candidate = {
-      source: "karaoke",
-      track: karaokeTrack,
-      nowPlaying: null,
-      isPlaying: karaokeIsPlaying,
-    };
 
-    // Precedence: actively playing first (iPod wins ties), then whichever has
-    // a track so paused playback still shows its cover.
+    // Show the cover while actively playing, then fall back to the current
+    // track so paused playback still shows its cover.
     let chosen: Candidate | null = null;
     if (ipodCandidate.isPlaying) chosen = ipodCandidate;
-    else if (karaokeCandidate.isPlaying) chosen = karaokeCandidate;
     else if (ipodCandidate.track) chosen = ipodCandidate;
-    else if (karaokeCandidate.track) chosen = karaokeCandidate;
 
     if (!chosen) return EMPTY;
 
@@ -116,7 +98,5 @@ export function useNowPlayingCover(): NowPlayingCover {
     ipodTracks,
     ipodAppleTracks,
     ipodNowPlaying,
-    karaokeIsPlaying,
-    karaokeSongId,
   ]);
 }

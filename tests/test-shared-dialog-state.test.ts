@@ -41,7 +41,6 @@ const collectAppHookFiles = (): string[] => {
 
 // Logic hooks that live outside a hooks/ directory but were migrated too.
 const EXTRA_MIGRATED_FILES = [
-  "src/apps/chats/components/chats-app/useChatsAppController.tsx",
   "src/apps/textedit/components/DialogManager.tsx",
 ];
 
@@ -80,14 +79,6 @@ describe("Shared dialog state wiring", () => {
 
   test("useIpodLogic uses useMediaAppDialogs", () => {
     const source = readSource("src/apps/ipod/hooks/useIpodLogic.ts");
-    expect(source).toContain(
-      'import { useMediaAppDialogs } from "@/hooks/useMediaAppDialogs"'
-    );
-    expect(source).toContain("useMediaAppDialogs()");
-  });
-
-  test("useKaraokeLogic uses useMediaAppDialogs", () => {
-    const source = readSource("src/apps/karaoke/hooks/useKaraokeLogic.ts");
     expect(source).toContain(
       'import { useMediaAppDialogs } from "@/hooks/useMediaAppDialogs"'
     );

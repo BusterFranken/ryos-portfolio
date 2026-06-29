@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
-import { abortableFetch } from "@/utils/abortableFetch";
-import { getApiUrl } from "@/utils/platform";
 
 export interface CursorAgentRunMeta {
   agentId?: string;
@@ -163,15 +161,10 @@ export function useCursorAgentRunPoll(
 
     async function tick(force = false) {
       try {
-        const res = await abortableFetch(
-          `${getApiUrl("/api/ai/cursor-run-status")}?runId=${encodeURIComponent(activeRunId)}`,
-          {
-            credentials: "include",
-            timeout: 25000,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          }
-        );
-        const data = (await res.json()) as CursorRunStatusResponse;
+        // STATIC BUILD: the cursor-agent backend (`/api/ai/*`) was removed.
+        // Resolve a terminal/no-op status so polling stops immediately and no
+        // request is fired. The hook interface is preserved for its caller.
+        const data: CursorRunStatusResponse = { done: true };
         if (cancelled) return;
 
         const newEvents = Array.isArray(data.events) ? data.events : [];
@@ -238,57 +231,17 @@ export function useCursorAgentRunPoll(
         });
         return;
       }
+      // STATIC BUILD: the cursor-agent backend (`/api/ai/*`) was removed, so
+      // follow-ups cannot be submitted. Surface a clear, non-crashing error
+      // instead of firing a request. `meta` is retained as a dependency so the
+      // callback identity matches the original interface.
+      void meta;
       dispatch({
         type: "patch",
-        payload: { isSendingFollowup: true, followupError: null },
+        payload: {
+          followupError: "Agent follow-ups are unavailable in this build.",
+        },
       });
-      try {
-        const res = await abortableFetch(
-          getApiUrl("/api/ai/cursor-run-followup"),
-          {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ runId: activeRunId, prompt: trimmed }),
-            timeout: 30000,
-            throwOnHttpError: false,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          }
-        );
-        const data = (await res.json().catch(() => ({}))) as {
-          runId?: string;
-          error?: string;
-        };
-        if (!res.ok) {
-          throw new Error(data?.error || `Failed (${res.status})`);
-        }
-        if (typeof data.runId !== "string" || data.runId.length === 0) {
-          throw new Error("Server did not return a new runId");
-        }
-        dispatch({
-          type: "patch",
-          payload: {
-            activeRunId: data.runId,
-            events: [],
-            done: false,
-            meta: {
-              ...meta,
-              nextRunId: undefined,
-              activeRunId: data.runId,
-              terminalStatus: undefined,
-            },
-          },
-        });
-        // Kick a quick refresh so the spinner shows immediately.
-        void tickRef.current?.(true);
-      } catch (e) {
-        dispatch({
-          type: "patch",
-          payload: { followupError: e instanceof Error ? e.message : String(e) },
-        });
-      } finally {
-        dispatch({ type: "patch", payload: { isSendingFollowup: false } });
-      }
     },
     [activeRunId, meta]
   );

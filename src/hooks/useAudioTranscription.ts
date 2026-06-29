@@ -1,8 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { getSupportedMimeType } from "@/utils/audio";
 import { checkOfflineAndShowError } from "@/utils/offline";
-import { getApiUrl } from "@/utils/platform";
-import { abortableFetch } from "@/utils/abortableFetch";
 
 // Constants
 const DEFAULT_SILENCE_THRESHOLD = 2000; // ms
@@ -162,50 +160,13 @@ export function useAudioTranscription({
         return;
       }
 
-      try {
-        // Validate audio content
-        const totalSize = chunks.reduce((sum, chunk) => sum + chunk.size, 0);
-        if (totalSize === 0) return;
-
-        const mimeType = getSupportedMimeType();
-        const audioBlob = new Blob(chunks, { type: mimeType });
-
-        // Validate blob
-        if (!audioBlob.size) {
-          throw new Error("Generated audio blob is empty");
-        }
-
-        onTranscriptionStart?.();
-
-        const formData = new FormData();
-        // Extract extension from MIME type (e.g., "audio/webm;codecs=opus" -> "webm")
-        const extension = mimeType.split(";")[0].split("/")[1];
-        formData.append("audio", audioBlob, `recording.${extension}`);
-
-        const response = await abortableFetch(
-          getApiUrl("/api/audio-transcribe"),
-          {
-            method: "POST",
-            body: formData,
-            timeout: 30000,
-            throwOnHttpError: false,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = (await response.json()) as { error: string };
-          throw new Error(errorData.error || "Transcription failed");
-        }
-
-        const { text } = (await response.json()) as { text: string };
-        if (text && text.trim()) {
-          onTranscriptionComplete(text);
-        }
-      } catch (error) {
-        const err = error instanceof Error ? error : new Error("Unknown error");
-        onError?.(err);
-      }
+      // STATIC BUILD: the `/api/audio-transcribe` backend (speech-to-text) was
+      // removed. Surface a clear error via the existing callback instead of
+      // firing a request. `onTranscriptionStart` / `onTranscriptionComplete`
+      // are kept as dependencies so the callback identity matches the original.
+      void onTranscriptionStart;
+      void onTranscriptionComplete;
+      onError?.(new Error("Audio transcription is unavailable in this build."));
     },
     [onTranscriptionComplete, onTranscriptionStart, onError]
   );

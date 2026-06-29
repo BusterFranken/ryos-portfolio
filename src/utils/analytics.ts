@@ -1,11 +1,11 @@
-import { getApiUrl } from "@/utils/platform";
-
 /**
  * First-party analytics SDK and centralized analytics event constants.
  *
- * Events are batched to /api/analytics/events and aggregated server-side in
- * Redis. The public `track(event, props)` API intentionally mirrors the old
- * Vercel Analytics helper so existing app code can stay simple.
+ * STATIC BUILD: the `/api/analytics/events` ingest backend was removed, so the
+ * network send is a no-op — NO analytics request is ever fired. The public
+ * `track(event, props)` / `initializeAnalytics()` API surface is preserved
+ * (events are queued in memory and dropped on flush) so call sites compile and
+ * a different analytics provider can be wired in later without touching them.
  */
 
 // Core application events
@@ -221,7 +221,6 @@ interface QueuedAnalyticsEvent {
   properties?: AnalyticsProperties;
 }
 
-const ANALYTICS_ENDPOINT = "/api/analytics/events";
 const SESSION_KEY = "ryos:analytics:session-id";
 const CLIENT_KEY = "ryos:analytics:client-id";
 const MAX_QUEUE_SIZE = 200;
@@ -345,37 +344,13 @@ function scheduleFlush(): void {
 }
 
 function sendBatch(
-  events: QueuedAnalyticsEvent[],
-  preferBeacon = false
+  _events: QueuedAnalyticsEvent[],
+  _preferBeacon = false
 ): Promise<void> | void {
-  if (!canUseBrowserApis() || events.length === 0) return;
-  const payload = JSON.stringify({ events });
-  const endpoint = getApiUrl(ANALYTICS_ENDPOINT);
-
-  if (preferBeacon && navigator.sendBeacon) {
-    try {
-      const blob = new Blob([payload], { type: "application/json" });
-      if (navigator.sendBeacon(endpoint, blob)) {
-        return;
-      }
-    } catch {
-      // Fall through to fetch.
-    }
-  }
-
-  return fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: payload,
-    credentials: "include",
-    keepalive: payload.length < 60_000,
-  })
-    .then(() => undefined)
-    .catch(() => {
-      // Analytics must never impact app behavior. Keep a small in-memory retry
-      // buffer for transient failures while the page remains open.
-      queue = [...events, ...queue].slice(0, MAX_QUEUE_SIZE);
-    });
+  // STATIC BUILD: the analytics ingest backend was removed. Drop the batch
+  // (no `fetch` / `sendBeacon` to `/api/analytics/events`). Callers are
+  // unaffected — `track()` still queues and flush still drains the queue.
+  return;
 }
 
 export function track(

@@ -21,7 +21,6 @@ export interface SpotlightResult {
   type:
     | "app"
     | "document"
-    | "applet"
     | "music"
     | "site"
     | "video"
@@ -127,7 +126,6 @@ const SEARCHABLE_COMMANDS = [
   { name: "grep", description: "Search text", keywords: ["find", "search", "pattern"] },
   { name: "whoami", description: "Current user", keywords: ["user", "name"] },
   { name: "cowsay", description: "ASCII cow", keywords: ["fun", "cow", "ascii"] },
-  { name: "ryo", description: "Ask Ryo AI", keywords: ["ai", "chat", "assistant"] },
 ];
 
 const MAX_RESULTS_PER_TYPE = 4;
@@ -188,21 +186,6 @@ const mapWorkerResultToSpotlightResult = (
         icon: "file-text.png",
         action: () =>
           launchApp("textedit", { initialData: { path: result.path } }),
-      };
-    case "applet":
-      return {
-        id: result.id,
-        type: "applet",
-        title: result.title,
-        subtitle: "Applets",
-        icon: result.icon && !result.icon.startsWith("/") && !result.icon.startsWith("http")
-          ? result.icon
-          : "applets.png",
-        isEmoji: result.isEmoji,
-        action: () =>
-          launchApp("applet-viewer", {
-            initialData: { path: result.path },
-          }),
       };
     case "music":
       return {
@@ -502,7 +485,6 @@ export function useSpotlightSearch(query: string): SpotlightSearchState {
     // Empty query — show top apps
     if (!trimmed) {
       const topApps: AppId[] = [
-        "chats",
         "finder",
         "textedit",
         "internet-explorer",
@@ -585,21 +567,6 @@ export function useSpotlightSearch(query: string): SpotlightSearchState {
       }));
     results.push(...cmdResults);
 
-    // 9. AI Fallback — always present when there's a query
-    results.push({
-      id: "ai-ask-ryo",
-      type: "ai" as const,
-      title: `${t("spotlight.askRyo")} \u201C${trimmed}\u201D`,
-      icon: getAppIconPath("chats"),
-      action: () =>
-        launchApp("chats", {
-          initialData: {
-            prefillMessage: trimmed,
-            autoSend: true,
-            prefillRequestId: `${Date.now()}`,
-          },
-        }),
-    });
 
     // Cap total
     return results.slice(0, MAX_TOTAL_RESULTS);

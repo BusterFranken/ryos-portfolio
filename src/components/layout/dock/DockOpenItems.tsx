@@ -6,7 +6,6 @@ import { getTranslatedAppName } from "@/utils/i18n";
 import type { AppInstance } from "@/stores/useAppStore";
 import type { FileSystemItem } from "@/stores/useFilesStore";
 import { DockIconButton } from "./DockIconButton";
-import { getDockAppletInfo } from "./dockAppletInfo";
 import type { DockOpenItem } from "./dockTypes";
 
 export interface DockOpenItemsProps {
@@ -50,58 +49,11 @@ export function renderDockOpenItems({
   handleIconHover,
   handleIconLeave,
   handleAppContextMenu,
-  restoreInstance,
-  bringInstanceToForeground,
   focusMostRecentInstanceOfApp,
   handleNonPinnedDragStart,
-  getFileItem,
-  t,
 }: DockOpenItemsProps): React.ReactNode[] {
   return openItems
     .map((item) => {
-      if (item.type === "applet" && item.instanceId) {
-        const instance = instances[item.instanceId];
-        if (!instance) return null;
-
-        const { icon, label, isEmoji } = getDockAppletInfo(
-          instance,
-          getFileItem,
-          t,
-        );
-        return (
-            <DockIconButton
-              key={item.instanceId}
-              label={label}
-              icon={icon}
-              idKey={item.instanceId}
-              onClick={(_e) => {
-                if (instance.isMinimized) {
-                  restoreInstance(item.instanceId!);
-                } else {
-                  bringInstanceToForeground(item.instanceId!);
-                }
-              }}
-              onContextMenu={(e) =>
-                handleAppContextMenu(e, "applet-viewer", item.instanceId)
-              }
-              showIndicator
-              isLoading={instance.isLoading}
-              isEmoji={isEmoji}
-              mouseX={mouseX}
-              magnifyEnabled={effectiveMagnifyEnabled}
-              isNew={
-                hasMounted && !seenIdsRef.current.has(item.instanceId!)
-              }
-              isHovered={hoveredId === item.instanceId}
-              isSwapping={isSwapping}
-              onHover={() => handleIconHover(item.instanceId!)}
-              onLeave={handleIconLeave}
-              baseSize={scaledButtonSize}
-              intentPrefetchAppId="applet-viewer"
-            />
-          );
-        }
-
         const icon = getAppIconPath(item.appId);
         const label = getTranslatedAppName(item.appId);
         const isLoading = Object.values(instances).some(

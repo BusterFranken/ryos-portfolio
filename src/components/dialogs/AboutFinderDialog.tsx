@@ -11,15 +11,10 @@ import { getNonFinderApps } from "@/config/appRegistry";
 import { useAppStore } from "@/stores/useAppStore";
 import { useIsRyoAdmin } from "@/hooks/useIsRyoAdmin";
 import { cn } from "@/lib/utils";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { ThemedIcon } from "@/components/shared/ThemedIcon";
 import { getTranslatedAppName } from "@/utils/i18n";
 import type { AppId } from "@/config/appRegistry";
-import { abortableFetch } from "@/utils/abortableFetch";
-import {
-  getDesktopDownloadUrl,
-  getSupportedDesktopDownloadTarget,
-} from "@/utils/desktopDownload";
 import { getDocsBaseUrl } from "@/utils/runtimeConfig";
 
 interface AboutFinderDialogProps {
@@ -45,63 +40,6 @@ export function AboutFinderDialog({
   const buildNumber = useAppStore((state) => state.ryOSBuildNumber);
   const buildTime = useAppStore((state) => state.ryOSBuildTime);
   const [versionDisplayMode, setVersionDisplayMode] = useState(0); // 0: version, 1: commit, 2: date
-  const [desktopVersion, setDesktopVersion] = useState<string | null>(null);
-  // Only offer the Mac desktop download on actual Mac browsers. This relies on
-  // the shared detector so mobile devices (iPad/iPhone) are excluded too.
-  const isMac = useMemo(
-    () => getSupportedDesktopDownloadTarget()?.platform === "mac",
-    []
-  );
-  const desktopDownloadUrl = useMemo(
-    () =>
-      desktopVersion && isMac
-        ? getDesktopDownloadUrl(desktopVersion, {
-            platform: "mac",
-            arch: "aarch64",
-          })
-        : null,
-    [desktopVersion, isMac]
-  );
-
-  // Fetch desktop version for download link
-  useEffect(() => {
-    if (!isMac) return;
-
-    const abortController = new AbortController();
-    let isActive = true;
-
-    const loadDesktopVersion = async () => {
-      try {
-        const response = await abortableFetch("/version.json", {
-          cache: "no-store",
-          timeout: 15000,
-          throwOnHttpError: false,
-          retry: { maxAttempts: 1, initialDelayMs: 250 },
-          signal: abortController.signal,
-        });
-        const data = await response.json();
-
-        if (!isActive || abortController.signal.aborted) return;
-        setDesktopVersion(
-          typeof data?.desktopVersion === "string" ? data.desktopVersion : null
-        );
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") {
-          return;
-        }
-        if (!isActive || abortController.signal.aborted) return;
-        setDesktopVersion(null);
-      }
-    };
-
-    void loadDesktopVersion();
-
-    return () => {
-      isActive = false;
-      abortController.abort();
-    };
-  }, [isMac]);
-
   const isAdmin = useIsRyoAdmin();
 
   const memoryUsage = useMemo(() => {
@@ -243,19 +181,6 @@ export function AboutFinderDialog({
               >
                 <p>© Ryo Lu. 1992-{new Date().getFullYear()}</p>
                 <p>
-                  {isMac && desktopDownloadUrl && (
-                    <>
-                      <a
-                        href={desktopDownloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-os-link hover:underline"
-                      >
-                        {t("apps.control-panels.downloadMacApp")}
-                      </a>
-                      {" · "}
-                    </>
-                  )}
                   <a
                     href="#"
                     onClick={(e) => {

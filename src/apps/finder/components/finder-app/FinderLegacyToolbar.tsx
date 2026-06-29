@@ -9,7 +9,6 @@ export interface FinderLegacyToolbarProps {
   t: TFunction;
   isWindowsTheme: boolean;
   currentTheme: string;
-  isAirDropView: boolean;
   currentPath: string;
   pathInputRef: RefObject<HTMLInputElement | null>;
   displayPath: string;
@@ -17,7 +16,6 @@ export interface FinderLegacyToolbarProps {
   canNavigateForward: () => boolean;
   navigateBack: () => void;
   navigateForward: () => void;
-  navigateAwayFromAirDrop: () => void;
   navigateUp: () => void;
   handlePathInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handlePathInputKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -30,7 +28,6 @@ export function FinderLegacyToolbar({
   t,
   isWindowsTheme,
   currentTheme,
-  isAirDropView,
   currentPath,
   pathInputRef,
   displayPath,
@@ -38,7 +35,6 @@ export function FinderLegacyToolbar({
   canNavigateForward,
   navigateBack,
   navigateForward,
-  navigateAwayFromAirDrop,
   navigateUp,
   handlePathInputChange,
   handlePathInputKeyDown,
@@ -65,14 +61,8 @@ export function FinderLegacyToolbar({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              if (isAirDropView) {
-                navigateAwayFromAirDrop();
-              } else {
-                navigateBack();
-              }
-            }}
-            disabled={!isAirDropView && !canNavigateBack()}
+            onClick={navigateBack}
+            disabled={!canNavigateBack()}
             className="size-8"
           >
             <ArrowLeft size={14} weight="bold" />

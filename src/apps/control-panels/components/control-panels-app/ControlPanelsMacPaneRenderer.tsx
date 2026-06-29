@@ -1,9 +1,5 @@
 import type { RefObject } from "react";
 import type { ReactNode } from "react";
-import type { Contact } from "@/utils/contacts";
-import type { TelegramLinkedAccount } from "@/api/telegram";
-import type { EmailStatusResponse } from "@/shared/contracts/auth";
-import type { RealtimeConnectionState } from "@/lib/pusherClient";
 import type { LanguageCode } from "@/stores/useLanguageStore";
 import type { OsThemeId } from "@/themes/types";
 import type { AccentChrome, AccentId } from "@/themes/accents";
@@ -14,16 +10,10 @@ import {
 import { AppearancePaneContent } from "./AppearancePaneContent";
 import { DesktopScreenSaverPaneContent } from "./DesktopScreenSaverPaneContent";
 import { InternationalPaneContent } from "./InternationalPaneContent";
-import { SecurityPaneContent } from "./SecurityPaneContent";
 import { SoundPaneContent } from "./SoundPaneContent";
 import { DisplaysPaneContent } from "./DisplaysPaneContent";
-import { DotMacPaneContent } from "./DotMacPaneContent";
 import { SharingPaneContent } from "./SharingPaneContent";
-import { AccountsPaneContent } from "./AccountsPaneContent";
 import { SoftwareUpdatePaneContent } from "./SoftwareUpdatePaneContent";
-import type { AIModel } from "@/types/aiModels";
-import type { AIModelInfo } from "@/types/aiModels";
-import type { SyncAuditStatus } from "./syncUtils";
 
 export type ControlPanelsMacPaneRendererProps = {
   paneId: ControlPanelPaneId;
@@ -74,100 +64,14 @@ export type ControlPanelsMacPaneRendererProps = {
   handleIpodMuteToggle: () => void;
   isIOS: boolean;
   isMacOSTheme: boolean;
-  username: string | null;
-  promptSetUsername: () => void;
-  promptLogin: () => void;
-  autoSyncEnabled: boolean;
-  setAutoSyncEnabled: (enabled: boolean) => void;
-  isAutoSyncChecking: boolean;
-  autoSyncLastCheckedAt: string | null;
-  autoSyncLastError: string | null;
-  autoSyncDomainStatus: Record<string, SyncAuditStatus>;
-  syncFiles: boolean;
-  syncSettings: boolean;
-  syncCalendar: boolean;
-  syncContacts: boolean;
-  syncMaps: boolean;
-  syncSongs: boolean;
-  syncVideos: boolean;
-  syncTv: boolean;
-  syncStickies: boolean;
-  syncBooks: boolean;
-  setSyncFiles: (enabled: boolean) => void;
-  setSyncSettings: (enabled: boolean) => void;
-  setSyncCalendar: (enabled: boolean) => void;
-  setSyncContacts: (enabled: boolean) => void;
-  setSyncMaps: (enabled: boolean) => void;
-  setSyncSongs: (enabled: boolean) => void;
-  setSyncVideos: (enabled: boolean) => void;
-  setSyncTv: (enabled: boolean) => void;
-  setSyncStickies: (enabled: boolean) => void;
-  setSyncBooks: (enabled: boolean) => void;
-  isCloudForceSyncing: boolean;
-  isCloudBackingUp: boolean;
-  isCloudRestoring: boolean;
-  isCloudForceUploading: boolean;
-  isCloudForceDownloading: boolean;
-  setIsConfirmForceUploadOpen: (open: boolean) => void;
-  setIsConfirmForceDownloadOpen: (open: boolean) => void;
-  handleCloudBackup: () => void;
-  setIsConfirmCloudRestoreOpen: (open: boolean) => void;
-  cloudSyncStatus: {
-    hasBackup: boolean;
-    metadata: {
-      timestamp: string;
-      totalSize: number;
-      version?: number;
-      createdAt?: string;
-    } | null;
-  } | null;
-  cloudProgress: { phase: string; percent: number } | null;
-  isCloudStatusLoading: boolean;
-  CLOUD_BACKUP_MAX_SIZE: number;
-  myContact: Contact | null;
-  accountAvatarLabel: string;
-  accountAvatarInitials: string;
-  realtimeStatus: RealtimeConnectionState;
-  accountJoinedAt?: number | null;
-  debugMode: boolean;
-  isAdmin: boolean;
-  promptVerifyToken: () => void;
-  hasPassword: boolean | null;
-  setPasswordInput: (value: string) => void;
-  setPasswordError: (error: string | null) => void;
-  setIsPasswordDialogOpen: (open: boolean) => void;
-  logout: () => void;
-  handleLogoutAllDevices: () => void;
-  isLoggingOutAllDevices: boolean;
-  telegramLinkedAccount: TelegramLinkedAccount | null;
-  openTelegramDialog: () => void;
-  isTelegramStatusLoading: boolean;
-  recoveryEmailStatus: EmailStatusResponse | null;
-  isEmailStatusLoading: boolean;
-  refreshRecoveryEmailStatus: () => Promise<EmailStatusResponse | null>;
   handleCheckForUpdates: () => void;
   handleBackup: () => void;
   fileInputRef: RefObject<HTMLInputElement | null>;
   handleRestore: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleResetAll: () => void;
   setIsConfirmFormatOpen: (open: boolean) => void;
-  setDebugMode: (enabled: boolean) => void;
-  showResizers: boolean;
-  setShowResizers: (enabled: boolean) => void;
   shaderEffectEnabled: boolean;
   setShaderEffectEnabled: (enabled: boolean) => void;
-  systemFont: import("@/themes/systemFonts").SystemFontId;
-  setSystemFont: (font: import("@/themes/systemFonts").SystemFontId) => void;
-  AI_MODELS: AIModelInfo[];
-  aiModel: AIModel | null;
-  setAiModel: (model: AIModel | null) => void;
-  ttsModel: "openai" | "elevenlabs" | null;
-  setTtsModel: (model: "openai" | "elevenlabs" | null) => void;
-  ttsVoice: string | null;
-  setTtsVoice: (voice: string | null) => void;
-  handleShowBootScreen: () => void;
-  handleTriggerAppCrashTest: () => void;
-  handleTriggerDesktopCrashTest: () => void;
 };
 
 export function ControlPanelsMacPaneRenderer(
@@ -203,28 +107,6 @@ export function ControlPanelsMacPaneRenderer(
           t={t}
           currentLanguage={props.currentLanguage}
           setLanguage={props.setLanguage}
-        />
-      );
-    case "security":
-      return (
-        <SecurityPaneContent
-          t={t}
-          username={props.username}
-          myContact={props.myContact}
-          accountAvatarLabel={props.accountAvatarLabel}
-          accountAvatarInitials={props.accountAvatarInitials}
-          realtimeStatus={props.realtimeStatus}
-          accountJoinedAt={props.accountJoinedAt}
-          locale={props.currentLanguage}
-          hasPassword={props.hasPassword}
-          promptSetUsername={props.promptSetUsername}
-          promptLogin={props.promptLogin}
-          logout={props.logout}
-          handleLogoutAllDevices={props.handleLogoutAllDevices}
-          isLoggingOutAllDevices={props.isLoggingOutAllDevices}
-          setPasswordInput={props.setPasswordInput}
-          setPasswordError={props.setPasswordError}
-          setIsPasswordDialogOpen={props.setIsPasswordDialogOpen}
         />
       );
     case "sound":
@@ -270,55 +152,6 @@ export function ControlPanelsMacPaneRenderer(
           setShaderEffectEnabled={props.setShaderEffectEnabled}
         />
       );
-    case "dot-mac":
-      return (
-        <DotMacPaneContent
-          t={t}
-          tabStyles={props.tabStyles}
-          username={props.username}
-          promptSetUsername={props.promptSetUsername}
-          autoSyncEnabled={props.autoSyncEnabled}
-          setAutoSyncEnabled={props.setAutoSyncEnabled}
-          isAutoSyncChecking={props.isAutoSyncChecking}
-          autoSyncLastCheckedAt={props.autoSyncLastCheckedAt}
-          autoSyncLastError={props.autoSyncLastError}
-          autoSyncDomainStatus={props.autoSyncDomainStatus}
-          syncFiles={props.syncFiles}
-          syncSettings={props.syncSettings}
-          syncCalendar={props.syncCalendar}
-          syncContacts={props.syncContacts}
-          syncMaps={props.syncMaps}
-          syncSongs={props.syncSongs}
-          syncVideos={props.syncVideos}
-          syncTv={props.syncTv}
-          syncStickies={props.syncStickies}
-          syncBooks={props.syncBooks}
-          setSyncFiles={props.setSyncFiles}
-          setSyncSettings={props.setSyncSettings}
-          setSyncCalendar={props.setSyncCalendar}
-          setSyncContacts={props.setSyncContacts}
-          setSyncMaps={props.setSyncMaps}
-          setSyncSongs={props.setSyncSongs}
-          setSyncVideos={props.setSyncVideos}
-          setSyncTv={props.setSyncTv}
-          setSyncStickies={props.setSyncStickies}
-          setSyncBooks={props.setSyncBooks}
-          isMacOSTheme={props.isMacOSTheme}
-          isCloudForceSyncing={props.isCloudForceSyncing}
-          isCloudBackingUp={props.isCloudBackingUp}
-          isCloudRestoring={props.isCloudRestoring}
-          isCloudForceUploading={props.isCloudForceUploading}
-          isCloudForceDownloading={props.isCloudForceDownloading}
-          setIsConfirmForceUploadOpen={props.setIsConfirmForceUploadOpen}
-          setIsConfirmForceDownloadOpen={props.setIsConfirmForceDownloadOpen}
-          handleCloudBackup={props.handleCloudBackup}
-          setIsConfirmCloudRestoreOpen={props.setIsConfirmCloudRestoreOpen}
-          cloudSyncStatus={props.cloudSyncStatus}
-          cloudProgress={props.cloudProgress}
-          isCloudStatusLoading={props.isCloudStatusLoading}
-          CLOUD_BACKUP_MAX_SIZE={props.CLOUD_BACKUP_MAX_SIZE}
-        />
-      );
     case "sharing":
       return (
         <SharingPaneContent
@@ -328,53 +161,6 @@ export function ControlPanelsMacPaneRenderer(
           handleRestore={props.handleRestore}
           handleResetAll={props.handleResetAll}
           setIsConfirmFormatOpen={props.setIsConfirmFormatOpen}
-        />
-      );
-    case "accounts":
-      return (
-        <AccountsPaneContent
-          t={t}
-          tabStyles={props.tabStyles}
-          username={props.username}
-          myContact={props.myContact}
-          accountAvatarLabel={props.accountAvatarLabel}
-          accountAvatarInitials={props.accountAvatarInitials}
-          realtimeStatus={props.realtimeStatus}
-          accountJoinedAt={props.accountJoinedAt}
-          locale={props.currentLanguage}
-          debugMode={props.debugMode}
-          isAdmin={props.isAdmin}
-          promptSetUsername={props.promptSetUsername}
-          promptLogin={props.promptLogin}
-          telegramLinkedAccount={props.telegramLinkedAccount}
-          openTelegramDialog={props.openTelegramDialog}
-          isTelegramStatusLoading={props.isTelegramStatusLoading}
-          recoveryEmailStatus={props.recoveryEmailStatus}
-          isEmailStatusLoading={props.isEmailStatusLoading}
-          refreshRecoveryEmailStatus={props.refreshRecoveryEmailStatus}
-          hasPassword={props.hasPassword}
-          logout={props.logout}
-          handleLogoutAllDevices={props.handleLogoutAllDevices}
-          isLoggingOutAllDevices={props.isLoggingOutAllDevices}
-          setPasswordInput={props.setPasswordInput}
-          setPasswordError={props.setPasswordError}
-          setIsPasswordDialogOpen={props.setIsPasswordDialogOpen}
-          setDebugMode={props.setDebugMode}
-          showResizers={props.showResizers}
-          setShowResizers={props.setShowResizers}
-          systemFont={props.systemFont}
-          setSystemFont={props.setSystemFont}
-          AI_MODELS={props.AI_MODELS}
-          aiModel={props.aiModel}
-          setAiModel={props.setAiModel}
-          ttsModel={props.ttsModel}
-          setTtsModel={props.setTtsModel}
-          ttsVoice={props.ttsVoice}
-          setTtsVoice={props.setTtsVoice}
-          handleShowBootScreen={props.handleShowBootScreen}
-          handleTriggerAppCrashTest={props.handleTriggerAppCrashTest}
-          handleTriggerDesktopCrashTest={props.handleTriggerDesktopCrashTest}
-          onNavigateToPane={props.onNavigateToPane}
         />
       );
     case "software-update":

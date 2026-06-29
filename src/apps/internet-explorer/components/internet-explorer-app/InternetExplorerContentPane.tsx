@@ -1,31 +1,18 @@
 import type { ReactNode, RefObject } from "react";
 import { motion, AnimatePresence, type Variants } from "motion/react";
-import HtmlPreview from "@/components/shared/HtmlPreview";
-import type {
-  ErrorResponse,
-  NavigationMode,
-} from "@/stores/useInternetExplorerStore";
+import type { ErrorResponse } from "@/stores/useInternetExplorerStore";
 import { ErrorPage } from "./ErrorPage";
 
 export interface InternetExplorerContentPaneProps {
   errorDetails: ErrorResponse | null;
   url: string;
   year: string;
-  mode: NavigationMode;
   finalUrl: string | null;
-  isFutureYear: boolean;
-  isAiLoading: boolean;
-  aiGeneratedHtml: string | null;
-  generatedHtml: string | null;
   status: string;
-  isFetchingWebsiteContent: boolean;
   isForeground: boolean;
   currentTheme: string;
   iframeRef: RefObject<HTMLIFrameElement | null>;
   loadingBarVariants: Variants;
-  playElevatorMusic: () => void;
-  stopElevatorMusic: () => void;
-  playDingSound: () => void;
   getDebugStatusMessage: () => ReactNode;
   handleGoBack: () => void;
   handleNavigate: (navUrl: string, navYear?: string) => void;
@@ -39,21 +26,12 @@ export function InternetExplorerContentPane({
   errorDetails,
   url,
   year,
-  mode,
   finalUrl,
-  isFutureYear,
-  isAiLoading,
-  aiGeneratedHtml,
-  generatedHtml,
   status,
-  isFetchingWebsiteContent,
   isForeground,
   currentTheme,
   iframeRef,
   loadingBarVariants,
-  playElevatorMusic,
-  stopElevatorMusic,
-  playDingSound,
   getDebugStatusMessage,
   handleGoBack,
   handleNavigate,
@@ -99,28 +77,6 @@ export function InternetExplorerContentPane({
       <div className="flex-1 relative bg-white">
         {errorDetails ? (
           renderErrorPage()
-        ) : isFutureYear ||
-          (mode === "past" && (isAiLoading || aiGeneratedHtml !== null)) ? (
-          <div className="size-full overflow-hidden absolute inset-0 font-geneva-12">
-            <HtmlPreview
-              htmlContent={
-                isAiLoading ? generatedHtml || "" : aiGeneratedHtml || ""
-              }
-              onInteractionChange={() => {}}
-              className="border-none"
-              maxHeight="none"
-              minHeight="100%"
-              initialFullScreen={false}
-              isInternetExplorer={true}
-              isStreaming={isAiLoading && generatedHtml !== aiGeneratedHtml}
-              playElevatorMusic={playElevatorMusic}
-              stopElevatorMusic={stopElevatorMusic}
-              playDingSound={playDingSound}
-              baseUrlForAiContent={url}
-              mode={mode}
-              appletCreatedBy="ryo"
-            />
-          </div>
         ) : (
           <iframe
             ref={iframeRef}
@@ -149,9 +105,7 @@ export function InternetExplorerContentPane({
         )}
 
         <AnimatePresence>
-          {(status === "loading" ||
-            isAiLoading ||
-            isFetchingWebsiteContent) && (
+          {status === "loading" && (
             <motion.div
               className="absolute top-0 left-0 right-0 bg-transparent backdrop-blur-sm overflow-hidden z-40"
               variants={loadingBarVariants}
@@ -159,30 +113,14 @@ export function InternetExplorerContentPane({
               animate="visible"
               exit="hidden"
             >
-              <div
-                className={`h-full ${
-                  isAiLoading && mode === "past" && parseInt(year) <= 1995
-                    ? "animate-progress-indeterminate-orange-reverse"
-                    : isAiLoading
-                      ? "animate-progress-indeterminate-orange"
-                      : isFetchingWebsiteContent && mode === "past"
-                        ? "animate-progress-indeterminate-green-reverse"
-                        : isFetchingWebsiteContent
-                          ? "animate-progress-indeterminate-green"
-                          : mode === "past" && !isAiLoading
-                            ? "animate-progress-indeterminate-reverse"
-                            : "animate-progress-indeterminate"
-                }`}
-              />
+              <div className="h-full animate-progress-indeterminate" />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       <AnimatePresence>
-        {(status === "loading" ||
-          (isAiLoading && generatedHtml !== aiGeneratedHtml) ||
-          isFetchingWebsiteContent) && (
+        {status === "loading" && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

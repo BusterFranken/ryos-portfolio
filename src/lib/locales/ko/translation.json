@@ -420,144 +420,6 @@
         "user": "사용자"
       }
     },
-    "applet-viewer": {
-      "description": "앱렛 보기 및 실행",
-      "dialogs": {
-        "addedToFeatured": "추천 항목에 추가됨",
-        "allAppletsUpToDate": "모든 애플릿이 최신 상태입니다",
-        "appletAlreadyShared": "애플릿이 이미 공유되었습니다",
-        "appletDeleted": "애플릿이 삭제되었습니다",
-        "appletExported": "애플릿 내보내기 완료!",
-        "appletExportedDescription": "{{fileName}}.app이 성공적으로 내보내졌습니다.",
-        "appletImported": "애플릿 가져오기 완료!",
-        "appletImportedDescription": "{{fileName}}이(가) /Applets{{iconText}}에 저장되었습니다",
-        "appletImportedIconSuffix": " {{icon}} 아이콘 포함",
-        "appletNotFound": "애플릿을 찾을 수 없습니다",
-        "appletNotFoundDescription": "공유된 애플릿이 삭제되었거나 링크가 유효하지 않을 수 있습니다.",
-        "appletSaved": "애플릿 저장됨",
-        "appletSavedDescription": "/Applets/{{fileName}}에 저장됨",
-        "appletShared": "애플릿 공유 완료!",
-        "appletStore": "애플릿 스토어",
-        "appletUpdateAvailable": "애플릿 업데이트 사용 가능",
-        "appletUpdateAvailableDescription": "{{appletName}}에 업데이트가 있습니다.",
-        "appletUpdated": "애플릿 업데이트됨",
-        "appletUpdatedShare": "애플릿 업데이트 완료!",
-        "appletsUpdated": "{{count}}개의 애플릿 업데이트됨",
-        "areYouSureDeleteApplet": "이 애플릿을 삭제하시겠습니까?",
-        "couldNotCompressAppletFile": "애플릿 파일을 압축할 수 없습니다.",
-        "couldNotImportFile": "파일을 가져올 수 없습니다.",
-        "exportFailed": "내보내기 실패",
-        "failedToDeleteApplet": "애플릿 삭제 실패",
-        "failedToFetchSharedApplet": "공유 애플릿을 가져오지 못했습니다.",
-        "failedToLoadSharedApplet": "공유 애플릿을 불러오지 못했습니다.",
-        "failedToSaveApplet": "애플릿 저장 실패",
-        "failedToShareApplet": "애플릿 공유 실패",
-        "failedToUpdateApplet": "애플릿 업데이트 실패",
-        "failedToUpdateApplets": "애플릿 업데이트 실패",
-        "failedToUpdateFeaturedStatus": "추천 상태 업데이트 실패",
-        "importFailed": "가져오기 실패",
-        "loading": "로드 중...",
-        "loginRequired": "로그인 필요",
-        "mustBeLoggedInToShare": "애플릿을 공유하려면 로그인해야 합니다.",
-        "newAppletUpdates": "{{count}}개의 새로운 애플릿 업데이트",
-        "newAppletUpdatesPlural": "{{count}}개의 새로운 애플릿 업데이트",
-        "noAppletToShare": "공유할 애플릿이 없습니다.",
-        "noAppletsAvailable": "현재 사용 가능한 애플릿이 없습니다.",
-        "noAppletsFound": "\"{{query}}\"와(과) 일치하는 애플릿을 찾을 수 없습니다.",
-        "pleaseCheckConnection": "연결을 확인하고 다시 시도해 주세요.",
-        "pleaseOpenAppletFirst": "먼저 애플릿을 열어 주세요.",
-        "pleaseTryAgainLater": "나중에 다시 시도해 주세요.",
-        "removedFromFeatured": "추천 항목에서 제거됨",
-        "shareLinkGeneratedSuccessfully": "공유 링크가 성공적으로 생성되었습니다.",
-        "shareLinkUpdatedSuccessfully": "공유 링크가 성공적으로 업데이트되었습니다.",
-        "sharedApplet": "공유 애플릿",
-        "sharedAppletLoaded": "공유된 애플릿이 로드되었습니다.",
-        "showingExistingShareLink": "기존 공유 링크를 표시 중입니다.",
-        "untitled": "제목 없음",
-        "untitledApplet": "제목 없는 애플릿",
-        "updatingApplet": "애플릿 업데이트 중...",
-        "updatingAppletSingle": "1개의 애플릿 업데이트 중...",
-        "updatingApplets": "{{count}}개의 애플릿 업데이트 중...",
-        "updatingAppletsPlural": "{{count}}개의 애플릿 업데이트 중..."
-      },
-      "help": {
-        "appletStore": {
-          "description": "스토어 탭을 열어 커뮤니티에서 제작한 앱을 탐색하고 클릭 한 번으로 설치",
-          "title": "스토어 둘러보기"
-        },
-        "createWithRyosChat": {
-          "description": "채팅에서 Ryo에게 커스텀 Applet 제작을 요청하고 즉시 작동하는 HTML 앱을 확인",
-          "title": "채팅으로 만들기"
-        },
-        "keepUpdated": {
-          "description": "Store ▸ 업데이트 확인을 통해 설치된 Applet의 최신 버전을 가져옵니다",
-          "title": "자동 업데이트 확인"
-        },
-        "openFromFinder": {
-          "description": ".app 또는 .gz Applet 번들을 Finder에 드롭하면 /Applets에 나타납니다",
-          "title": "Finder에서 열기"
-        },
-        "shareApplets": {
-          "description": "파일 ▸ Applet 공유를 사용하여 다른 사람이 붙여넣을 수 있는 링크나 단축 코드를 복사",
-          "title": "코드로 공유"
-        },
-        "viewApplets": {
-          "description": "샌드박스 실행기가 시스템에 저장된 모든 HTML Applet을 안전하게 실행",
-          "title": "무엇이든 실행"
-        }
-      },
-      "labels": {
-        "addToFeatured": "추천 항목에 추가",
-        "deleteApplet": "애플릿 삭제",
-        "discover": "둘러보기",
-        "removeFromFeatured": "추천 항목에서 제거",
-        "searchApplets": "애플릿 검색",
-        "showAll": "모두 보기"
-      },
-      "menu": {
-        "aboutApplets": "애플릿 정보",
-        "appletStore": "애플릿 스토어",
-        "appletsHelp": "애플릿 도움말",
-        "checkForUpdates": "업데이트 확인",
-        "createAccount": "계정 만들기...",
-        "exportAs": "다른 이름으로 내보내기...",
-        "html": "HTML",
-        "importFromDevice": "기기에서 가져오기...",
-        "logOut": "로그아웃",
-        "login": "로그인...",
-        "noAppletsOpen": "열린 애플릿 없음",
-        "open": "열기...",
-        "openAppletStore": "애플릿 스토어 열기",
-        "ryosApp": "ryOS 앱",
-        "shareApplet": "애플릿 공유...",
-        "store": "스토어",
-        "untitled": "제목 없음",
-        "updateApplets": "애플릿 {{count}}개 업데이트",
-        "updateAppletsPlural": "애플릿 {{count}}개 업데이트",
-        "window": "창"
-      },
-      "name": "앱렛 스토어",
-      "sections": {
-        "featured": "추천",
-        "installed": "설치됨",
-        "newApplets": "새로운 애플릿",
-        "updatesAvailable": "업데이트 있음"
-      },
-      "status": {
-        "get": "받기",
-        "open": "열기",
-        "save": "저장",
-        "update": "업데이트",
-        "updatedDaysAgo": "{{days}}일 전 업데이트됨",
-        "updatedHoursAgo": "{{hours}}시간 전 업데이트됨",
-        "updatedJustNow": "방금 전 업데이트됨",
-        "updatedMinutesAgo": "{{minutes}}분 전 업데이트됨",
-        "updatedMonthsAgo": "{{months}}개월 전 업데이트됨",
-        "updatedWeeksAgo": "{{weeks}}주 전 업데이트됨",
-        "updatedYearsAgo": "{{years}}년 전 업데이트됨",
-        "updatedYesterday": "어제 업데이트됨"
-      }
-    },
     "books": {
       "columns": {
         "auto": "자동",
@@ -2086,7 +1948,6 @@
         "file": "파일",
         "folder": "폴더",
         "gifImage": "GIF 이미지",
-        "htmlApplet": "HTML 애플릿",
         "internetShortcut": "인터넷 바로 가기",
         "jpegImage": "JPEG 이미지",
         "mp3Audio": "MP3 오디오",
@@ -4494,7 +4355,6 @@
     "noResults": "결과 없음",
     "placeholder": "ryOS 검색",
     "sections": {
-      "applets": "애플릿",
       "apps": "응용 프로그램",
       "calendar": "캘린더",
       "commands": "명령어",

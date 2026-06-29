@@ -8,19 +8,14 @@ import { useEffect, useReducer } from "react";
  * of the Maps app will reuse the same `mapkit` global instead of pulling
  * the script again or calling `mapkit.init` twice.
  *
- * Token resolution order:
- *   1. Server-signed JWT from `/api/mapkit-token` (preferred for prod).
- *      The response is cached in memory and refreshed 60s before expiry.
- *   2. `import.meta.env.VITE_MAPKIT_TOKEN` as a fallback for local dev.
- *
- * If neither source produces a token the hook returns `status: "missing-token"`
- * so callers can render a friendly placeholder instead of crashing.
+ * Token resolution (static portfolio build): the server token endpoint was
+ * removed, so the only source is `import.meta.env.VITE_MAPKIT_TOKEN`. When it
+ * is unset the hook returns `status: "missing-token"` so callers can render a
+ * friendly placeholder instead of crashing.
  */
 
 const MAPKIT_SCRIPT_SRC = "https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js";
 const MAPKIT_SCRIPT_ID = "ryos-mapkit-js";
-const MAPKIT_TOKEN_ENDPOINT = "/api/mapkit-token";
-const TOKEN_REFRESH_BUFFER_MS = 60_000;
 
 export type MapKitStatus =
   | "idle"
@@ -31,14 +26,6 @@ export type MapKitStatus =
 
 let scriptPromise: Promise<void> | null = null;
 let initialized = false;
-
-interface CachedServerToken {
-  token: string;
-  expiresAt: number; // epoch ms
-}
-
-let cachedServerToken: CachedServerToken | null = null;
-let inFlightTokenFetch: Promise<string> | null = null;
 
 interface AppleMapKitNamespace {
   init: (options: {
@@ -61,65 +48,16 @@ function getEnvFallbackToken(): string | undefined {
   return token && token.trim().length > 0 ? token.trim() : undefined;
 }
 
-async function fetchServerToken(): Promise<string> {
-  const now = Date.now();
-  if (
-    cachedServerToken &&
-    cachedServerToken.expiresAt - now > TOKEN_REFRESH_BUFFER_MS
-  ) {
-    return cachedServerToken.token;
-  }
-
-  if (inFlightTokenFetch) return inFlightTokenFetch;
-
-  inFlightTokenFetch = (async () => {
-    const res = await fetch(MAPKIT_TOKEN_ENDPOINT, {
-      method: "GET",
-      credentials: "same-origin",
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) {
-      throw new Error(`MapKit token endpoint returned ${res.status}`);
-    }
-    const data = (await res.json()) as Partial<CachedServerToken> & {
-      error?: string;
-    };
-    if (!data.token || typeof data.expiresAt !== "number") {
-      throw new Error(data.error || "Invalid MapKit token response");
-    }
-    cachedServerToken = {
-      token: data.token,
-      expiresAt: data.expiresAt,
-    };
-    return data.token;
-  })();
-
-  try {
-    return await inFlightTokenFetch;
-  } finally {
-    inFlightTokenFetch = null;
-  }
-}
-
 /**
- * Resolve a MapKit token. Tries the server endpoint first; if that fails and a
- * `VITE_MAPKIT_TOKEN` env value is configured, falls back to it. Throws when
- * no source is available so callers can show the missing-token overlay.
+ * Resolve a MapKit token from `VITE_MAPKIT_TOKEN` only. The server token
+ * endpoint (`/api/mapkit-token`) was removed for the static portfolio build.
+ * Throws when no env token is configured so callers can render the
+ * missing-token overlay (see `MapsMapStatusOverlay`).
  */
 async function resolveToken(): Promise<string> {
-  try {
-    return await fetchServerToken();
-  } catch (err) {
-    const fallback = getEnvFallbackToken();
-    if (fallback) {
-      console.warn(
-        "[mapkit] server token fetch failed, falling back to VITE_MAPKIT_TOKEN",
-        err
-      );
-      return fallback;
-    }
-    throw err;
-  }
+  const fallback = getEnvFallbackToken();
+  if (fallback) return fallback;
+  throw new Error("No MapKit token configured (VITE_MAPKIT_TOKEN unset)");
 }
 
 function loadScript(): Promise<void> {
@@ -212,10 +150,10 @@ export interface UseMapKitResult {
 }
 
 /**
- * Hook that lazily loads Apple MapKit JS and initializes it. The token is
- * fetched from `/api/mapkit-token` on demand, with `VITE_MAPKIT_TOKEN` as a
- * dev fallback. When neither source produces a token the hook returns
- * `status: "missing-token"` so callers can render a friendly placeholder.
+ * Hook that lazily loads Apple MapKit JS and initializes it. The token comes
+ * from `VITE_MAPKIT_TOKEN` only (the server endpoint was removed). When it is
+ * unset the hook returns `status: "missing-token"` so callers can render a
+ * friendly placeholder.
  */
 export function useMapKit(options: UseMapKitOptions = {}): UseMapKitResult {
   const { enabled = true, language } = options;
@@ -232,7 +170,7 @@ export function useMapKit(options: UseMapKitOptions = {}): UseMapKitResult {
   const initialState: MapKitHookState = {
     status: initialized ? "ready" : "idle",
     error: null,
-    hasToken: Boolean(cachedServerToken || getEnvFallbackToken()),
+    hasToken: Boolean(getEnvFallbackToken()),
   };
   const reducer = (
     state: MapKitHookState,

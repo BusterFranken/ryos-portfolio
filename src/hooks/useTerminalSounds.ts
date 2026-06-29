@@ -1004,9 +1004,6 @@ export function useTerminalSounds() {
     playErrorSound: () => {
       return playSound("error");
     },
-    playAiResponseSound: () => {
-      return playSound("aiResponse");
-    },
     playElevatorMusic,
     stopElevatorMusic,
     playDingSound,

@@ -180,7 +180,8 @@ realtime (Pusher/Redis), Cloud Sync (`src/sync/`), object storage (`src/utils/st
 Electron, and the admin app. Disable/guard backend-coupled features in retained apps:
 - **Videos** — keep client-side embeds (hardcoded IDs); do not expose the `/api/youtube-search` add flow.
 - **iPod** — local/YouTube-ID playback only; strip Apple Music + `/api/songs` sync.
-- **maps / tv channel-creation / applet-viewer store** — remove or hide (backend-coupled).
+- **tv channel-creation / applet-viewer store** — remove (backend-coupled, not in the design).
+- **maps** — **KEEP** for a "where I'm based" view, but re-point it off Apple MapKit (which needs a token) to a **token-free map** (OpenStreetMap embed or a static map + pin). Base location is deferred content (§13).
 - Neutralize the hardcoded prod fallbacks in `src/utils/runtimeConfig.ts:22,26` (point at ryo.lu).
 - **Substack Reader** — RSS pulled at **build time** by a script that emits static JSON; no runtime
   fetch (avoids CORS + keeps it static). Live auto-refresh is explicitly out of scope.
@@ -205,6 +206,10 @@ Tracked here and to be mirrored into `CLAUDE.md`. None of these block building t
 - [ ] Confirm Substack publication feed (`busterfranken.substack.com/feed`) for the Reader
 - [ ] iPod Easter-egg playlist track list
 - [ ] Booking link for the contact CTA (Luma/Calendly)
+- [ ] Maps base location/city → token-free "where I'm based" view
+- [ ] Connect Calendar app to your real calendar → show availability + "book a meeting" (Calendly/Cal.com or a published Google Calendar embed; no backend of ours)
+
+_Optional later feature:_ a **token-free IE "Time Machine"** using the Wayback Machine instead of the removed AI version — verified feasible (availability API is CORS-open; archived snapshots iframe via the `if_` clean-embed mode). Build only if desired.
 
 ## 14. Implementation phases (high-level — detailed plan follows)
 1. **Strip** backend subsystems to reach a clean static SPA that boots with no env

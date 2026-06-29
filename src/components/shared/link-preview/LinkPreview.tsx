@@ -18,7 +18,6 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
 
   const {
     handleAddToIpod,
-    handleOpenInKaraoke,
     handleOpenYouTube,
     handleOpenExternally,
   } = useLinkPreviewHandlers(url);
@@ -60,7 +59,6 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
           metadata={metadata}
           isMacOSTheme={isMacOSTheme}
           handleAddToIpod={handleAddToIpod}
-          handleOpenInKaraoke={handleOpenInKaraoke}
           handleOpenYouTube={handleOpenYouTube}
           handleOpenExternally={handleOpenExternally}
         />
@@ -71,7 +69,6 @@ export function LinkPreview({ url, className = "" }: LinkPreviewProps) {
           isMacOSTheme={isMacOSTheme}
           dispatch={dispatch}
           handleAddToIpod={handleAddToIpod}
-          handleOpenInKaraoke={handleOpenInKaraoke}
           handleOpenYouTube={handleOpenYouTube}
           handleOpenExternally={handleOpenExternally}
         />

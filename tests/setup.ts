@@ -1,6 +1,6 @@
 /**
  * Global test setup — preloaded before every bun test run.
- * Validates that the API server is reachable for integration suites.
+ * The backend was removed for the static portfolio, so there is no API
+ * server to validate here. Kept as the bunfig `preload` entry point.
  */
-
-export const BASE_URL = process.env.API_URL || "http://localhost:3000";
+export {};
