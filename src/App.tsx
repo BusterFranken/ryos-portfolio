@@ -5,6 +5,7 @@ import { applyDisplayMode } from "./utils/displayMode";
 import { Toaster } from "./components/ui/sonner";
 import { useAppStoreShallow } from "@/stores/useAppStore";
 import { bootLayout } from "@/config/bootLayout";
+import { BusterBarnGag } from "@/components/BusterBarnGag";
 import { useDisplaySettingsStoreShallow } from "@/stores/useDisplaySettingsStore";
 import { BootScreen } from "./components/dialogs/BootScreen";
 import { getNextBootMessage, clearNextBootMessage, isBootDebugMode } from "./utils/bootMessage";
@@ -180,6 +181,7 @@ export function App() {
       <Toaster position={toastConfig.position} offset={toastConfig.offset} />
       <WallpaperAccentRunner />
       <ScreenSaverOverlay />
+      <BusterBarnGag />
     </>
   );
 }
