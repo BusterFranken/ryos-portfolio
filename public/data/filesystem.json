@@ -98,6 +98,15 @@
   ],
   "files": [
     {
+      "path": "/Documents/read_me_first.md",
+      "name": "read_me_first.md",
+      "isDirectory": false,
+      "type": "markdown",
+      "icon": "/icons/default/file-text.png",
+      "status": "active",
+      "assetPath": "/assets/documents/read_me_first.md"
+    },
+    {
       "path": "/Documents/README.md",
       "name": "README.md",
       "isDirectory": false,

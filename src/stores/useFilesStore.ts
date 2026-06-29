@@ -498,12 +498,14 @@ async function saveDefaultContents(
 // Function to generate an empty initial state (just for typing)
 const getEmptyFileSystemState = (): Record<string, FileSystemItem> => ({});
 
-const STORE_VERSION = 14; // Add Meditations as a default Books EPUB
+const STORE_VERSION = 15; // Add read_me_first default document
 const STORE_NAME = "ryos:files";
 
 const DEFAULT_MEDITATIONS_BOOK_PATH = "/Books/Meditations - Marcus Aurelius.epub";
 const DEFAULT_MEDITATIONS_BOOK_NAME = "Meditations - Marcus Aurelius.epub";
 const DEFAULT_MEDITATIONS_BOOK_SIZE = 1378157;
+const DEFAULT_READ_ME_FIRST_PATH = "/Documents/read_me_first.md";
+const DEFAULT_READ_ME_FIRST_NAME = "read_me_first.md";
 
 const DEFAULT_APPLICATIONS_FOLDER_ALIAS_NAME = "Applications";
 
@@ -658,6 +660,50 @@ function migrateV14DefaultMeditationsBook(
     status: "active",
     uuid: uuidv4(),
     size: DEFAULT_MEDITATIONS_BOOK_SIZE,
+    createdAt: now,
+    modifiedAt: now,
+  };
+
+  return newState;
+}
+
+/** v15: add the default read_me_first note to existing loaded libraries once. */
+function migrateV15DefaultReadMeFirst(
+  items: Record<string, FileSystemItem>,
+  libraryState: LibraryState | undefined,
+  now: number
+): Record<string, FileSystemItem> {
+  if (libraryState === "cleared" || items[DEFAULT_READ_ME_FIRST_PATH]) {
+    return items;
+  }
+
+  const documentsDir = items["/Documents"];
+  if (documentsDir?.status === "trashed") {
+    return items;
+  }
+
+  const newState = { ...items };
+  if (!documentsDir) {
+    newState["/Documents"] = {
+      path: "/Documents",
+      name: "Documents",
+      isDirectory: true,
+      type: "directory",
+      icon: "/icons/default/documents.png",
+      status: "active",
+      createdAt: now,
+      modifiedAt: now,
+    };
+  }
+
+  newState[DEFAULT_READ_ME_FIRST_PATH] = {
+    path: DEFAULT_READ_ME_FIRST_PATH,
+    name: DEFAULT_READ_ME_FIRST_NAME,
+    isDirectory: false,
+    type: "markdown",
+    icon: "/icons/default/file-text.png",
+    status: "active",
+    uuid: uuidv4(),
     createdAt: now,
     modifiedAt: now,
   };
@@ -1717,6 +1763,23 @@ export const useFilesStore = create<FilesStoreState>()(
 
           return {
             items: migrateV14DefaultMeditationsBook(
+              oldState.items,
+              oldState.libraryState,
+              now
+            ),
+            libraryState: oldState.libraryState || "loaded",
+          };
+        }
+
+        if (version < 15) {
+          const oldState = persistedState as {
+            items: Record<string, FileSystemItem>;
+            libraryState?: LibraryState;
+          };
+          const now = Date.now();
+
+          return {
+            items: migrateV15DefaultReadMeFirst(
               oldState.items,
               oldState.libraryState,
               now
