@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { isRegisteredApp } from "@/config/appRegistry";
 import type { AppId } from "@/config/appRegistry";
 import { useAppStoreShallow } from "@/stores/useAppStore";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
@@ -47,7 +48,10 @@ export function useAppManager({ apps }: AppManagerProps) {
     exposeMode,
   } = useAppStoreShallow((state) => ({
     openInstanceIdsKey: Object.values(state.instances)
-      .filter((instance) => instance.isOpen)
+      .filter(
+        (instance) =>
+          instance.isOpen && isRegisteredApp(instance.appId as AppId)
+      )
       .map((instance) => instance.instanceId)
       .join("\0"),
     launchApp: state.launchApp,

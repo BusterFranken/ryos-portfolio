@@ -631,7 +631,8 @@ export const appRegistry = {
 
 // Helper function to get app icon path
 export const getAppIconPath = (appId: AppId): string => {
-  const app = appRegistry[appId];
+  const app = appRegistry[resolveRegistryAppId(appId)];
+  if (!app) return "/icons/default/app.png";
   if (typeof app.icon === "string") {
     return app.icon;
   }
@@ -670,18 +671,24 @@ function resolveRegistryAppId(appId: AppId): AppId {
 
 // Helper function to get app metadata
 export const getAppMetadata = (appId: AppId) => {
-  return appRegistry[resolveRegistryAppId(appId)].metadata;
+  return appRegistry[resolveRegistryAppId(appId)]?.metadata;
 };
 
-// Helper function to get app component
+// Helper function to get app component (undefined if the id is no longer
+// registered — e.g. a persisted window for an app that has since been removed).
 export const getAppComponent = (appId: AppId) => {
-  return appRegistry[resolveRegistryAppId(appId)].component;
+  return appRegistry[resolveRegistryAppId(appId)]?.component;
+};
+
+// Helper function to check whether an app id maps to a registered app.
+export const isRegisteredApp = (appId: AppId): boolean => {
+  return !!appRegistry[resolveRegistryAppId(appId)];
 };
 
 // Helper function to get window configuration
 export const getWindowConfig = (appId: AppId): WindowConstraints => {
   const resolved = resolveRegistryAppId(appId);
-  return appRegistry[resolved].windowConfig || defaultWindowConstraints;
+  return appRegistry[resolved]?.windowConfig || defaultWindowConstraints;
 };
 
 // Helper function to get mobile window size

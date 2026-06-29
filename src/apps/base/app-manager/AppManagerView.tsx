@@ -150,6 +150,10 @@ const ManagedAppInstance = memo(function ManagedAppInstance({
 
   const appId = instance.appId as AppId;
   const AppComponent = getAppComponent(appId) as ComponentType<AppProps>;
+  // The app for this persisted window no longer exists in the registry (e.g. it
+  // was removed or merged in a refactor). Skip it instead of crashing the whole
+  // desktop on `<undefined />`. (useAppManager also prunes these from the dock.)
+  if (!AppComponent) return null;
   const app = apps.find((registeredApp) => registeredApp.id === appId);
   const translatedAppName = getTranslatedAppName(appId);
   const crashDialogAppName =
