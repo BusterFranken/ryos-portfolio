@@ -106,6 +106,10 @@ export function ProjectIframeWindow({
   const bringInstanceToForeground = useAppStore(
     (s) => s.bringInstanceToForeground
   );
+  // In full-screen there is no WindowFrame, so the AppProps `onClose` (which
+  // dispatches a requestCloseWindow event the frame listens for) is a no-op.
+  // Close the instance directly instead.
+  const closeAppInstance = useAppStore((s) => s.closeAppInstance);
   const name = appNames[appId] ?? appId;
   const metadata = makeProjectMetadata(appId, name);
 
@@ -135,15 +139,17 @@ export function ProjectIframeWindow({
     };
   }, [isIframeMode, status, config.url]);
 
-  // Esc returns to the desktop from the full-screen takeover.
+  // Esc returns to the desktop from the full-screen takeover. (Only fires while
+  // the parent document has focus — once you click into the cross-origin game
+  // iframe, keystrokes go to the game, so the Exit button is the sure way out.)
   useEffect(() => {
     if (!isFullscreen || !isWindowOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeAppInstance(instanceId);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isFullscreen, isWindowOpen, onClose]);
+  }, [isFullscreen, isWindowOpen, closeAppInstance, instanceId]);
 
   const iframeEl = (
     <iframe
@@ -215,12 +221,12 @@ export function ProjectIframeWindow({
         )}
         <button
           type="button"
-          onClick={onClose}
-          title="Return to desktop (Esc)"
+          onClick={() => closeAppInstance(instanceId)}
+          title="Return to desktop"
           aria-label="Return to desktop"
-          className="absolute right-3 top-3 z-10 rounded bg-black/50 px-3 py-1.5 font-geneva-12 text-[12px] text-white/90 backdrop-blur transition-colors hover:bg-black/75"
+          className="absolute right-3 top-3 z-10 rounded bg-black/60 px-3 py-1.5 font-geneva-12 text-[12px] text-white/90 ring-1 ring-white/20 backdrop-blur transition-colors hover:bg-black/80"
         >
-          ✕ Exit
+          ✕ Exit game
         </button>
       </div>,
       document.body
