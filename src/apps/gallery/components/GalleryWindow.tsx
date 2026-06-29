@@ -11,6 +11,11 @@ import { useAppMenuBarChrome } from "@/hooks/useAppMenuBarChrome";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { makeGalleryMetadata } from "../metadata";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  osToolbarSurfaceClassName,
+  windowsBevelClassName,
+} from "@/components/shared/osThemePrimitives";
 
 interface GalleryMenuBarProps {
   appId: AppId;
@@ -81,7 +86,8 @@ export function GalleryWindow({
   onNavigateNext,
   onNavigatePrevious,
 }: GalleryWindowProps) {
-  const { isWindowsTheme } = useThemeFlags();
+  const { isWindowsTheme, isMacOSTheme, isSystem7Theme, isWin98 } =
+    useThemeFlags();
   const name = appNames[appId] ?? album.title;
   const metadata = makeGalleryMetadata(appId, name);
 
@@ -126,6 +132,22 @@ export function GalleryWindow({
     />
   );
 
+  // Native picture-viewer surfaces, per OS theme.
+  const surfaceFlags = {
+    isMacOSTheme,
+    isSystem7Theme,
+    isWindowsTheme,
+    isWin98,
+  };
+  // The image "well": a classic sunken canvas matching each OS.
+  const wellClassName = cn(
+    "relative flex size-full items-center justify-center overflow-hidden",
+    isMacOSTheme &&
+      "rounded-md bg-neutral-200/70 shadow-[inset_0_1px_5px_rgba(0,0,0,0.2)] dark:bg-neutral-800",
+    isSystem7Theme && "border-2 border-black bg-[#d8d8d8]",
+    isWindowsTheme && cn(windowsBevelClassName("sunken"), "bg-[#c0c0c0]")
+  );
+
   return (
     <AppWindowShell
       isWindowOpen={isWindowOpen}
@@ -143,60 +165,61 @@ export function GalleryWindow({
         onNavigatePrevious,
       }}
     >
-      <div className="flex size-full flex-col bg-white dark:bg-neutral-900">
-        {/* Viewer area */}
-        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-neutral-100 dark:bg-neutral-950">
-          {hasImages ? (
-            <>
+      <div className="flex size-full flex-col bg-os-window-bg text-os-text-primary">
+        {/* Picture well */}
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3">
+          <div className={wellClassName}>
+            {hasImages ? (
               <img
                 src={album.images[index]}
                 alt={`${album.title} — ${index + 1} of ${total}`}
                 className="max-h-full max-w-full object-contain"
               />
-              {total > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={goPrev}
-                    aria-label="Previous image"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded bg-black/50 px-3 py-2 font-geneva-12 text-[14px] text-white/90 ring-1 ring-white/20 backdrop-blur transition-colors hover:bg-black/70"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    aria-label="Next image"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-black/50 px-3 py-2 font-geneva-12 text-[14px] text-white/90 ring-1 ring-white/20 backdrop-blur transition-colors hover:bg-black/70"
-                  >
-                    ›
-                  </button>
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded bg-black/55 px-2 py-0.5 font-geneva-12 text-[11px] text-white/90 backdrop-blur">
-                    {index + 1} / {total}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            // Intentional placeholder while screenshots are deferred.
-            <div className="flex flex-col items-center gap-3 p-8 text-center">
-              <div className="flex size-32 items-center justify-center rounded-2xl border-2 border-dashed border-neutral-300 bg-gradient-to-br from-neutral-100 to-neutral-300 text-[56px] leading-none shadow-inner dark:border-neutral-700 dark:from-neutral-800 dark:to-neutral-900">
-                <span aria-hidden>📸</span>
+            ) : (
+              <div className="flex flex-col items-center gap-3 p-8 text-center">
+                <div className="text-[56px] leading-none opacity-70" aria-hidden>
+                  📸
+                </div>
+                <p className="font-geneva-12 text-[12px] text-os-text-secondary">
+                  Screenshots coming soon
+                </p>
               </div>
-              <p className="font-geneva-12 text-[12px] text-neutral-600 dark:text-neutral-300">
-                Screenshots coming soon
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
+        {/* Navigation toolbar (native buttons + page counter) */}
+        {total > 1 && (
+          <div
+            className={cn(
+              "flex shrink-0 items-center justify-center gap-3 px-3 py-1.5",
+              osToolbarSurfaceClassName(surfaceFlags, { border: "top" })
+            )}
+          >
+            <Button variant="secondary" size="sm" onClick={goPrev}>
+              ‹ Prev
+            </Button>
+            <span className="font-geneva-12 min-w-[3.5rem] text-center text-[11px] tabular-nums text-os-text-secondary">
+              {index + 1} / {total}
+            </span>
+            <Button variant="secondary" size="sm" onClick={goNext}>
+              Next ›
+            </Button>
+          </div>
+        )}
+
         {/* Caption + CTA */}
-        <div className="shrink-0 space-y-2 border-t border-black/10 px-5 py-4 text-center dark:border-white/10">
-          <h2 className="font-geneva-12 text-[16px] font-bold text-neutral-800 dark:text-neutral-100">
+        <div
+          className={cn(
+            "shrink-0 space-y-2 px-5 py-4 text-center",
+            osToolbarSurfaceClassName(surfaceFlags, { border: "top" })
+          )}
+        >
+          <h2 className="font-geneva-12 text-[15px] font-bold text-os-text-primary">
             {album.title}
           </h2>
           {album.blurb && (
-            <p className="font-geneva-12 mx-auto max-w-md text-[12px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+            <p className="font-geneva-12 mx-auto max-w-md text-[12px] leading-relaxed text-os-text-secondary">
               {album.blurb}
             </p>
           )}
