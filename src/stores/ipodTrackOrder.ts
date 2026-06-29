@@ -1,6 +1,6 @@
 /**
- * Matches listSongs ordering in api/_utils/_song-service.ts (newest first, then importOrder),
- * with updatedAt as a tiebreaker so recently edited songs surface like the server list intent.
+ * Orders songs newest first, then by importOrder (matching the original catalog
+ * list ordering), with updatedAt as a tiebreaker so recently edited songs surface first.
  * When all tie, preserves the prior array order (stable).
  */
 export interface IpodTrackSortFields {

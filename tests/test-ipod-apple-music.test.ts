@@ -71,11 +71,6 @@ const {
 );
 type Track = import("../src/stores/useIpodStore").Track;
 const {
-  isValidAppleMusicSongId,
-  isValidYouTubeVideoId,
-  isValidSongId,
-} = await import("../api/songs/_utils");
-const {
   generateAppleMusicSongShareUrl,
   generateIpodSongShareUrl,
   shouldCacheSongMetadataForShare,
@@ -101,28 +96,7 @@ describe("MusicKit configuration", () => {
   });
 });
 
-describe("Apple Music song ID validation", () => {
-  test("accepts the canonical YouTube video ID format", () => {
-    expect(isValidYouTubeVideoId("dQw4w9WgXcQ")).toBe(true);
-    expect(isValidSongId("dQw4w9WgXcQ")).toBe(true);
-  });
-
-  test("accepts numeric Apple Music catalog IDs prefixed with am:", () => {
-    expect(isValidAppleMusicSongId("am:1616228595")).toBe(true);
-    expect(isValidSongId("am:1616228595")).toBe(true);
-  });
-
-  test("accepts library-style Apple Music IDs (i.<hash>)", () => {
-    expect(isValidAppleMusicSongId("am:i.uUZAkT3")).toBe(true);
-    expect(isValidSongId("am:i.uUZAkT3")).toBe(true);
-  });
-
-  test("rejects malformed IDs", () => {
-    expect(isValidSongId("not-a-real-id")).toBe(false);
-    expect(isValidSongId("am:")).toBe(false);
-    expect(isValidSongId("am:foo bar")).toBe(false);
-  });
-
+describe("Apple Music song ID normalization", () => {
   test("normalizes MusicKit ids for lyrics API paths", () => {
     expect(appleMusicKitIdToLyricsSongId(undefined)).toBe("");
     expect(appleMusicKitIdToLyricsSongId("1616228595")).toBe("am:1616228595");
