@@ -1,5 +1,4 @@
-import { abortableFetch, type AbortableFetchOptions } from "@/utils/abortableFetch";
-import { getApiUrl } from "@/utils/platform";
+import { type AbortableFetchOptions } from "@/utils/abortableFetch";
 
 export interface ApiErrorPayload {
   error?: string;
@@ -51,38 +50,6 @@ export function getBrowserTimeZoneHeaders(): Record<string, string> {
   return timeZone ? { "X-User-Timezone": timeZone } : {};
 }
 
-function buildUrl(
-  path: string,
-  query?: Record<string, string | number | boolean | null | undefined>
-): string {
-  const relativePath = path.startsWith("/") ? path : `/${path}`;
-  if (!query) return getApiUrl(relativePath);
-
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(query)) {
-    if (value === undefined || value === null) continue;
-    params.set(key, String(value));
-  }
-
-  const queryString = params.toString();
-  return getApiUrl(queryString ? `${relativePath}?${queryString}` : relativePath);
-}
-
-function buildHeaders(
-  headers: HeadersInit | undefined,
-  hasBody: boolean
-): Headers {
-  const merged = new Headers(headers);
-  const timeZone = getBrowserTimeZone();
-  if (timeZone && !merged.has("X-User-Timezone")) {
-    merged.set("X-User-Timezone", timeZone);
-  }
-  if (hasBody && !merged.has("Content-Type")) {
-    merged.set("Content-Type", "application/json");
-  }
-  return merged;
-}
-
 async function parseErrorPayload(response: Response): Promise<ApiErrorPayload> {
   try {
     const data = (await response.json()) as ApiErrorPayload;
@@ -93,29 +60,17 @@ async function parseErrorPayload(response: Response): Promise<ApiErrorPayload> {
 }
 
 async function performApiRequest<TBody = unknown>(
-  options: ApiRequestOptions<TBody>
+  _options: ApiRequestOptions<TBody>
 ): Promise<Response> {
-  const {
-    path,
-    method = "GET",
-    query,
-    body,
-    headers,
-    signal,
-    timeout = 15000,
-    retry = { maxAttempts: 1, initialDelayMs: 250 },
-  } = options;
-
-  const hasBody = body !== undefined;
-  return abortableFetch(buildUrl(path, query), {
-    method,
-    headers: buildHeaders(headers, hasBody),
-    body: hasBody ? JSON.stringify(body) : undefined,
-    signal,
-    timeout,
-    throwOnHttpError: false,
-    retry,
-  });
+  // STATIC PORTFOLIO BUILD: the ryOS backend was removed, so no `/api/*`
+  // request is ever fired. Callers receive a synthetic 404 — the same shape
+  // the original backend returned for missing data — so existing
+  // `ApiRequestError(404)` handling resolves to empty / cache-miss / no-op
+  // states (no accounts, no song catalog, no lyrics service).
+  return new Response(
+    JSON.stringify({ error: "Backend disabled in static portfolio build" }),
+    { status: 404, headers: { "Content-Type": "application/json" } }
+  );
 }
 
 export async function apiRequestRaw<TBody = unknown>(

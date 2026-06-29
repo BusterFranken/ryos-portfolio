@@ -1,5 +1,4 @@
 import { abortableFetch } from "@/utils/abortableFetch";
-import { getApiUrl } from "@/utils/platform";
 
 const FETCH_OPTS = {
   timeout: 15000,
@@ -47,34 +46,14 @@ export interface ParsedYouTubeTitle {
 }
 
 /**
- * Resolve a cleaned title/artist via `/api/parse-title`. Never throws: on any
- * HTTP/network failure it falls back to `{ title: rawTitle }`.
+ * Resolve a cleaned title/artist. The original implementation called the
+ * `/api/parse-title` backend (LLM title cleanup); that backend was removed for
+ * the static portfolio build, so we use the raw oEmbed title directly. Kept
+ * `async` and the same signature so callers compile unchanged.
  */
 export async function parseYouTubeTitle(
   rawTitle: string,
-  authorName?: string
+  _authorName?: string
 ): Promise<ParsedYouTubeTitle> {
-  try {
-    const res = await abortableFetch(getApiUrl("/api/parse-title"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: rawTitle, author_name: authorName }),
-      ...FETCH_OPTS,
-    });
-    if (res.ok) {
-      const data = (await res.json()) as {
-        title?: string;
-        artist?: string;
-        album?: string;
-      };
-      return {
-        title: data.title || rawTitle,
-        artist: data.artist,
-        album: data.album,
-      };
-    }
-  } catch {
-    // ignore — fall back to the raw oEmbed title
-  }
   return { title: rawTitle };
 }

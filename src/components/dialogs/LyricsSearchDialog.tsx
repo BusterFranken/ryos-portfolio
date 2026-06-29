@@ -12,8 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { getApiUrl } from "@/utils/platform";
-import { abortableFetch } from "@/utils/abortableFetch";
 import { formatKugouImageUrl } from "@/utils/coverArt";
 
 const lyricsSearchListStyle: CSSProperties = {
@@ -79,7 +77,8 @@ interface LyricsSearchDialogProps {
 export function LyricsSearchDialog({
   isOpen,
   onOpenChange,
-  trackId,
+  // `trackId` (the lyrics-search backend target) is intentionally unused: the
+  // `/api/songs/:id` search backend was removed for the static build.
   trackTitle,
   trackArtist,
   initialQuery,
@@ -168,46 +167,9 @@ export function LyricsSearchDialog({
 
     dispatch({ type: "searchStart" });
 
-    try {
-      const response = await abortableFetch(
-        getApiUrl(`/api/songs/${encodeURIComponent(trackId)}`),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "search-lyrics",
-            query: query.trim(),
-          }),
-          timeout: 15000,
-          throwOnHttpError: false,
-          retry: { maxAttempts: 1, initialDelayMs: 250 },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          response.status === 404
-            ? t("apps.ipod.dialogs.lyricsSearchNoResults")
-            : `Failed to search (status ${response.status})`
-        );
-      }
-
-      const data = await response.json();
-      if (data.results && Array.isArray(data.results)) {
-        dispatch({ type: "searchSuccess", results: data.results });
-      } else {
-        throw new Error(t("apps.ipod.dialogs.lyricsSearchInvalidResponse"));
-      }
-    } catch (err) {
-      console.error("Lyrics search error:", err);
-      dispatch({
-        type: "searchError",
-        error:
-          err instanceof Error
-            ? err.message
-            : t("apps.ipod.dialogs.lyricsSearchError"),
-      });
-    }
+    // STATIC BUILD: the `/api/songs/:id` lyrics-search backend was removed.
+    // Resolve to the empty-results state instead of firing a request.
+    dispatch({ type: "searchSuccess", results: [] });
   };
 
   const handleUseSelected = useCallback(() => {
