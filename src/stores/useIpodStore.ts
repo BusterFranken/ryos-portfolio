@@ -18,7 +18,6 @@ import { getCachedSongMetadata } from "@/utils/songMetadataCache";
 import { ApiRequestError } from "@/api/core";
 import {
   clearSongCachedData,
-  fetchSongLyrics,
   listSongs,
   patchSongMetadata,
 } from "@/api/songs";
@@ -1761,34 +1760,10 @@ export const useIpodStore = create<IpodState>()(
           } | undefined,
         };
 
-        // Single call to fetch-lyrics with returnMetadata: searches Kugou, fetches lyrics+cover, returns metadata
-        // This consolidates search + fetch into one call
-        try {
-          const fetchData = await fetchSongLyrics(videoId, {
-            title: rawTitle,
-            returnMetadata: true,
-            retry: { maxAttempts: 1, initialDelayMs: 250 },
-          });
-
-          // Use metadata from server (Kugou source) if available
-          if (fetchData.metadata?.lyricsSource) {
-            const meta = fetchData.metadata;
-            debug(`[iPod Store] Got metadata from Kugou for ${videoId}:`, {
-              title: meta.title,
-              artist: meta.artist,
-              cover: meta.cover,
-            });
-            
-            trackInfo.title = meta.title || trackInfo.title;
-            trackInfo.artist = meta.artist;
-            trackInfo.album = meta.album;
-            trackInfo.cover = meta.cover;
-            trackInfo.coverColor = meta.coverColor;
-            trackInfo.lyricsSource = meta.lyricsSource;
-          }
-        } catch (error) {
-          console.warn(`[iPod Store] Failed to fetch lyrics for ${videoId}:`, error);
-        }
+        // STUBBED: the lyrics/metadata catalog backend (`/api/songs`
+        // fetch-lyrics) was removed for the static portfolio build. Resolve
+        // to no Kugou match so the flow falls back to local title parsing.
+        // `trackInfo.lyricsSource` stays undefined.
 
         // If no Kugou match found (no lyricsSource), fall back to AI title parsing
         if (!trackInfo.lyricsSource) {

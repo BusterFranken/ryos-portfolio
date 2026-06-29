@@ -9,8 +9,6 @@ declare global {
   }
 }
 
-const DEFAULT_PUBLIC_ORIGIN = "https://os.ryo.lu";
-
 function normalizeOrigin(value: string | null | undefined): string | null {
   if (!value) return null;
   const trimmed = value.trim();
@@ -45,11 +43,13 @@ export function getAppPublicOrigin(): string {
   const buildOrigin = normalizeOrigin(import.meta.env.VITE_APP_PUBLIC_ORIGIN);
   if (buildOrigin) return buildOrigin;
 
+  // Client-only portfolio: derive the public origin from the current page.
+  // SSR/undefined-safe fallback to a relative-empty origin.
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
 
-  return DEFAULT_PUBLIC_ORIGIN;
+  return "";
 }
 
 export function getDocsBaseUrl(): string {
