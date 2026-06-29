@@ -11,11 +11,13 @@ import { useAppMenuBarChrome } from "@/hooks/useAppMenuBarChrome";
 import { useThemeFlags } from "@/hooks/useThemeFlags";
 import { makeGalleryMetadata } from "../metadata";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import {
-  osToolbarSurfaceClassName,
-  windowsBevelClassName,
-} from "@/components/shared/osThemePrimitives";
+import { osToolbarSurfaceClassName } from "@/components/shared/osThemePrimitives";
+import { ImageSquare } from "@phosphor-icons/react";
+
+/** iPhoto's signature charcoal photo canvas. */
+const CANVAS_BG = "#2b2b2b";
 
 interface GalleryMenuBarProps {
   appId: AppId;
@@ -94,14 +96,18 @@ export function GalleryWindow({
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [zoom, setZoom] = useState(1);
 
   const total = album.images.length;
   const hasImages = total > 0;
 
-  // Clamp the index if the album shrinks (defensive — images are static today).
+  // Reset zoom + clamp index when the album / selected image changes.
   useEffect(() => {
     if (index > total - 1) setIndex(Math.max(0, total - 1));
   }, [index, total]);
+  useEffect(() => {
+    setZoom(1);
+  }, [index]);
 
   const goPrev = () =>
     setIndex((i) => (total > 0 ? (i - 1 + total) % total : 0));
@@ -132,21 +138,8 @@ export function GalleryWindow({
     />
   );
 
-  // Native picture-viewer surfaces, per OS theme.
-  const surfaceFlags = {
-    isMacOSTheme,
-    isSystem7Theme,
-    isWindowsTheme,
-    isWin98,
-  };
-  // The image "well": a classic sunken canvas matching each OS.
-  const wellClassName = cn(
-    "relative flex size-full items-center justify-center overflow-hidden",
-    isMacOSTheme &&
-      "rounded-md bg-neutral-200/70 shadow-[inset_0_1px_5px_rgba(0,0,0,0.2)] dark:bg-neutral-800",
-    isSystem7Theme && "border-2 border-black bg-[#d8d8d8]",
-    isWindowsTheme && cn(windowsBevelClassName("sunken"), "bg-[#c0c0c0]")
-  );
+  const surfaceFlags = { isMacOSTheme, isSystem7Theme, isWindowsTheme, isWin98 };
+  const zoomPct = `${Math.round(zoom * 100)}%`;
 
   return (
     <AppWindowShell
@@ -165,71 +158,121 @@ export function GalleryWindow({
         onNavigatePrevious,
       }}
     >
-      <div className="flex size-full flex-col bg-os-window-bg text-os-text-primary">
-        {/* Picture well */}
-        <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3">
-          <div className={wellClassName}>
-            {hasImages ? (
+      {hasImages ? (
+        <div className="flex size-full flex-col bg-os-window-bg text-os-text-primary">
+          {/* iPhoto charcoal photo canvas — white-matted photo with a drop shadow */}
+          <div
+            className="flex min-h-0 flex-1 items-center justify-center overflow-auto p-6"
+            style={{ backgroundColor: CANVAS_BG }}
+          >
+            <div className="inline-block bg-white p-1.5 shadow-[0_10px_34px_rgba(0,0,0,0.6)]">
               <img
                 src={album.images[index]}
                 alt={`${album.title} — ${index + 1} of ${total}`}
-                className="max-h-full max-w-full object-contain"
+                draggable={false}
+                className="block object-contain"
+                style={{ maxWidth: zoomPct, maxHeight: zoomPct }}
               />
-            ) : (
-              <div className="flex flex-col items-center gap-3 p-8 text-center">
-                <div className="text-[56px] leading-none opacity-70" aria-hidden>
-                  📸
-                </div>
-                <p className="font-geneva-12 text-[12px] text-os-text-secondary">
-                  Screenshots coming soon
-                </p>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Navigation toolbar (native buttons + page counter) */}
-        {total > 1 && (
+          {/* Thumbnail strip */}
+          {total > 1 && (
+            <div
+              className="flex shrink-0 items-center gap-2 overflow-x-auto px-3 py-2"
+              style={{ backgroundColor: "#3a3a3a" }}
+            >
+              {album.images.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  aria-label={`Photo ${i + 1}`}
+                  className={cn(
+                    "shrink-0 overflow-hidden rounded-[2px] border-2 transition-opacity",
+                    i === index
+                      ? "border-white"
+                      : "border-transparent opacity-60 hover:opacity-100"
+                  )}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    draggable={false}
+                    className="h-12 w-16 object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* iPhoto bottom toolbar: Size slider · info · CTA */}
           <div
             className={cn(
-              "flex shrink-0 items-center justify-center gap-3 px-3 py-1.5",
+              "flex shrink-0 items-center gap-3 px-3 py-2",
               osToolbarSurfaceClassName(surfaceFlags, { border: "top" })
             )}
           >
-            <Button variant="secondary" size="sm" onClick={goPrev}>
-              ‹ Prev
-            </Button>
-            <span className="font-geneva-12 min-w-[3.5rem] text-center text-[11px] tabular-nums text-os-text-secondary">
-              {index + 1} / {total}
-            </span>
-            <Button variant="secondary" size="sm" onClick={goNext}>
-              Next ›
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <ImageSquare
+                size={11}
+                weight="fill"
+                className="text-os-text-secondary"
+              />
+              <Slider
+                value={[zoom]}
+                onValueChange={([v]) => setZoom(v)}
+                min={1}
+                max={3}
+                step={0.05}
+                aria-label="Size"
+                className="w-24"
+              />
+              <ImageSquare
+                size={17}
+                weight="fill"
+                className="text-os-text-secondary"
+              />
+            </div>
+            <div className="min-w-0 flex-1 truncate text-center font-geneva-12 text-[11px] text-os-text-secondary">
+              {album.title} — {index + 1} of {total}
+            </div>
+            {album.cta ? (
+              <Button asChild size="sm" variant="secondary">
+                <a href={album.cta.href}>{album.cta.label}</a>
+              </Button>
+            ) : (
+              <div className="w-px" />
+            )}
           </div>
-        )}
-
-        {/* Caption + CTA */}
+        </div>
+      ) : (
+        /* Empty album — placeholder on the iPhoto canvas. */
         <div
-          className={cn(
-            "shrink-0 space-y-2 px-5 py-4 text-center",
-            osToolbarSurfaceClassName(surfaceFlags, { border: "top" })
-          )}
+          className="flex size-full flex-col items-center justify-center gap-4 p-8 text-center"
+          style={{ backgroundColor: CANVAS_BG }}
         >
-          <h2 className="font-geneva-12 text-[15px] font-bold text-os-text-primary">
+          <div className="text-[64px] leading-none opacity-60" aria-hidden>
+            📸
+          </div>
+          <h2 className="font-geneva-12 text-[16px] font-bold text-white">
             {album.title}
           </h2>
           {album.blurb && (
-            <p className="font-geneva-12 mx-auto max-w-md text-[12px] leading-relaxed text-os-text-secondary">
+            <p className="font-geneva-12 mx-auto max-w-md text-[12px] leading-relaxed text-white/70">
               {album.blurb}
             </p>
           )}
+          <p className="font-geneva-12 text-[11px] text-white/45">
+            Screenshots coming soon
+          </p>
           {album.cta && (
             <Button asChild className="mt-1">
               <a href={album.cta.href}>{album.cta.label}</a>
             </Button>
           )}
         </div>
-      </div>
+      )}
 
       <AppHelpAboutDialogs
         appId={appId}

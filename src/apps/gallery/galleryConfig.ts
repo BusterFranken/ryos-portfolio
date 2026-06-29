@@ -11,12 +11,22 @@ export interface GalleryAlbum {
   cta?: { label: string; href: string };
 }
 
+// TEMP demo images (existing aqua wallpapers) so the iPhoto-style viewer is
+// visible before real screenshots land. Replace each album's `images` with the
+// real Workout / jDog / speaking shots — then this constant can be deleted.
+const DEMO_IMAGES = [
+  "/wallpapers/photos/aqua/0-aqua-blue.jpg",
+  "/wallpapers/photos/aqua/0-leopard-aqua_blue.jpg",
+  "/wallpapers/photos/aqua/0-aqua-graphite.jpg",
+  "/wallpapers/photos/aqua/0-leopard-aqua_graphite.jpg",
+];
+
 export const galleryAlbums: Partial<Record<AppId, GalleryAlbum>> = {
   workout: {
     appId: "workout",
     title: "Workout",
     blurb: "A simpler, better workout app — Swift / iOS.",
-    images: [],
+    images: DEMO_IMAGES,
     cta: {
       label: "Want something like this? Get in touch →",
       href: "mailto:busterfranken@gmail.com?subject=Workout%20app",
@@ -27,7 +37,7 @@ export const galleryAlbums: Partial<Record<AppId, GalleryAlbum>> = {
     title: "jDog",
     blurb:
       "Self-hosted, read-only WhatsApp digest agent (WAHA + Node/TS + SQLite).",
-    images: [],
+    images: DEMO_IMAGES,
     cta: {
       label: "Want something like this? Get in touch →",
       href: "mailto:busterfranken@gmail.com?subject=jDog",
@@ -37,7 +47,7 @@ export const galleryAlbums: Partial<Record<AppId, GalleryAlbum>> = {
     appId: "speaking",
     title: "Speaking",
     blurb: "Talks & events.",
-    images: [],
+    images: DEMO_IMAGES,
     cta: {
       label: "Invite me to speak →",
       href: "mailto:busterfranken@gmail.com?subject=Speaking%20invite",
