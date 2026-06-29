@@ -18,6 +18,8 @@ import { vimCommand } from "./vim";
 import { openCommand } from "./open";
 import { grepCommand } from "./grep";
 import { uptimeCommand } from "./uptime";
+import { projectsCommand } from "./projects";
+import { contactCommand } from "./contact";
 
 // Create command registry
 export const commands: Record<string, Command> = {
@@ -38,6 +40,8 @@ export const commands: Record<string, Command> = {
   open: openCommand,
   grep: grepCommand,
   uptime: uptimeCommand,
+  projects: projectsCommand,
+  contact: contactCommand,
 };
 
 // Export list of available command names for autocompletion

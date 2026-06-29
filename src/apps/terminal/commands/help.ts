@@ -28,17 +28,16 @@ terminal
   history          ${t("apps.terminal.commands.history")}
   about            ${t("apps.terminal.commands.about")}
   echo <text>      ${t("apps.terminal.commands.echo")}
-  whoami           ${t("apps.terminal.commands.whoami")}
   su <user> [pass] ${t("apps.terminal.commands.su")}
   logout           ${t("apps.terminal.commands.logout")}
   date             ${t("apps.terminal.commands.date")}
   cowsay <text>    ${t("apps.terminal.commands.cowsay")}
   uptime           ${t("apps.terminal.commands.uptime")}
 
-assistant
-  ryo <prompt>     ${t("apps.terminal.commands.ryo")}
-  ai <prompt>      ${t("apps.terminal.commands.ai")}
-  chat <prompt>    ${t("apps.terminal.commands.chat")}
+portfolio
+  whoami           who i am
+  projects         things i've made
+  contact          how to reach me
 
 `,
       isError: false,
