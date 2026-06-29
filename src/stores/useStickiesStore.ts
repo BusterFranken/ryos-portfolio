@@ -24,6 +24,24 @@ interface StickiesState {
 
 const DEFAULT_NOTE_SIZE = { width: 220, height: 240 };
 
+// Easter egg: a personal note seeded mostly off the left edge, so a curious
+// visitor discovers it by dragging it into view.
+const SECRET_NOTE_ID = "portfolio-secret-note";
+const SECRET_NOTE: StickyNote = {
+  id: SECRET_NOTE_ID,
+  content: `you found me 🐣
+
+if you're poking around in here,
+we'd probably get along.
+
+say hi → busterfranken@gmail.com`,
+  color: "pink",
+  position: { x: -150, y: 340 }, // ~70px peeks in from the left edge
+  size: { width: 220, height: 240 },
+  createdAt: 1700000000000,
+  updatedAt: 1700000000000,
+};
+
 // Stack new notes with slight offset from existing notes
 const getNextPosition = (existingNotes: StickyNote[]) => {
   const baseX = 100;
@@ -52,7 +70,7 @@ const getNextPosition = (existingNotes: StickyNote[]) => {
 export const useStickiesStore = create<StickiesState>()(
   persist(
     (set, get) => ({
-      notes: [],
+      notes: [SECRET_NOTE],
 
       addNote: (color: StickyColor = "yellow") => {
         const id = crypto.randomUUID();
@@ -108,6 +126,19 @@ export const useStickiesStore = create<StickiesState>()(
     }),
     {
       name: "stickies-storage",
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        const state = (persistedState ?? {}) as Partial<StickiesState>;
+        if (version < 1) {
+          const notes = state.notes ?? [];
+          const hasSecret = notes.some((n) => n.id === SECRET_NOTE_ID);
+          return {
+            ...state,
+            notes: hasSecret ? notes : [SECRET_NOTE, ...notes],
+          };
+        }
+        return state;
+      },
     }
   )
 );
