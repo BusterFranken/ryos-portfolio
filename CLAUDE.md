@@ -47,6 +47,10 @@ Do not extend these — they are being DISABLED (see `docs/STRIP_LIST.md`):
 - Object storage (Vercel Blob / S3)
 - Electron and Tauri desktop shells
 
+**One approved backend exception:** `api/spotify-recent.ts` (Vercel Edge Function)
+serves Buster's recently-played Spotify feed for the iPod. Secrets live in Vercel
+env vars only (`docs/SPOTIFY_SETUP.md`). Keep the rest of the app static.
+
 ## Gotchas
 - OS switch = a value in the theme Zustand store + the **Appearance** panel in the **Control Panels** app. Set the initial/default theme there.
 - iframes: target sites must allow framing (`X-Frame-Options` / CSP `frame-ancestors`), or fall back to a static preview + "open in new tab" button.
