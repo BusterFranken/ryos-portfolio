@@ -27,6 +27,7 @@ import {
   refreshStaleAppleMusicPlaylistTracks,
   type AppleMusicSearchScope,
 } from "./useAppleMusicLibrary";
+import { useSpotifyRecent } from "./useSpotifyRecent";
 import { useMusicKit } from "@/hooks/useMusicKit";
 import { clearAppleMusicLibrary } from "@/utils/appleMusicLibraryCache";
 import { useThemeStore } from "@/stores/useThemeStore";
@@ -281,6 +282,11 @@ export function useIpodLogic({
     enabled: enableMusicKit,
     isAuthorized: appleMusicAuthorized,
   });
+
+  // Read-only "Recently on Spotify" list (opens tracks in Spotify; not playable
+  // in-app). Fetched once when the iPod is open.
+  const { tracks: spotifyRecentTracks, loading: spotifyRecentLoading } =
+    useSpotifyRecent(isWindowOpen);
 
   const appleMusicLibraryLoading = useIpodStore(
     (s) => s.appleMusicLibraryLoading
@@ -1589,6 +1595,40 @@ export function useIpodLogic({
     useModernAppleMusicTitlebarLoading,
   ]);
 
+  const recentlyOnSpotifyMenuItems = useMemo<MenuItem[]>(() => {
+    if (spotifyRecentLoading && spotifyRecentTracks.length === 0) {
+      return [
+        {
+          label: t("apps.ipod.menuItems.loading", "Loading…"),
+          action: () => {},
+          showChevron: false,
+          isLoading: true,
+        },
+      ];
+    }
+    if (spotifyRecentTracks.length === 0) {
+      return [
+        {
+          label: t("apps.ipod.menuItems.noSongs", "No Songs"),
+          action: () => {},
+          showChevron: false,
+        },
+      ];
+    }
+    return spotifyRecentTracks.map((track) => ({
+      label: track.title,
+      subtitle: track.artist || undefined,
+      coverUrl: track.albumArt ?? undefined,
+      showChevron: false,
+      action: () => {
+        registerActivity();
+        // Not playable in-app — open the track in Spotify. Synchronous so it
+        // runs inside the click gesture and isn't blocked as a popup.
+        if (track.url) window.open(track.url, "_blank", "noopener,noreferrer");
+      },
+    }));
+  }, [spotifyRecentTracks, spotifyRecentLoading, registerActivity, menuLocale]);
+
   const appleMusicFavoritesMenuItems = useMemo(() => {
     const loadingLabel = t("apps.ipod.menuItems.loading", "Loading…");
     if (isAppleMusicFavoritesLoading && appleMusicFavoriteTracks.length === 0) {
@@ -2414,6 +2454,8 @@ export function useIpodLogic({
 
   const musicMenuItemsRef = useRef(musicMenuItems);
   musicMenuItemsRef.current = musicMenuItems;
+  const recentlyOnSpotifyMenuItemsRef = useRef(recentlyOnSpotifyMenuItems);
+  recentlyOnSpotifyMenuItemsRef.current = recentlyOnSpotifyMenuItems;
   const settingsMenuItemsRef = useRef(settingsMenuItems);
   settingsMenuItemsRef.current = settingsMenuItems;
 
@@ -2490,6 +2532,22 @@ export function useIpodLogic({
             title: extrasLabel,
             items: extrasItems,
             selectedIndex: 0,
+          });
+        },
+        showChevron: true,
+      },
+      {
+        label: t("apps.ipod.menuItems.recentlyOnSpotify", "Recently on Spotify"),
+        action: () => {
+          registerActivity();
+          if (useIpodStore.getState().showVideo) toggleVideo();
+          pushMenuChild({
+            kind: "recentlyOnSpotify",
+            id: "recentlyOnSpotify",
+            title: t("apps.ipod.menuItems.recentlyOnSpotify", "Recently on Spotify"),
+            items: recentlyOnSpotifyMenuItemsRef.current,
+            selectedIndex: 0,
+            modernMediaList: true,
           });
         },
         showChevron: true,
@@ -3200,6 +3258,8 @@ export function useIpodLogic({
           return nowPlayingSongMenuItems;
         case "recentlyAdded":
           return isAppleMusic ? appleMusicRecentlyAddedMenuItems : null;
+        case "recentlyOnSpotify":
+          return recentlyOnSpotifyMenuItems;
         case "favorites":
           return isAppleMusic ? appleMusicFavoritesMenuItems : null;
         case "radio":
@@ -3317,6 +3377,7 @@ export function useIpodLogic({
     isAppleMusic,
     appleMusicFavoritesMenuItems,
     appleMusicRecentlyAddedMenuItems,
+    recentlyOnSpotifyMenuItems,
     appleMusicRadioMenuItems,
     allSongsMenuItems,
     artistAllSongsMenuItemsByTitle,

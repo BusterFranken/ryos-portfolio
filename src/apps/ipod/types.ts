@@ -50,6 +50,7 @@ export type IpodMenuKind =
   | "songs"
   | "playlists"
   | "recentlyAdded"
+  | "recentlyOnSpotify"
   | "favorites"
   | "radio"
   | "artist"
