@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getContactEmail } from "@/utils/contactChannels";
 
 export type StickyColor = "yellow" | "blue" | "green" | "pink" | "purple" | "orange";
 
@@ -34,7 +35,7 @@ const SECRET_NOTE: StickyNote = {
 if you're poking around in here,
 we'd probably get along.
 
-say hi → busterfranken@gmail.com`,
+say hi → ${getContactEmail()}`,
   color: "pink",
   position: { x: -150, y: 340 }, // ~70px peeks in from the left edge
   size: { width: 220, height: 240 },

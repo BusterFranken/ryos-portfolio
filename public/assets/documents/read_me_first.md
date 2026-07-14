@@ -17,6 +17,6 @@ There are a few hidden things. One window will even try to *escape the OS* entir
 
 ## Reach me
 
-Open **Contacts** for my email, LinkedIn, GitHub, and Substack — or email me directly at **busterfranken@gmail.com**. Always up for a good conversation.
+Open **Contacts** for my email, LinkedIn, GitHub, and YouTube — the "email" button there will start a message to me. Always up for a good conversation.
 
 — Buster

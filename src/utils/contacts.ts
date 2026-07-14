@@ -1,3 +1,5 @@
+import { getContactEmail, CONTACT_LINKS } from "@/utils/contactChannels";
+
 export type ContactSource = "manual" | "vcard" | "telegram" | "ai";
 
 export interface ContactValue {
@@ -71,29 +73,15 @@ export const DEFAULT_RYO_CONTACT_DRAFT: ContactDraft = {
   firstName: "Buster",
   lastName: "Franken",
   nickname: "buster",
-  emails: ["busterfranken@gmail.com"],
+  // Assembled at runtime (see contactChannels) so the literal address is never
+  // a scrapable string in the bundle.
+  emails: [getContactEmail()],
   urls: [
-    {
-      id: "url-linkedin",
-      label: "linkedin",
-      value: "https://linkedin.com/in/buster-franken",
-    },
-    {
-      id: "url-github",
-      label: "github",
-      value: "https://github.com/BusterFranken",
-    },
-    {
-      id: "url-substack",
-      label: "substack",
-      value: "https://substack.com/@busterfranken",
-    },
-    {
-      id: "url-youtube",
-      label: "youtube",
-      value: "https://youtube.com/@fruitpunchai5359",
-    },
+    { id: "url-linkedin", label: "linkedin", value: CONTACT_LINKS.linkedin },
+    { id: "url-github", label: "github", value: CONTACT_LINKS.github },
+    { id: "url-youtube", label: "youtube", value: CONTACT_LINKS.youtube },
   ],
+  picture: "/assets/images/gallery/headshot.jpg",
   source: "manual",
 };
 const CONTACT_SOURCES: readonly ContactSource[] = [
