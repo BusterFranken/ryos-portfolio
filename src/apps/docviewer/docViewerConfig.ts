@@ -14,7 +14,7 @@ export const docViewerDocs: Partial<Record<AppId, DocViewerDoc>> = {
     appId: "cv-pdf",
     title: "Résumé",
     mode: "pdf",
-    src: undefined /* deferred — drop the CV PDF path here later */,
+    src: "/assets/documents/resume-buster.pdf",
   },
 };
 

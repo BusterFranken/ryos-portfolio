@@ -9,120 +9,74 @@ export interface Video {
   artist?: string;
 }
 
+// Buster's FruitPunch AI talks & challenge recaps. Order: the pitch first, then
+// the "AI for …" wildlife/earth challenge series.
 export const DEFAULT_VIDEOS: Video[] = [
   {
-    id: "0pP3ZjMDzF4",
-    url: "https://youtu.be/0pP3ZjMDzF4",
-    title: "Make Something Wonderful",
-    artist: "Steve Jobs",
+    id: "JNXnE-wpEmc",
+    url: "https://www.youtube.com/watch?v=JNXnE-wpEmc",
+    title: "FruitPunch AI — The Pitch",
+    artist: "Buster Franken",
   },
   {
-    id: "3vq9p00T08I",
-    url: "https://youtu.be/3vq9p00T08I",
-    title: "Macintosh (1984)",
-    artist: "Apple Computer",
+    id: "aGy0lwtGgXw",
+    url: "https://youtu.be/aGy0lwtGgXw",
+    title: "AI for Bears",
+    artist: "FruitPunch AI",
   },
   {
-    id: "2B-XwPjn9YY",
-    url: "https://youtu.be/2B-XwPjn9YY",
-    title: "Macintosh Introduction (1984)",
-    artist: "Steve Jobs",
+    id: "ZbYeP_4RldQ",
+    url: "https://youtu.be/ZbYeP_4RldQ",
+    title: "AI for Sea Turtles",
+    artist: "FruitPunch AI",
   },
   {
-    id: "VFP-VZtgb0s",
-    url: "https://youtu.be/VFP-VZtgb0s",
-    title: "iMac G3 vs PC Simplicity (1998)",
-    artist: "Apple Computer",
+    id: "oi_w9m2gj9o",
+    url: "https://youtu.be/oi_w9m2gj9o",
+    title: "AI for Forest Elephants",
+    artist: "FruitPunch AI",
   },
   {
-    id: "dtaSDVpAo4c",
-    url: "https://youtu.be/dtaSDVpAo4c",
-    title: "Apple Back on Track (1998)",
-    artist: "Steve Jobs",
+    id: "xyRKm39qBZ4",
+    url: "https://youtu.be/xyRKm39qBZ4",
+    title: "AI for Seals",
+    artist: "FruitPunch AI",
   },
   {
-    id: "Ko4V3G4NqII",
-    url: "https://youtu.be/Ko4V3G4NqII",
-    title: "Mac OS X Introduction Part 1 (2000)",
-    artist: "Steve Jobs",
+    id: "P9I4gy1-nrw",
+    url: "https://youtu.be/P9I4gy1-nrw",
+    title: "AI for Wildlife",
+    artist: "FruitPunch AI",
   },
   {
-    id: "6-fkYFV7rOY",
-    url: "https://youtu.be/6-fkYFV7rOY",
-    title: "Mac OS X Introduction Part 2 (2000)",
-    artist: "Steve Jobs",
+    id: "u-lzr5YdQvs",
+    url: "https://youtu.be/u-lzr5YdQvs",
+    title: "AI for Trees",
+    artist: "FruitPunch AI",
   },
   {
-    id: "mE_bDNaYAr8",
-    url: "https://youtu.be/mE_bDNaYAr8",
-    title: "iPod Ad (2001)",
-    artist: "Apple Computer",
+    id: "pnosMD8vDTg",
+    url: "https://youtu.be/pnosMD8vDTg",
+    title: "AI for Oil Spills",
+    artist: "FruitPunch AI",
   },
   {
-    id: "Mc_FiHTITHE",
-    url: "https://youtu.be/Mc_FiHTITHE",
-    title: "iPod Introduction (2001)",
-    artist: "Steve Jobs",
+    id: "qyZRPIziCkI",
+    url: "https://youtu.be/qyZRPIziCkI",
+    title: "AI for European Wildlife",
+    artist: "FruitPunch AI",
   },
   {
-    id: "b5P3QDm61go",
-    url: "https://youtu.be/b5P3QDm61go",
-    title: 'iMac G4 "Lamp" Ad (2002)',
-    artist: "Apple Computer",
+    id: "0h-S2fTDbxs",
+    url: "https://youtu.be/0h-S2fTDbxs",
+    title: "AI for Earth — with the European Space Agency",
+    artist: "FruitPunch AI",
   },
   {
-    id: "TDVYfgRoVAo",
-    url: "https://youtu.be/TDVYfgRoVAo",
-    title: "iMac G4 Introduction (2002)",
-    artist: "Steve Jobs",
-  },
-  {
-    id: "9AJ1oSXlzCo",
-    url: "https://youtu.be/9AJ1oSXlzCo",
-    title: "iPod Nano Ad (2005)",
-    artist: "Apple Computer",
-  },
-  {
-    id: "VQKMoT-6XSg",
-    url: "https://youtu.be/VQKMoT-6XSg?si=XzKqJ_mnXDH_P4zH",
-    title: "iPhone Introduction (2007)",
-    artist: "Steve Jobs",
-  },
-  {
-    id: "dMBW1G4U54g",
-    url: "https://youtu.be/dMBW1G4U54g",
-    title: "MacBook Air Ad (2008)",
-    artist: "Apple Computer",
-  },
-  {
-    id: "KEaLJpFxR9Q",
-    url: "https://www.youtube.com/watch?v=KEaLJpFxR9Q",
-    title: "iPhone 4 Ad (2010)",
-    artist: "Apple Computer",
-  },
-  {
-    id: "b6-yFqenAy4",
-    url: "https://www.youtube.com/watch?v=b6-yFqenAy4",
-    title: "iPhone 4 Introduction (2010)",
-    artist: "Steve Jobs",
-  },
-  {
-    id: "EKBVLzOZyLw",
-    url: "https://youtu.be/EKBVLzOZyLw",
-    title: "On Focus",
-    artist: "Jony Ive",
-  },
-  {
-    id: "wLb9g_8r-mE",
-    url: "https://youtu.be/wLb9g_8r-mE",
-    title: "A Conversation with Jony Ive",
-    artist: "Jony Ive",
-  },
-  {
-    id: "TQhv6Wol6Ns",
-    url: "https://www.youtube.com/watch?v=TQhv6Wol6Ns&t=26s",
-    title: "Our designer built an OS with Cursor",
-    artist: "Cursor",
+    id: "ghtcwxDgZnA",
+    url: "https://youtu.be/ghtcwxDgZnA",
+    title: "AI for Wind Energy",
+    artist: "FruitPunch AI",
   },
 ];
 
@@ -146,7 +100,7 @@ interface VideoStoreState {
   getCurrentVideo: () => Video | null;
 }
 
-const CURRENT_VIDEO_STORE_VERSION = 8; // Clean ID-based version
+const CURRENT_VIDEO_STORE_VERSION = 9; // Portfolio: FruitPunch talks
 
 const getInitialState = () => ({
   videos: DEFAULT_VIDEOS,

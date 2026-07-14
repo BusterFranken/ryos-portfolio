@@ -14,37 +14,41 @@ export interface BootEntry {
  * by the "Reset Desktop" action.
  *
  * Order is back-to-front (first entry = deepest, last entry = front-most /
- * foreground). Deliberately:
- *  - at most ONE live iframe at boot (`mpoftheweek`)
- *  - excludes `buster-barn` (full-screen takeover) and `casefile` (slow cold
- *    start) — those stay launch-on-click only.
+ * foreground). The hero pairing is the D&D portfolio main page (`dnd-cv`, which
+ * resolves to busterfranken.com) with the busterfranken.com Projects page open
+ * right next to it in an Internet Explorer window. Both live iframes are the
+ * same fast static host. `buster-barn` (full-screen takeover) and `casefile`
+ * (slow cold start) stay launch-on-click only.
  */
 export const bootLayout: BootEntry[] = [
   {
-    appId: "mpoftheweek",
-    position: { x: 440, y: 60 },
-    size: { width: 780, height: 540 },
+    appId: "dnd-cv",
+    title: "busterfranken.com",
+    position: { x: 120, y: 64 },
+    size: { width: 660, height: 560 },
+  },
+  {
+    appId: "internet-explorer",
+    initialData: { url: "https://www.busterfranken.com/projects.html" },
+    title: "Projects — busterfranken.com",
+    position: { x: 800, y: 96 },
+    size: { width: 560, height: 540 },
   },
   {
     appId: "gallery",
-    position: { x: 250, y: 230 },
-    size: { width: 720, height: 470 },
+    position: { x: 200, y: 340 },
+    size: { width: 620, height: 420 },
   },
   {
     appId: "contacts",
-    position: { x: 620, y: 290 },
-    size: { width: 620, height: 430 },
-  },
-  {
-    appId: "videos",
-    position: { x: 80, y: 320 },
-    size: { width: 400, height: 420 },
+    position: { x: 840, y: 360 },
+    size: { width: 540, height: 400 },
   },
   {
     appId: "textedit",
     initialData: { path: "/Documents/read_me_first.md" },
     title: "read_me_first.md",
-    position: { x: 70, y: 55 },
+    position: { x: 60, y: 52 },
     size: { width: 440, height: 480 },
   },
 ];

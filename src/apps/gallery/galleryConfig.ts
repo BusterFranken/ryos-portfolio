@@ -1,3 +1,5 @@
+import { buildMailto } from "@/utils/contactChannels";
+
 /** A screenshot album shown in the Gallery (selectable from the source list). */
 export interface GalleryAlbum {
   id: string;
@@ -9,46 +11,50 @@ export interface GalleryAlbum {
   cta?: { label: string; href: string };
 }
 
-// TEMP demo images (existing aqua wallpapers) so the iPhoto-style viewer is
-// visible before real screenshots land. Replace each album's `images` with the
-// real Workout / jDog / speaking shots — then this constant can be deleted.
-const DEMO_IMAGES = [
-  "/wallpapers/photos/aqua/0-aqua-blue.jpg",
-  "/wallpapers/photos/aqua/0-leopard-aqua_blue.jpg",
-  "/wallpapers/photos/aqua/0-aqua-graphite.jpg",
-  "/wallpapers/photos/aqua/0-leopard-aqua_graphite.jpg",
-];
+const GALLERY = "/assets/images/gallery";
 
 export const galleryAlbums: GalleryAlbum[] = [
   {
+    id: "speaking",
+    title: "Speaking",
+    blurb:
+      "On stage — keynoting the European Commission's Digital Skills & Education Congress, and the main stage at World Summit AI, Amsterdam.",
+    images: [`${GALLERY}/ec-digital-skills.jpg`, `${GALLERY}/world-summit-ai.jpg`],
+    cta: {
+      label: "Invite me to speak →",
+      href: buildMailto("Speaking invite"),
+    },
+  },
+  {
+    id: "fruitpunch",
+    title: "FruitPunch AI",
+    blurb:
+      "Building FruitPunch AI — our team, and the global community of volunteers we brought together for the AI-for-Good challenges.",
+    images: [`${GALLERY}/fruitpunch-team.jpg`, `${GALLERY}/volunteers-meetup.jpg`],
+    cta: {
+      label: "Work with me →",
+      href: buildMailto("Let's work together"),
+    },
+  },
+  {
     id: "workout",
     title: "Workout",
-    blurb: "A simpler, better workout app — Swift / iOS.",
-    images: DEMO_IMAGES,
+    blurb: "A simpler, better workout app — Swift / iOS. (Screenshots coming soon.)",
+    images: [],
     cta: {
       label: "Want something like this? →",
-      href: "mailto:busterfranken@gmail.com?subject=Workout%20app",
+      href: buildMailto("Workout app"),
     },
   },
   {
     id: "jdog",
     title: "jDog",
     blurb:
-      "Self-hosted, read-only WhatsApp digest agent (WAHA + Node/TS + SQLite).",
-    images: DEMO_IMAGES,
+      "Self-hosted, read-only WhatsApp digest agent (WAHA + Node/TS + SQLite). (Screenshots coming soon.)",
+    images: [],
     cta: {
       label: "Want something like this? →",
-      href: "mailto:busterfranken@gmail.com?subject=jDog",
-    },
-  },
-  {
-    id: "speaking",
-    title: "Speaking",
-    blurb: "Talks & events.",
-    images: DEMO_IMAGES,
-    cta: {
-      label: "Invite me to speak →",
-      href: "mailto:busterfranken@gmail.com?subject=Speaking%20invite",
+      href: buildMailto("jDog"),
     },
   },
 ];
