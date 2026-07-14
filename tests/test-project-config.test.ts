@@ -6,37 +6,45 @@ import {
 import { appIds, appNames } from "../src/config/appRegistryData";
 
 describe("projectConfig", () => {
+  // buster-barn is the full-screen takeover; every other project renders as a
+  // live iframe (tarot + pawnshop went live once their sites shipped).
   const LIVE = [
-    "buster-barn",
     "casefile",
     "hush",
     "kafka-form",
     "eigenvector",
     "mpoftheweek",
     "dnd-cv",
+    "tarot",
+    "pawnshop",
   ] as const;
-  const PREVIEW = ["tarot", "pawnshop"] as const;
+  const FULLSCREEN = ["buster-barn"] as const;
 
   test("every project id has a config", () => {
-    for (const id of [...LIVE, ...PREVIEW]) {
+    for (const id of [...LIVE, ...FULLSCREEN]) {
       expect(resolveProjectConfig(id)).toBeDefined();
     }
   });
 
-  test("live projects are mode 'live' with an http(s) url (buster-barn is fullscreen)", () => {
+  test("live projects are mode 'live' with an http(s) url", () => {
     for (const id of LIVE) {
       const c = resolveProjectConfig(id)!;
-      const expected = id === "buster-barn" ? "fullscreen" : "live";
-      expect(c.mode).toBe(expected);
+      expect(c.mode).toBe("live");
       expect(c.url).toMatch(/^https?:\/\//);
     }
   });
 
-  test("preview projects are mode 'preview' and carry a redirect url", () => {
-    for (const id of PREVIEW) {
+  test("buster-barn is the fullscreen takeover with an http(s) url", () => {
+    for (const id of FULLSCREEN) {
       const c = resolveProjectConfig(id)!;
-      expect(c.mode).toBe("preview");
+      expect(c.mode).toBe("fullscreen");
       expect(c.url).toMatch(/^https?:\/\//);
+    }
+  });
+
+  test("no project is left in preview mode", () => {
+    for (const c of Object.values(projectConfig)) {
+      expect(c!.mode).not.toBe("preview");
     }
   });
 

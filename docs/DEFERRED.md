@@ -11,14 +11,10 @@ don't open an empty reader. To bring it back:
 2. Re-add `"substack"` to `AQUA_DESKTOP_APP_IDS`.
 3. (Optional) add it back to the boot layout.
 
-## Tarot — live site is down
-**Status:** blocked. `tarotread.help` does not resolve (DNS SERVFAIL). The `tarot`
-app is still a **preview card** (🔮 + CTA to tarotread.help). Buster wants it to
-render as a **live interactive iframe** like the other live projects. To do that:
-1. Bring `tarotread.help` back online (or provide a working URL).
-2. Flip `tarot` in `projectConfig.ts` from `mode: "preview"` to `mode: "live"`.
-Until then the preview card's CTA points at a dead domain — consider disabling
-or hiding the tarot icon if the site stays down.
+## Tarot & Pawnshop — DONE (now live)
+`tarotread.help` is back online and `pawnshop-qw60.onrender.com` went live, so
+both are `mode: "live"` in `projectConfig.ts` and render as interactive iframes.
+Pawnshop also opens on startup (`bootLayout.ts`).
 
 ## iPod — live Spotify feed
 **Status:** needs an architecture decision. Buster wants the iPod to feature the
@@ -39,9 +35,18 @@ token-free path: replace the MapKit view with an **OpenStreetMap embed iframe**
 (`openstreetmap.org/export/embed.html?bbox=…&marker=…`) centered on that spot, or
 a Leaflet + OSM tiles map. This is a small feature build, not a config tweak.
 
-## Gallery — remaining screenshots + per-photo captions
-- Buster will send **Workout** and **jDog** screenshots; those albums are empty
-  placeholders for now (`galleryConfig.ts`).
+## jDog & Workout — becoming live iframe apps (not gallery albums)
+Buster is putting up **one-pager** sites for **jDog** and **Workout** on their own
+domains, to be rendered as **live iframe project windows** (like tarot/pawnshop),
+NOT as Gallery screenshot albums.
+- **jDog:** one-pager coming soon → add a `jdog` live entry in `projectConfig.ts`
+  + register the app + desktop icon, and remove the empty `jdog` gallery album.
+- **Workout:** Buster has the domain, still needs to generate + publish the
+  one-pager → then same treatment as jDog.
+Once both are iframe apps, drop the empty `workout`/`jdog` albums from
+`galleryConfig.ts` (Gallery then holds only Speaking + FruitPunch photos).
+
+## Gallery — per-photo captions
 - The 5 speaking/team photos are wired but the Gallery has no per-image caption
   field, so their rich context (European Commission talk, World Summit AI, etc.)
   lives only in album blurbs. Adding per-image captions is a small UI addition.

@@ -34,22 +34,8 @@ export const projectConfig: Partial<Record<AppId, ProjectConfig>> = {
     mode: "live",
     url: "https://busterfranken.github.io/DnD-style-portfolio-cv/",
   },
-  tarot: {
-    mode: "preview",
-    url: "https://tarotread.help/",
-    previewBlurb:
-      "A bit-art fortune teller. Draw a card and let the pixels read your future.",
-    ctaLabel: "Start tarot reading",
-    placeholderEmoji: "🔮",
-  },
-  pawnshop: {
-    mode: "preview",
-    url: "https://github.com/BusterFranken/pawnshop",
-    previewBlurb:
-      "An AI jewelry-appraisal marketplace — snap a photo, get an instant valuation, book a pawn-shop appointment. Not deployed yet; take a look at the source.",
-    ctaLabel: "View on GitHub",
-    placeholderEmoji: "💎",
-  },
+  tarot: { mode: "live", url: "https://tarotread.help/" },
+  pawnshop: { mode: "live", url: "https://pawnshop-qw60.onrender.com/" },
 };
 
 export function resolveProjectConfig(

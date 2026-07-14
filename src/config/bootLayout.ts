@@ -35,6 +35,11 @@ export const bootLayout: BootEntry[] = [
     size: { width: 560, height: 540 },
   },
   {
+    appId: "pawnshop",
+    position: { x: 380, y: 200 },
+    size: { width: 720, height: 500 },
+  },
+  {
     appId: "gallery",
     position: { x: 200, y: 340 },
     size: { width: 620, height: 420 },

@@ -19,11 +19,22 @@ describe("bootLayout (curated-chaos first run)", () => {
     }
   });
 
-  test("at most one live iframe at boot", () => {
-    const liveIframes = bootLayout.filter(
-      (e) => projectConfig[e.appId]?.mode === "live"
+  test("opens the dnd-cv + projects hero pairing and pawnshop on startup", () => {
+    const ids = bootLayout.map((e) => e.appId);
+    // The D&D portfolio main page + the busterfranken.com Projects page.
+    expect(ids).toContain("dnd-cv");
+    const ie = bootLayout.find((e) => e.appId === "internet-explorer");
+    expect(ie).toBeDefined();
+    expect((ie!.initialData as { url?: string })?.url).toContain(
+      "busterfranken.com"
     );
-    expect(liveIframes.length).toBeLessThanOrEqual(1);
+    // Pawnshop opens on startup too (Buster's request).
+    expect(ids).toContain("pawnshop");
+    // Every boot project iframe is a real live/fullscreen project config.
+    for (const e of bootLayout) {
+      const cfg = projectConfig[e.appId];
+      if (cfg) expect(["live", "fullscreen"]).toContain(cfg.mode);
+    }
   });
 
   test("excludes the full-screen takeover and the slow cold-start project", () => {
