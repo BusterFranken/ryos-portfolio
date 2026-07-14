@@ -24,6 +24,6 @@ export function makeProjectMetadata(appId: AppId, name: string) {
   return {
     ...appMetadata,
     name,
-    icon: `/icons/default/${appId}.png`,
+    icon: `/icons/default/${appId}.svg`,
   };
 }

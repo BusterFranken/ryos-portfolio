@@ -488,7 +488,7 @@ export const appRegistry = {
   ["buster-barn"]: {
     id: "buster-barn",
     name: appNames["buster-barn"],
-    icon: { type: "image", src: "/icons/default/buster-barn.png" },
+    icon: { type: "image", src: "/icons/default/buster-barn.svg" },
     description: "Full-screen pixel-art barn game",
     component: makeProjectApp("buster-barn"),
     helpItems: projectHelpItems,
@@ -501,7 +501,7 @@ export const appRegistry = {
   ["casefile"]: {
     id: "casefile",
     name: appNames["casefile"],
-    icon: { type: "image", src: "/icons/default/casefile.png" },
+    icon: { type: "image", src: "/icons/default/casefile.svg" },
     description: "Courtroom drama investigation",
     component: makeProjectApp("casefile"),
     helpItems: projectHelpItems,
@@ -514,7 +514,7 @@ export const appRegistry = {
   ["hush"]: {
     id: "hush",
     name: appNames["hush"],
-    icon: { type: "image", src: "/icons/default/hush.png" },
+    icon: { type: "image", src: "/icons/default/hush.svg" },
     description: "A quiet little web toy",
     component: makeProjectApp("hush"),
     helpItems: projectHelpItems,
@@ -527,7 +527,7 @@ export const appRegistry = {
   ["kafka-form"]: {
     id: "kafka-form",
     name: appNames["kafka-form"],
-    icon: { type: "image", src: "/icons/default/kafka-form.png" },
+    icon: { type: "image", src: "/icons/default/kafka-form.svg" },
     description: "A Kafkaesque web form",
     component: makeProjectApp("kafka-form"),
     helpItems: projectHelpItems,
@@ -540,7 +540,7 @@ export const appRegistry = {
   ["eigenvector"]: {
     id: "eigenvector",
     name: appNames["eigenvector"],
-    icon: { type: "image", src: "/icons/default/eigenvector.png" },
+    icon: { type: "image", src: "/icons/default/eigenvector.svg" },
     description: "eigenvector.pro — live site",
     component: makeProjectApp("eigenvector"),
     helpItems: projectHelpItems,
@@ -553,7 +553,7 @@ export const appRegistry = {
   ["mpoftheweek"]: {
     id: "mpoftheweek",
     name: appNames["mpoftheweek"],
-    icon: { type: "image", src: "/icons/default/mpoftheweek.png" },
+    icon: { type: "image", src: "/icons/default/mpoftheweek.svg" },
     description: "MP of the Week — live site",
     component: makeProjectApp("mpoftheweek"),
     helpItems: projectHelpItems,
@@ -566,7 +566,7 @@ export const appRegistry = {
   ["dnd-cv"]: {
     id: "dnd-cv",
     name: appNames["dnd-cv"],
-    icon: { type: "image", src: "/icons/default/dnd-cv.png" },
+    icon: { type: "image", src: "/icons/default/dnd-cv.svg" },
     description: "D&D-style portfolio CV",
     component: makeProjectApp("dnd-cv"),
     helpItems: projectHelpItems,
@@ -579,7 +579,7 @@ export const appRegistry = {
   ["tarot"]: {
     id: "tarot",
     name: appNames["tarot"],
-    icon: { type: "image", src: "/icons/default/tarot.png" },
+    icon: { type: "image", src: "/icons/default/tarot.svg" },
     description: "A bit-art fortune teller",
     component: makeProjectApp("tarot"),
     helpItems: projectHelpItems,
@@ -592,7 +592,7 @@ export const appRegistry = {
   ["pawnshop"]: {
     id: "pawnshop",
     name: appNames["pawnshop"],
-    icon: { type: "image", src: "/icons/default/pawnshop.png" },
+    icon: { type: "image", src: "/icons/default/pawnshop.svg" },
     description: "AI jewelry-appraisal marketplace",
     component: makeProjectApp("pawnshop"),
     helpItems: projectHelpItems,
