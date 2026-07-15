@@ -186,7 +186,7 @@ export function AboutFinderDialog({
                     onClick={(e) => {
                       e.preventDefault();
                       launchApp("internet-explorer", {
-                        url: "os.ryo.lu/docs/changelog",
+                        url: "https://www.busterfranken.com",
                         year: "current",
                       });
                       onOpenChange(false);

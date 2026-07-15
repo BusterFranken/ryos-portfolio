@@ -114,229 +114,79 @@ export const DEFAULT_FAVORITES: Favorite[] = [
     isDirectory: false,
   },
   {
-    title: "Ryo",
-    url: "https://ryo.lu",
-    favicon: "https://www.google.com/s2/favicons?domain=ryo.lu&sz=32",
+    title: "Buster",
+    url: "https://www.busterfranken.com",
+    favicon: "https://www.google.com/s2/favicons?domain=busterfranken.com&sz=32",
     year: "current",
     isDirectory: false,
   },
   {
-    title: "ryOS Docs",
-    url: "https://os.ryo.lu/docs",
-    favicon: "https://www.google.com/s2/favicons?domain=os.ryo.lu&sz=32",
+    title: "Projects",
+    isDirectory: true,
+    children: [
+    {
+        title: "Eigenvector",
+        url: "https://eigenvector.pro",
+        favicon: "https://www.google.com/s2/favicons?domain=eigenvector.pro&sz=32",
+        year: "current",
+        isDirectory: false,
+      },
+    {
+        title: "MP of the Week",
+        url: "https://mpoftheweek.com",
+        favicon: "https://www.google.com/s2/favicons?domain=mpoftheweek.com&sz=32",
+        year: "current",
+        isDirectory: false,
+      },
+    {
+        title: "Tarot",
+        url: "https://tarotread.help",
+        favicon: "https://www.google.com/s2/favicons?domain=tarotread.help&sz=32",
+        year: "current",
+        isDirectory: false,
+      },
+    {
+        title: "Pawnshop",
+        url: "https://pawnshop-qw60.onrender.com",
+        favicon: "https://www.google.com/s2/favicons?domain=pawnshop-qw60.onrender.com&sz=32",
+        year: "current",
+        isDirectory: false,
+      },
+    {
+        title: "jDog",
+        url: "https://jdog.lol",
+        favicon: "https://www.google.com/s2/favicons?domain=jdog.lol&sz=32",
+        year: "current",
+        isDirectory: false,
+      },
+    ],
+  },
+  {
+    title: "FruitPunch AI",
+    url: "https://www.youtube.com/@fruitpunchai5359",
+    favicon: "https://www.google.com/s2/favicons?domain=youtube.com&sz=32",
     year: "current",
     isDirectory: false,
   },
   {
-    title: "Friends",
-    isDirectory: true, // Mark as directory
-    children: [
-      {
-        title: "ISOCITY",
-        url: "https://iso-city.com",
-        favicon: "https://www.google.com/s2/favicons?domain=iso-city.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Ian",
-        url: "https://shaoruu.io",
-        favicon: "https://www.google.com/s2/favicons?domain=shaoruu.io&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Long",
-        url: "https://os.rocorgi.wang",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=os.rocorgi.wang&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Maya",
-        url: "https://mayabakir.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=mayabakir.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Modi",
-        url: "https://www.akm.io",
-        favicon: "https://www.google.com/s2/favicons?domain=www.akm.io&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Sam",
-        url: "https://www.samuelcatania.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=www.samuelcatania.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Stephen",
-        url: "https://wustep.me",
-        favicon: "https://www.google.com/s2/favicons?domain=wustep.me&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Theo",
-        url: "https://tmb.sh",
-        favicon: "https://www.google.com/s2/favicons?domain=tmb.sh&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Tyler",
-        url: "https://tyler.cafe",
-        favicon: "https://www.google.com/s2/favicons?domain=tyler.cafe&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Andrew",
-        url: "https://www.andrewl.ee",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=www.andrewl.ee&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Ekin",
-        url: "https://www.ekinoflazer.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=www.ekinoflazer.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Lucas",
-        url: "https://www.lucasn.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=www.lucasn.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-    ],
+    title: "GitHub",
+    url: "https://github.com/BusterFranken",
+    favicon: "https://www.google.com/s2/favicons?domain=github.com&sz=32",
+    year: "current",
+    isDirectory: false,
   },
-  // Work Folder
   {
-    title: "Work",
-    isDirectory: true, // Mark as directory
-    children: [
-      {
-        title: "Cursor",
-        url: "https://cursor.sh",
-        favicon: "https://www.google.com/s2/favicons?domain=cursor.com&sz=32",
-        year: "1992",
-        isDirectory: false,
-      },
-      {
-        title: "Notion",
-        url: "https://notion.com",
-        favicon: "https://www.google.com/s2/favicons?domain=notion.com&sz=32",
-        year: "1800",
-        isDirectory: false,
-      },
-      {
-        title: "Stripe",
-        url: "https://stripe.com",
-        favicon: "https://www.google.com/s2/favicons?domain=stripe.com&sz=32",
-        year: "2018",
-        isDirectory: false,
-      },
-    ],
-  },
-  // Tools Folder
-  {
-    title: "Tools",
-    isDirectory: true, // Mark as directory
-    children: [
-      {
-        title: "HyperCards",
-        url: "https://hcsimulator.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=hcsimulator.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-    ],
-  },
-  // Sites Folder
-  {
-    title: "Sites",
-    isDirectory: true, // Mark as directory
-    children: [
-      {
-        title: "Disney",
-        url: "https://disney.com",
-        favicon: "https://www.google.com/s2/favicons?domain=disney.com&sz=32",
-        year: "1997",
-        isDirectory: false,
-      },
-      {
-        title: "GeoCities",
-        url: "https://geocities.restorativland.org", // Example archive/representation
-        favicon:
-          "https://www.google.com/s2/favicons?domain=geocities.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Microsoft",
-        url: "https://microsoft.com",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=microsoft.com&sz=32",
-        year: "1996",
-        isDirectory: false,
-      },
-      {
-        title: "Netscape",
-        url: "https://netscape.com", // Might redirect or be an archive
-        favicon: "https://www.google.com/s2/favicons?domain=netscape.com&sz=32",
-        year: "1996",
-        isDirectory: false,
-      },
-      {
-        title: "NYTimes",
-        url: "https://nytimes.com",
-        favicon: "https://www.google.com/s2/favicons?domain=nytimes.com&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Wikipedia",
-        url: "https://en.wikipedia.org/wiki",
-        favicon:
-          "https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32",
-        year: "current",
-        isDirectory: false,
-      },
-      {
-        title: "Google",
-        url: "https://google.com",
-        favicon: "https://www.google.com/s2/favicons?domain=google.com&sz=32",
-        year: "1999",
-        isDirectory: false,
-      },
-      {
-        title: "Space Jam",
-        url: "https://www.spacejam.com/index.cgi",
-        favicon: "https://www.google.com/s2/favicons?domain=spacejam.com&sz=32",
-        year: "1996",
-        isDirectory: false,
-      },
-    ],
+    title: "LinkedIn",
+    url: "https://www.linkedin.com/in/buster-franken/",
+    favicon: "https://www.google.com/s2/favicons?domain=linkedin.com&sz=32",
+    year: "current",
+    isDirectory: false,
   },
 ];
 
 // Define the current version for the store
-const RESET_IE_STORE_BEFORE_VERSION = 5;
-const CURRENT_IE_STORE_VERSION = 6;
+const RESET_IE_STORE_BEFORE_VERSION = 7;
+const CURRENT_IE_STORE_VERSION = 7;
 
 const REMOVED_DEFAULT_FAVORITE_HOSTS = new Set(["baby-cursor.ryo.lu"]);
 
