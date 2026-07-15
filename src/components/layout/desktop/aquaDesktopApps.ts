@@ -21,4 +21,9 @@ export const AQUA_DESKTOP_APP_IDS: AppId[] = [
   // hidden from the desktop so visitors don't hit an empty reader. Re-add when
   // there's a real publication feed. See docs/DEFERRED.md.
   "contacts",
+  // Fun extras — the classic OS apps, also featured on the desktop (EVE-269).
+  "pc",
+  "minesweeper",
+  "synth",
+  "winamp",
 ];
