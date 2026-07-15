@@ -26,8 +26,10 @@ export const bootLayout: BootEntry[] = [
   {
     appId: "dnd-cv",
     title: "busterfranken.com",
-    position: { x: 120, y: 64 },
-    size: { width: 660, height: 560 },
+    // Big "hero" size — but it's the back-most window, so README, Videos,
+    // Gallery and jDog overlap it (EVE-263: nice and large, but never in front).
+    position: { x: 100, y: 56 },
+    size: { width: 900, height: 680 },
   },
   {
     appId: "internet-explorer",
