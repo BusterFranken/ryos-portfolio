@@ -6,7 +6,7 @@ import { appIds } from "../src/config/appRegistryData";
 describe("bootLayout (curated-chaos first run)", () => {
   test("opens a handful of overlapping windows", () => {
     expect(bootLayout.length).toBeGreaterThanOrEqual(4);
-    expect(bootLayout.length).toBeLessThanOrEqual(8);
+    expect(bootLayout.length).toBeLessThanOrEqual(10);
   });
 
   test("every entry is a registered app with a position + size", () => {
@@ -19,7 +19,7 @@ describe("bootLayout (curated-chaos first run)", () => {
     }
   });
 
-  test("opens the dnd-cv + projects hero pairing and pawnshop on startup", () => {
+  test("opens the hero pairing plus Videos, iPod, and Maps by default (EVE-267)", () => {
     const ids = bootLayout.map((e) => e.appId);
     // The D&D portfolio main page + the busterfranken.com Projects page.
     expect(ids).toContain("dnd-cv");
@@ -28,8 +28,10 @@ describe("bootLayout (curated-chaos first run)", () => {
     expect((ie!.initialData as { url?: string })?.url).toContain(
       "busterfranken.com"
     );
-    // Pawnshop opens on startup too (Buster's request).
-    expect(ids).toContain("pawnshop");
+    // The three apps the ticket wants open on startup.
+    expect(ids).toContain("videos");
+    expect(ids).toContain("ipod");
+    expect(ids).toContain("maps");
     // Every boot project iframe is a real live/fullscreen project config.
     for (const e of bootLayout) {
       const cfg = projectConfig[e.appId];
@@ -37,10 +39,18 @@ describe("bootLayout (curated-chaos first run)", () => {
     }
   });
 
-  test("excludes the full-screen takeover and the slow cold-start project", () => {
+  test("keeps the EVE-267 launch-on-click apps out of the boot layout", () => {
     const ids = bootLayout.map((e) => e.appId);
-    expect(ids).not.toContain("buster-barn");
-    expect(ids).not.toContain("casefile");
+    for (const id of [
+      "mpoftheweek",
+      "hush",
+      "kafka-form",
+      "pawnshop",
+      "buster-barn",
+      "casefile",
+    ]) {
+      expect(ids).not.toContain(id);
+    }
   });
 
   test("opens the README note in textedit", () => {

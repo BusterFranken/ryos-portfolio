@@ -107,8 +107,8 @@
       "assetPath": "/assets/documents/README.md"
     },
     {
-      "path": "/Documents/README.md",
-      "name": "README.md",
+      "path": "/Documents/About this site.md",
+      "name": "About this site.md",
       "isDirectory": false,
       "type": "markdown",
       "icon": "/icons/default/file-text.png",
