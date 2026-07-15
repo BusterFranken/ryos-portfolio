@@ -63,6 +63,13 @@ export const bootLayout: BootEntry[] = [
     size: { width: 480, height: 360 },
   },
   {
+    // Opens scrolled to the "WHO" section (Buster's photo + bio) via the
+    // #about anchor in projectConfig. Buster's namesake current project.
+    appId: "eigenvector",
+    position: { x: 430, y: 110 },
+    size: { width: 760, height: 580 },
+  },
+  {
     appId: "contacts",
     position: { x: 910, y: 400 },
     size: { width: 490, height: 360 },
