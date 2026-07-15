@@ -3,6 +3,8 @@ import {
   createInitialState,
   applyMove,
   isLegalMove,
+  pass,
+  score,
   neighbors,
   idx,
   type Board,
@@ -140,5 +142,48 @@ describe("goEngine — ko", () => {
     const s2 = applyMove(s1!, idx(8, 8));
     expect(s2).not.toBeNull();
     expect(s2!.koPoint).toBeNull();
+  });
+});
+
+describe("goEngine — pass & game end", () => {
+  test("two consecutive passes finish the game and score it", () => {
+    const s0 = createInitialState();
+    const s1 = pass(s0);
+    expect(s1.status).toBe("playing");
+    expect(s1.passes).toBe(1);
+    const s2 = pass(s1);
+    expect(s2.status).toBe("finished");
+    expect(s2.result).not.toBeNull();
+    // Empty board: no territory owned; White wins on komi alone.
+    expect(s2.result!.winner).toBe("white");
+  });
+
+  test("a move between passes resets the pass counter", () => {
+    const s0 = createInitialState();
+    const s1 = pass(s0); // black passes
+    const s2 = applyMove(s1, idx(4, 4)); // white plays
+    expect(s2).not.toBeNull();
+    expect(s2!.passes).toBe(0);
+  });
+});
+
+describe("goEngine — Tromp-Taylor scoring", () => {
+  test("empty region reaching one colour is that colour's area", () => {
+    const b = emptyBoard();
+    b[idx(0, 0)] = "black";
+    const r = score(b);
+    expect(r.blackScore).toBe(81); // 1 stone + 80 empty points reaching only black
+    expect(r.whiteScore).toBeCloseTo(5.5);
+    expect(r.winner).toBe("black");
+  });
+
+  test("region reaching both colours is neutral; komi decides", () => {
+    const b = emptyBoard();
+    b[idx(0, 0)] = "black";
+    b[idx(8, 8)] = "white";
+    const r = score(b);
+    expect(r.blackScore).toBe(1);
+    expect(r.whiteScore).toBeCloseTo(6.5);
+    expect(r.winner).toBe("white");
   });
 });

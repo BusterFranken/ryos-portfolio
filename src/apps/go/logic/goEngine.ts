@@ -149,3 +149,71 @@ export function applyMove(state: GameState, i: number): GameState | null {
 export function isLegalMove(state: GameState, i: number): boolean {
   return applyMove(state, i) !== null;
 }
+
+/** Pass for the side to move. Two consecutive passes finish and score the game. */
+export function pass(state: GameState): GameState {
+  if (state.status !== "playing") return state;
+  const passes = state.passes + 1;
+  const base: GameState = {
+    ...state,
+    toMove: opponent(state.toMove),
+    koPoint: null,
+    passes,
+    lastMove: null,
+  };
+  if (passes >= 2) {
+    return { ...base, status: "finished", result: score(state.board) };
+  }
+  return base;
+}
+
+/**
+ * Tromp-Taylor area scoring: area(colour) = own stones + empty points that
+ * reach only that colour. Regions touching both colours are neutral (dame).
+ * White receives KOMI. Assumes dead stones have already been captured.
+ */
+export function score(board: Board): GameResult {
+  let black = 0;
+  let white = 0;
+  for (const p of board) {
+    if (p === "black") black++;
+    else if (p === "white") white++;
+  }
+
+  const seen = new Set<number>();
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] !== null || seen.has(i)) continue;
+    const region: number[] = [];
+    const border = new Set<Stone>();
+    const stack = [i];
+    seen.add(i);
+    while (stack.length) {
+      const cur = stack.pop() as number;
+      region.push(cur);
+      for (const n of neighbors(cur)) {
+        const p = board[n];
+        if (p === null) {
+          if (!seen.has(n)) {
+            seen.add(n);
+            stack.push(n);
+          }
+        } else {
+          border.add(p);
+        }
+      }
+    }
+    if (border.size === 1) {
+      if (border.has("black")) black += region.length;
+      else white += region.length;
+    }
+    // border.size === 0 (whole board empty) or 2 (dame) -> neutral.
+  }
+
+  const blackScore = black;
+  const whiteScore = white + KOMI;
+  return {
+    blackScore,
+    whiteScore,
+    winner: blackScore > whiteScore ? "black" : "white",
+  };
+}
