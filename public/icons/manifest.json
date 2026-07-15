@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-15T09:27:42.795Z",
+  "generatedAt": "2026-07-15T16:02:43.314Z",
   "themes": {
     "default": [
       "admin.png",
@@ -60,6 +60,7 @@
       "gallery.png",
       "gameboy.png",
       "games.png",
+      "go.png",
       "hush.svg",
       "ie-loader-animated.png",
       "ie-loader.png",
