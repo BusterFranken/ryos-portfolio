@@ -1,13 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#d98a3d"/>
-  <g fill="#f8f7f3">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eb9c49"/>
+      <stop offset="1" stop-color="#b96f27"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#tile)"/>
+  <g fill="#fdf6ec">
     <polygon points="20,17 27,31 14,31"/>
     <polygon points="44,17 37,31 50,31"/>
     <circle cx="32" cy="37" r="13"/>
   </g>
-  <g fill="#d98a3d">
+  <g fill="#b96f27">
     <circle cx="27" cy="35" r="2.2"/>
     <circle cx="37" cy="35" r="2.2"/>
     <circle cx="32" cy="42" r="2.8"/>
   </g>
+  <path d="M4,14 Q4,4 14,4 H50 Q60,4 60,14 V27 Q32,37 4,27 Z" fill="url(#gloss)"/>
 </svg>
