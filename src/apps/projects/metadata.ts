@@ -19,11 +19,12 @@ export const helpItems: Array<{
   description: string;
 }> = [];
 
-/** Per-project metadata (name + icon resolved from the registry id). */
-export function makeProjectMetadata(appId: AppId, name: string) {
+/** Per-project metadata. Icon defaults to the id's .svg; pass an explicit path
+ * for projects using a different icon file (e.g. a real macOS .png). */
+export function makeProjectMetadata(appId: AppId, name: string, icon?: string) {
   return {
     ...appMetadata,
     name,
-    icon: `/icons/default/${appId}.svg`,
+    icon: icon ?? `/icons/default/${appId}.svg`,
   };
 }

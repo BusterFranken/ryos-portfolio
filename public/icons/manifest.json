@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-15T08:32:23.697Z",
+  "generatedAt": "2026-07-15T09:27:42.795Z",
   "themes": {
     "default": [
       "admin.png",
@@ -15,7 +15,7 @@
       "books.png",
       "buster-barn.svg",
       "calendar.png",
-      "casefile.svg",
+      "casefile.png",
       "cdrom.png",
       "chats.png",
       "cloud-sync.png",
@@ -51,7 +51,7 @@
       "dnd-cv.svg",
       "documents.png",
       "downloads.png",
-      "eigenvector.svg",
+      "eigenvector.png",
       "error.png",
       "file-text.png",
       "file.png",
@@ -101,7 +101,7 @@
       "minesweeper-app.png",
       "minesweeper.png",
       "movies.png",
-      "mpoftheweek.svg",
+      "mpoftheweek.png",
       "music.png",
       "paint.png",
       "pawnshop.svg",

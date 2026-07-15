@@ -501,11 +501,11 @@ export const appRegistry = {
   ["casefile"]: {
     id: "casefile",
     name: appNames["casefile"],
-    icon: { type: "image", src: "/icons/default/casefile.svg" },
+    icon: { type: "image", src: "/icons/default/casefile.png" },
     description: "Courtroom drama investigation",
     component: makeProjectApp("casefile"),
     helpItems: projectHelpItems,
-    metadata: makeProjectMetadata("casefile", appNames["casefile"]),
+    metadata: makeProjectMetadata("casefile", appNames["casefile"], "/icons/default/casefile.png"),
     windowConfig: {
       defaultSize: { width: 800, height: 600 },
       minSize: { width: 320, height: 240 },
@@ -540,11 +540,11 @@ export const appRegistry = {
   ["eigenvector"]: {
     id: "eigenvector",
     name: appNames["eigenvector"],
-    icon: { type: "image", src: "/icons/default/eigenvector.svg" },
+    icon: { type: "image", src: "/icons/default/eigenvector.png" },
     description: "eigenvector.pro — live site",
     component: makeProjectApp("eigenvector"),
     helpItems: projectHelpItems,
-    metadata: makeProjectMetadata("eigenvector", appNames["eigenvector"]),
+    metadata: makeProjectMetadata("eigenvector", appNames["eigenvector"], "/icons/default/eigenvector.png"),
     windowConfig: {
       defaultSize: { width: 800, height: 600 },
       minSize: { width: 320, height: 240 },
@@ -553,11 +553,11 @@ export const appRegistry = {
   ["mpoftheweek"]: {
     id: "mpoftheweek",
     name: appNames["mpoftheweek"],
-    icon: { type: "image", src: "/icons/default/mpoftheweek.svg" },
+    icon: { type: "image", src: "/icons/default/mpoftheweek.png" },
     description: "MP of the Week — live site",
     component: makeProjectApp("mpoftheweek"),
     helpItems: projectHelpItems,
-    metadata: makeProjectMetadata("mpoftheweek", appNames["mpoftheweek"]),
+    metadata: makeProjectMetadata("mpoftheweek", appNames["mpoftheweek"], "/icons/default/mpoftheweek.png"),
     windowConfig: {
       defaultSize: { width: 800, height: 600 },
       minSize: { width: 320, height: 240 },
