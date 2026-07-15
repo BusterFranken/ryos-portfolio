@@ -35,16 +35,18 @@ token-free path: replace the MapKit view with an **OpenStreetMap embed iframe**
 (`openstreetmap.org/export/embed.html?bbox=…&marker=…`) centered on that spot, or
 a Leaflet + OSM tiles map. This is a small feature build, not a config tweak.
 
-## jDog & Workout — becoming live iframe apps (not gallery albums)
-Buster is putting up **one-pager** sites for **jDog** and **Workout** on their own
-domains, to be rendered as **live iframe project windows** (like tarot/pawnshop),
-NOT as Gallery screenshot albums.
-- **jDog:** one-pager coming soon → add a `jdog` live entry in `projectConfig.ts`
-  + register the app + desktop icon, and remove the empty `jdog` gallery album.
-- **Workout:** Buster has the domain, still needs to generate + publish the
-  one-pager → then same treatment as jDog.
-Once both are iframe apps, drop the empty `workout`/`jdog` albums from
-`galleryConfig.ts` (Gallery then holds only Speaking + FruitPunch photos).
+## jDog — DONE (live iframe app)
+`jdog` is now a live project window at https://jdog.lol/, registered like the
+other project apps, on the desktop, and open on startup. Its empty Gallery album
+was removed.
+
+## Workout — still becoming a live iframe app (not a gallery album)
+Buster has the domain but still needs to generate + publish the **one-pager**.
+When it's live: add a `workout` live entry in `projectConfig.ts`, register the
+app (appIds/appNames/BaseApp id union/appRegistry/help maps/desktop set), give it
+an icon, optionally add to the boot layout, and remove the empty `workout`
+Gallery album. Mirror the jDog commit (`d81a9ecec`). After that the Gallery holds
+only Speaking + FruitPunch photos.
 
 ## Gallery — per-photo captions
 - The 5 speaking/team photos are wired but the Gallery has no per-image caption
