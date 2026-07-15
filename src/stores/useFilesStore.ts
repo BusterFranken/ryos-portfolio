@@ -498,14 +498,15 @@ async function saveDefaultContents(
 // Function to generate an empty initial state (just for typing)
 const getEmptyFileSystemState = (): Record<string, FileSystemItem> => ({});
 
-const STORE_VERSION = 15; // Add read_me_first default document
+const STORE_VERSION = 16; // Rename read_me_first.md -> README.md
 const STORE_NAME = "ryos:files";
 
 const DEFAULT_MEDITATIONS_BOOK_PATH = "/Books/Meditations - Marcus Aurelius.epub";
 const DEFAULT_MEDITATIONS_BOOK_NAME = "Meditations - Marcus Aurelius.epub";
 const DEFAULT_MEDITATIONS_BOOK_SIZE = 1378157;
-const DEFAULT_READ_ME_FIRST_PATH = "/Documents/read_me_first.md";
-const DEFAULT_READ_ME_FIRST_NAME = "read_me_first.md";
+const DEFAULT_README_PATH = "/Documents/README.md";
+const DEFAULT_README_NAME = "README.md";
+const LEGACY_READ_ME_FIRST_PATH = "/Documents/read_me_first.md";
 
 const DEFAULT_APPLICATIONS_FOLDER_ALIAS_NAME = "Applications";
 
@@ -667,13 +668,17 @@ function migrateV14DefaultMeditationsBook(
   return newState;
 }
 
-/** v15: add the default read_me_first note to existing loaded libraries once. */
+/** v15: add the default README note to existing loaded libraries once. */
 function migrateV15DefaultReadMeFirst(
   items: Record<string, FileSystemItem>,
   libraryState: LibraryState | undefined,
   now: number
 ): Record<string, FileSystemItem> {
-  if (libraryState === "cleared" || items[DEFAULT_READ_ME_FIRST_PATH]) {
+  if (
+    libraryState === "cleared" ||
+    items[DEFAULT_README_PATH] ||
+    items[LEGACY_READ_ME_FIRST_PATH]
+  ) {
     return items;
   }
 
@@ -696,9 +701,9 @@ function migrateV15DefaultReadMeFirst(
     };
   }
 
-  newState[DEFAULT_READ_ME_FIRST_PATH] = {
-    path: DEFAULT_READ_ME_FIRST_PATH,
-    name: DEFAULT_READ_ME_FIRST_NAME,
+  newState[DEFAULT_README_PATH] = {
+    path: DEFAULT_README_PATH,
+    name: DEFAULT_README_NAME,
     isDirectory: false,
     type: "markdown",
     icon: "/icons/default/file-text.png",
@@ -708,6 +713,28 @@ function migrateV15DefaultReadMeFirst(
     modifiedAt: now,
   };
 
+  return newState;
+}
+
+/** v16: rename an existing read_me_first.md note to README.md, preserving the
+ * item (uuid, timestamps). Content loads via the path→asset registry built from
+ * filesystem.json, which now maps /Documents/README.md. */
+function migrateV16RenameReadme(
+  items: Record<string, FileSystemItem>,
+  now: number
+): Record<string, FileSystemItem> {
+  const legacy = items[LEGACY_READ_ME_FIRST_PATH];
+  if (!legacy || items[DEFAULT_README_PATH]) {
+    return items;
+  }
+  const newState = { ...items };
+  delete newState[LEGACY_READ_ME_FIRST_PATH];
+  newState[DEFAULT_README_PATH] = {
+    ...legacy,
+    path: DEFAULT_README_PATH,
+    name: DEFAULT_README_NAME,
+    modifiedAt: now,
+  };
   return newState;
 }
 
@@ -1784,6 +1811,19 @@ export const useFilesStore = create<FilesStoreState>()(
               oldState.libraryState,
               now
             ),
+            libraryState: oldState.libraryState || "loaded",
+          };
+        }
+
+        if (version < 16) {
+          const oldState = persistedState as {
+            items: Record<string, FileSystemItem>;
+            libraryState?: LibraryState;
+          };
+          const now = Date.now();
+
+          return {
+            items: migrateV16RenameReadme(oldState.items, now),
             libraryState: oldState.libraryState || "loaded",
           };
         }

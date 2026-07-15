@@ -72,9 +72,9 @@ export const bootLayout: BootEntry[] = [
   },
   {
     appId: "textedit",
-    initialData: { path: "/Documents/read_me_first.md" },
-    title: "read_me_first.md",
+    initialData: { path: "/Documents/README.md" },
+    title: "README.md",
     position: { x: 56, y: 56 },
-    size: { width: 420, height: 470 },
+    size: { width: 360, height: 420 },
   },
 ];
