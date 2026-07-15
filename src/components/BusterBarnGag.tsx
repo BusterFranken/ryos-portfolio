@@ -5,13 +5,14 @@ import type { AppId } from "@/config/appRegistryData";
 
 /**
  * Easter egg: a pair of fake "malware" popups that escape the OS chrome. The
- * first (a millionth-visitor prize) appears ~10s in; if it isn't accepted, a
- * fake "Run BusterBarn_Setup.exe" warning escalates at ~30s. Accepting either
- * launches Buster-Barn full-screen — exactly like clicking its desktop icon.
+ * first (a millionth-visitor prize) appears ~2 min in — late enough that it
+ * surfaces only for a lingering visitor, not on arrival; if it isn't accepted,
+ * a fake "Run BusterBarn_Setup.exe" warning escalates at ~2:30. Accepting
+ * either launches Buster-Barn full-screen — like clicking its desktop icon.
  */
 const SESSION_KEY = "ryos:barn-gag-shown";
-const PRIZE_DELAY_MS = 10_000;
-const EXE_DELAY_MS = 30_000;
+export const PRIZE_DELAY_MS = 120_000;
+export const EXE_DELAY_MS = 150_000;
 // Above the OS chrome, below the full-screen Buster-Barn takeover (999999).
 const GAG_Z = 990000;
 
