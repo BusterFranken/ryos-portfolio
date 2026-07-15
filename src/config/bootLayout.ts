@@ -61,4 +61,10 @@ export const bootLayout: BootEntry[] = [
     position: { x: 60, y: 52 },
     size: { width: 440, height: 480 },
   },
+  {
+    appId: "ipod",
+    initialData: { openRecentlyOnSpotify: true },
+    position: { x: 1080, y: 70 },
+    size: { width: 300, height: 470 },
+  },
 ];

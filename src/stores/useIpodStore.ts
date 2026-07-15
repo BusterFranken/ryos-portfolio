@@ -369,7 +369,8 @@ const initialIpodData: IpodData = {
   showVideo: false,
   displayMode: DisplayMode.Video,
   backlightOn: true,
-  backlightTimeout: "2s",
+  // Portfolio: keep the iPod screen always lit (no real-iPod sleep dimming).
+  backlightTimeout: "always-on",
   theme: "classic",
   uiVariant: "modern",
   lcdFilterOn: true,

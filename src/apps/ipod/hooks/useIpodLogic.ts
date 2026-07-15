@@ -3835,6 +3835,34 @@ export function useIpodLogic({
     };
   }, [isWindowOpen, initialData, processVideoId, clearIpodInitialData, instanceId]);
 
+  // Boot straight into "Recently on Spotify" when asked (e.g. from the boot
+  // layout). Waits until the root menu is initialized, then pushes the view
+  // once. Only acts from root so it doesn't hijack a restored deep menu.
+  const hasOpenedSpotifyRef = useRef(false);
+  useEffect(() => {
+    if (hasOpenedSpotifyRef.current) return;
+    if (!isWindowOpen || !initialData?.openRecentlyOnSpotify) return;
+    if (menuHistory.length !== 1 || menuHistory[0].kind !== "root") return;
+    hasOpenedSpotifyRef.current = true;
+    pushMenuChild({
+      kind: "recentlyOnSpotify",
+      id: "recentlyOnSpotify",
+      title: t("apps.ipod.menuItems.recentlyOnSpotify", "Recently on Spotify"),
+      items: recentlyOnSpotifyMenuItemsRef.current,
+      selectedIndex: 0,
+      modernMediaList: true,
+    });
+    if (instanceId) clearIpodInitialData(instanceId);
+  }, [
+    isWindowOpen,
+    initialData,
+    menuHistory,
+    pushMenuChild,
+    t,
+    instanceId,
+    clearIpodInitialData,
+  ]);
+
   // Update app event handling
   useEffect(() => {
     return onAppUpdate((event) => {

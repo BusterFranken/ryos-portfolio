@@ -101,6 +101,8 @@ export interface InternetExplorerInitialData {
 
 export interface IpodInitialData {
   videoId?: string;
+  /** Boot the iPod straight into the "Recently on Spotify" list. */
+  openRecentlyOnSpotify?: boolean;
 }
 
 export interface PaintInitialData {
