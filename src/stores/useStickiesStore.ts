@@ -43,6 +43,40 @@ say hi → ${getContactEmail()}`,
   updatedAt: 1700000000000,
 };
 
+// A few seeded notes with pointers for visitors (EVE-268). Stable ids so the
+// migration can add them once without duplicating.
+const PROJECT_NOTES: StickyNote[] = [
+  {
+    id: "portfolio-note-welcome",
+    content: `Every window here is one of my projects.
+
+Switch the whole OS between Mac OS X and Windows in Control Panels → Appearance.`,
+    color: "yellow",
+    position: { x: 880, y: 110 },
+    size: { width: 240, height: 210 },
+    createdAt: 1700000001000,
+    updatedAt: 1700000001000,
+  },
+  {
+    id: "portfolio-note-eigenvector",
+    content: `Eigenvector is what I'm building now — a live app. Open it from the desktop to take a look.`,
+    color: "blue",
+    position: { x: 1090, y: 250 },
+    size: { width: 230, height: 190 },
+    createdAt: 1700000002000,
+    updatedAt: 1700000002000,
+  },
+  {
+    id: "portfolio-note-fruitpunch",
+    content: `I founded FruitPunch AI — 50+ AI-for-Good challenges with 80+ partner organizations. The Videos app has some of my talks.`,
+    color: "green",
+    position: { x: 900, y: 430 },
+    size: { width: 250, height: 210 },
+    createdAt: 1700000003000,
+    updatedAt: 1700000003000,
+  },
+];
+
 // Stack new notes with slight offset from existing notes
 const getNextPosition = (existingNotes: StickyNote[]) => {
   const baseX = 100;
@@ -71,7 +105,7 @@ const getNextPosition = (existingNotes: StickyNote[]) => {
 export const useStickiesStore = create<StickiesState>()(
   persist(
     (set, get) => ({
-      notes: [SECRET_NOTE],
+      notes: [SECRET_NOTE, ...PROJECT_NOTES],
 
       addNote: (color: StickyColor = "yellow") => {
         const id = crypto.randomUUID();
@@ -127,16 +161,21 @@ export const useStickiesStore = create<StickiesState>()(
     }),
     {
       name: "stickies-storage",
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown, version: number) => {
         const state = (persistedState ?? {}) as Partial<StickiesState>;
-        if (version < 1) {
-          const notes = state.notes ?? [];
-          const hasSecret = notes.some((n) => n.id === SECRET_NOTE_ID);
-          return {
-            ...state,
-            notes: hasSecret ? notes : [SECRET_NOTE, ...notes],
-          };
+        if (version < 2) {
+          let notes = state.notes ?? [];
+          // v1: seed the hidden note if missing.
+          if (!notes.some((n) => n.id === SECRET_NOTE_ID)) {
+            notes = [SECRET_NOTE, ...notes];
+          }
+          // v2: add the project-info notes (by stable id, once).
+          const missing = PROJECT_NOTES.filter(
+            (p) => !notes.some((n) => n.id === p.id)
+          );
+          notes = [...notes, ...missing];
+          return { ...state, notes };
         }
         return state;
       },
