@@ -5,6 +5,7 @@ import {
   isLegalMove,
   pass,
   score,
+  bot,
   neighbors,
   idx,
   type Board,
@@ -185,5 +186,51 @@ describe("goEngine — Tromp-Taylor scoring", () => {
     expect(r.blackScore).toBe(1);
     expect(r.whiteScore).toBeCloseTo(6.5);
     expect(r.winner).toBe("white");
+  });
+});
+
+describe("goEngine — bot", () => {
+  test("returns a legal move from the opening position", () => {
+    const s = createInitialState();
+    const m = bot(s);
+    expect(m).not.toBe("pass");
+    expect(isLegalMove(s, m as number)).toBe(true);
+  });
+
+  test("takes an available capture", () => {
+    const b = emptyBoard();
+    b[idx(4, 4)] = "black";
+    b[idx(3, 4)] = "white";
+    b[idx(5, 4)] = "white";
+    b[idx(4, 3)] = "white";
+    const s = stateWith(b, "white"); // white can capture at (4,5)
+    expect(bot(s)).toBe(idx(4, 5));
+  });
+
+  test("never fills its own true eye", () => {
+    const b = emptyBoard();
+    // White wall + diagonals around an empty eye at (4,4).
+    for (const [r, c] of [
+      [3, 4],
+      [5, 4],
+      [4, 3],
+      [4, 5],
+      [3, 3],
+      [3, 5],
+      [5, 3],
+      [5, 5],
+    ]) {
+      b[idx(r, c)] = "white";
+    }
+    const s = stateWith(b, "white");
+    expect(bot(s)).not.toBe(idx(4, 4));
+  });
+
+  test("passes when its only legal points are its own eyes", () => {
+    const b: Board = Array(81).fill("black");
+    b[idx(0, 0)] = null; // black eye
+    b[idx(8, 8)] = null; // black eye
+    const s = stateWith(b, "white"); // both empties are suicide for white
+    expect(bot(s)).toBe("pass");
   });
 });

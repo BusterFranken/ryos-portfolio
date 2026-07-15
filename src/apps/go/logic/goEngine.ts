@@ -217,3 +217,81 @@ export function score(board: Board): GameResult {
     winner: blackScore > whiteScore ? "black" : "white",
   };
 }
+
+/**
+ * True-eye heuristic: an empty point orthogonally surrounded by `color`, whose
+ * diagonals are controlled by `color` (all of them on an edge/corner, or all
+ * but at most one in the interior). Used so the bot never fills its own eyes.
+ */
+export function isTrueEye(board: Board, i: number, color: Stone): boolean {
+  if (board[i] !== null) return false;
+  for (const n of neighbors(i)) {
+    if (board[n] !== color) return false;
+  }
+  const r = rowOf(i);
+  const c = colOf(i);
+  const diagonals = [
+    [r - 1, c - 1],
+    [r - 1, c + 1],
+    [r + 1, c - 1],
+    [r + 1, c + 1],
+  ];
+  let offBoard = 0;
+  let notColor = 0;
+  for (const [dr, dc] of diagonals) {
+    if (dr < 0 || dr >= BOARD_SIZE || dc < 0 || dc >= BOARD_SIZE) {
+      offBoard++;
+      continue;
+    }
+    if (board[idx(dr, dc)] !== color) notColor++;
+  }
+  const allowed = offBoard > 0 ? 0 : 1;
+  return notColor <= allowed;
+}
+
+/**
+ * Heuristic move for the side to move. Scores every legal, non-eye-filling
+ * point (captures >> putting a group in atari > locality; self-atari penalised)
+ * and returns the best, or "pass" when nothing is worth playing.
+ */
+export function bot(state: GameState): number | "pass" {
+  if (state.status !== "playing") return "pass";
+  const color = state.toMove;
+  const opp = opponent(color);
+
+  let bestIdx = -1;
+  let bestScore = -Infinity;
+
+  for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+    if (state.board[i] !== null) continue;
+    if (isTrueEye(state.board, i, color)) continue;
+    const next = applyMove(state, i);
+    if (!next) continue;
+
+    let s = 0;
+    const capturedNow = next.captures[color] - state.captures[color];
+    s += capturedNow * 12;
+
+    const myGroup = groupAndLiberties(next.board, i);
+    if (myGroup.liberties === 1 && capturedNow === 0) s -= 8; // self-atari
+
+    for (const n of neighbors(i)) {
+      if (next.board[n] === opp) {
+        const g = groupAndLiberties(next.board, n);
+        if (g.liberties === 1) s += 3; // puts opponent group in atari
+      }
+      if (state.board[n] !== null) s += 1; // locality: play near stones
+    }
+
+    s += Math.random() * 0.5; // tiebreak so play isn't deterministic
+
+    if (s > bestScore) {
+      bestScore = s;
+      bestIdx = i;
+    }
+  }
+
+  if (bestIdx === -1) return "pass";
+  if (bestScore < 0) return "pass"; // only bad (self-atari) moves remain
+  return bestIdx;
+}
