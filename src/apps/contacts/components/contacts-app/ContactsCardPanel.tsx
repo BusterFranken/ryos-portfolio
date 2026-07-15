@@ -59,7 +59,7 @@ export function ContactsCardPanel({ c }: ContactsCardPanelProps) {
                   <img
                     src={selectedContact.picture}
                     alt={selectedContact.displayName}
-                    className="size-full object-contain"
+                    className="size-full object-cover"
                   />
                 ) : (
                   getContactInitials(selectedContact)
