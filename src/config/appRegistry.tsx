@@ -84,6 +84,11 @@ const LazyMinesweeperApp = createLazyComponent<unknown>(
   "minesweeper"
 );
 
+const LazyGoApp = createLazyComponent<unknown>(
+  () => import("@/apps/go/components/GoAppComponent").then(m => ({ default: m.GoAppComponent })),
+  "go"
+);
+
 const LazySoundboardApp = createLazyComponent<unknown>(
   () => import("@/apps/soundboard/components/SoundboardAppComponent").then(m => ({ default: m.SoundboardAppComponent })),
   "soundboard"
@@ -177,6 +182,7 @@ import { appMetadata as texteditMetadata, helpItems as texteditHelpItems } from 
 import { appMetadata as paintMetadata, helpItems as paintHelpItems } from "@/apps/paint";
 import { appMetadata as photoboothMetadata, helpItems as photoboothHelpItems } from "@/apps/photo-booth/metadata";
 import { appMetadata as minesweeperMetadata, helpItems as minesweeperHelpItems } from "@/apps/minesweeper";
+import { appMetadata as goMetadata, helpItems as goHelpItems } from "@/apps/go";
 import { appMetadata as videosMetadata, helpItems as videosHelpItems } from "@/apps/videos/metadata";
 import { appMetadata as ipodMetadata, helpItems as ipodHelpItems } from "@/apps/ipod/metadata";
 import { appMetadata as synthMetadata, helpItems as synthHelpItems } from "@/apps/synth/metadata";
@@ -298,6 +304,20 @@ export const appRegistry = {
       defaultSize: { width: 305, height: 400 },
       minSize: { width: 305, height: 400 },
       maxSize: { width: 305, height: 400 },
+    } as WindowConstraints,
+  },
+  ["go"]: {
+    id: "go",
+    name: appNames["go"],
+    icon: { type: "image", src: goMetadata!.icon },
+    description: "Play 9×9 Go against the computer",
+    component: LazyGoApp,
+    helpItems: goHelpItems,
+    metadata: goMetadata,
+    windowConfig: {
+      defaultSize: { width: 360, height: 460 },
+      minSize: { width: 360, height: 460 },
+      maxSize: { width: 360, height: 460 },
     } as WindowConstraints,
   },
   ["videos"]: {

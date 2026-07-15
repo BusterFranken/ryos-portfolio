@@ -160,6 +160,7 @@ const HELP_KEYS: Record<AppId, string[]> = {
     "darkMode",
   ],
   "buster-barn": [],
+  go: [],
   casefile: [],
   hush: [],
   "kafka-form": [],
