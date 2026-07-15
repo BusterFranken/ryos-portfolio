@@ -147,6 +147,7 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     maps: ["searchPlaces", "dropPins", "locateMe", "mapTypes", "poweredByApple", "switchMapStyle"],
     books: ["bookshelf", "import", "pageTurn", "progress", "fonts", "darkMode"],
     "buster-barn": [],
+    go: [],
     casefile: [],
     hush: [],
     "kafka-form": [],

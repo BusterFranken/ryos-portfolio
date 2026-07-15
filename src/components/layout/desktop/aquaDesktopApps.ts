@@ -24,6 +24,7 @@ export const AQUA_DESKTOP_APP_IDS: AppId[] = [
   // Fun extras — the classic OS apps, also featured on the desktop (EVE-269).
   "pc",
   "minesweeper",
+  "go",
   "synth",
   "winamp",
 ];
