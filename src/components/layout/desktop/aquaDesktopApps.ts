@@ -14,6 +14,7 @@ export const AQUA_DESKTOP_APP_IDS: AppId[] = [
   "dnd-cv",
   "tarot",
   "pawnshop",
+  "jdog",
   "gallery",
   "cv-pdf",
   // "substack" — deferred (not enough content yet); app stays registered but

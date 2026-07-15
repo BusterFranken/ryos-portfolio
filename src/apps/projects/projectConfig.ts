@@ -36,6 +36,7 @@ export const projectConfig: Partial<Record<AppId, ProjectConfig>> = {
   },
   tarot: { mode: "live", url: "https://tarotread.help/" },
   pawnshop: { mode: "live", url: "https://pawnshop-qw60.onrender.com/" },
+  jdog: { mode: "live", url: "https://jdog.lol/" },
 };
 
 export function resolveProjectConfig(

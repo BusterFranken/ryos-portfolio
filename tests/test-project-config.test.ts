@@ -17,6 +17,7 @@ describe("projectConfig", () => {
     "dnd-cv",
     "tarot",
     "pawnshop",
+    "jdog",
   ] as const;
   const FULLSCREEN = ["buster-barn"] as const;
 

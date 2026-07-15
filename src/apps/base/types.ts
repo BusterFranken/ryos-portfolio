@@ -49,6 +49,7 @@ export interface BaseApp<TInitialData = unknown> {
     | "dnd-cv"
     | "tarot"
     | "pawnshop"
+    | "jdog"
     | "gallery"
     | "cv-pdf"
     | "substack";

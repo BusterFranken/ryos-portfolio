@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-14T14:59:10.041Z",
+  "generatedAt": "2026-07-15T08:32:23.697Z",
   "themes": {
     "default": [
       "admin.png",
@@ -73,7 +73,7 @@
       "internet.png",
       "ipod.png",
       "isync.png",
-      "jdog.png",
+      "jdog.svg",
       "kafka-form.svg",
       "karaoke.png",
       "mac-classic.png",

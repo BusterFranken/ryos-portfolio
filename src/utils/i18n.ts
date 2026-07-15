@@ -155,6 +155,7 @@ export function getTranslatedHelpItems(appId: AppId): Array<{
     "dnd-cv": [],
     tarot: [],
     pawnshop: [],
+    jdog: [],
     gallery: [],
     "cv-pdf": [],
     substack: [],

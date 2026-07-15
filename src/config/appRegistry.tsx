@@ -602,6 +602,19 @@ export const appRegistry = {
       minSize: { width: 320, height: 240 },
     } as WindowConstraints,
   },
+  ["jdog"]: {
+    id: "jdog",
+    name: appNames["jdog"],
+    icon: { type: "image", src: "/icons/default/jdog.svg" },
+    description: "Self-hosted WhatsApp digest agent",
+    component: makeProjectApp("jdog"),
+    helpItems: projectHelpItems,
+    metadata: makeProjectMetadata("jdog", appNames["jdog"]),
+    windowConfig: {
+      defaultSize: { width: 800, height: 600 },
+      minSize: { width: 320, height: 240 },
+    } as WindowConstraints,
+  },
   ["gallery"]: {
     id: "gallery",
     name: appNames["gallery"],

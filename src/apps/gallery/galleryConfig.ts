@@ -46,17 +46,6 @@ export const galleryAlbums: GalleryAlbum[] = [
       href: buildMailto("Workout app"),
     },
   },
-  {
-    id: "jdog",
-    title: "jDog",
-    blurb:
-      "Self-hosted, read-only WhatsApp digest agent (WAHA + Node/TS + SQLite). (Screenshots coming soon.)",
-    images: [],
-    cta: {
-      label: "Want something like this? →",
-      href: buildMailto("jDog"),
-    },
-  },
 ];
 
 export function getAlbum(id: string): GalleryAlbum | undefined {
