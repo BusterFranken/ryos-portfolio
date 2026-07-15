@@ -43,10 +43,10 @@ describe("bootLayout (curated-chaos first run)", () => {
     expect(ids).not.toContain("casefile");
   });
 
-  test("opens the read_me_first note in textedit", () => {
+  test("opens the README note in textedit", () => {
     const te = bootLayout.find((e) => e.appId === "textedit");
     expect(te).toBeDefined();
     const path = (te!.initialData as { path?: string })?.path;
-    expect(path).toContain("read_me_first");
+    expect(path).toContain("README");
   });
 });

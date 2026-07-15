@@ -98,13 +98,13 @@
   ],
   "files": [
     {
-      "path": "/Documents/read_me_first.md",
-      "name": "read_me_first.md",
+      "path": "/Documents/README.md",
+      "name": "README.md",
       "isDirectory": false,
       "type": "markdown",
       "icon": "/icons/default/file-text.png",
       "status": "active",
-      "assetPath": "/assets/documents/read_me_first.md"
+      "assetPath": "/assets/documents/README.md"
     },
     {
       "path": "/Documents/README.md",
@@ -122,7 +122,7 @@
       "type": "markdown",
       "icon": "/icons/default/file-text.png",
       "status": "active",
-      "content": "# Getting around\n\n## The basics\n- Launch things from the **Desktop icons**, the **Finder**, or the  / Start menu\n- Drag windows to move, drag edges to resize, minimize to the dock/taskbar\n- Switch the whole OS look in **Control Panels → Appearance** (Mac OS X ⟷ Windows)\n- Lost the layout? The  menu has a **Reset Desktop**\n\n## The projects\n- **Live project windows** load a real, deployed site right inside the window\n- **Gallery** collects screenshots from things that don't live on the web (Workout, jDog, talks)\n- **Videos** has a few of my talks\n- **Résumé** opens my CV; **Substack** collects my writing\n- Any window with a **↗** button opens the real thing in a new tab\n\n## Handy apps\n- **Terminal** — try `whoami`, `projects`, and `contact`\n- **Contacts** — my email and links\n- **TextEdit** — start with *read_me_first*\n- **Internet Explorer** — a plain browser for the live sites\n- **Minesweeper**, **iPod**, **Paint**, **Photo Booth**, **Synth** — because why not\n\n## Easter eggs\nThere are a few hidden things. One window will even try to escape the OS entirely. Have a dig."
+      "content": "# Getting around\n\n## The basics\n- Launch things from the **Desktop icons**, the **Finder**, or the  / Start menu\n- Drag windows to move, drag edges to resize, minimize to the dock/taskbar\n- Switch the whole OS look in **Control Panels → Appearance** (Mac OS X ⟷ Windows)\n- Lost the layout? The  menu has a **Reset Desktop**\n\n## The projects\n- **Live project windows** load a real, deployed site right inside the window\n- **Gallery** collects screenshots from things that don't live on the web (Workout, jDog, talks)\n- **Videos** has a few of my talks\n- **Résumé** opens my CV; **Substack** collects my writing\n- Any window with a **↗** button opens the real thing in a new tab\n\n## Handy apps\n- **Terminal** — try `whoami`, `projects`, and `contact`\n- **Contacts** — my email and links\n- **TextEdit** — start with *README*\n- **Internet Explorer** — a plain browser for the live sites\n- **Minesweeper**, **iPod**, **Paint**, **Photo Booth**, **Synth** — because why not\n\n## Easter eggs\nThere are a few hidden things. One window will even try to escape the OS entirely. Have a dig."
     },
     {
       "path": "/Books/Meditations - Marcus Aurelius.epub",
