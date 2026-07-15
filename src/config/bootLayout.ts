@@ -16,9 +16,11 @@ export interface BootEntry {
  * Order is back-to-front (first entry = deepest, last entry = front-most /
  * foreground). The hero pairing is the D&D portfolio main page (`dnd-cv`, which
  * resolves to busterfranken.com) with the busterfranken.com Projects page open
- * right next to it in an Internet Explorer window. Both live iframes are the
- * same fast static host. `buster-barn` (full-screen takeover) and `casefile`
- * (slow cold start) stay launch-on-click only.
+ * right next to it in an Internet Explorer window. Videos (a FruitPunch talk
+ * loaded + paused), the iPod (Recently on Spotify), and Maps (Amsterdam) also
+ * open by default. Per EVE-267 the project apps `mpoftheweek`, `hush`,
+ * `kafka-form`, `pawnshop`, `buster-barn`, and `casefile` stay launch-on-click
+ * only.
  */
 export const bootLayout: BootEntry[] = [
   {
@@ -35,36 +37,44 @@ export const bootLayout: BootEntry[] = [
     size: { width: 560, height: 540 },
   },
   {
-    appId: "pawnshop",
-    position: { x: 380, y: 200 },
-    size: { width: 720, height: 500 },
-  },
-  {
     appId: "jdog",
-    position: { x: 540, y: 280 },
-    size: { width: 700, height: 480 },
+    position: { x: 560, y: 320 },
+    size: { width: 640, height: 430 },
   },
   {
     appId: "gallery",
-    position: { x: 200, y: 340 },
-    size: { width: 620, height: 420 },
+    position: { x: 170, y: 380 },
+    size: { width: 560, height: 380 },
+  },
+  {
+    // The Videos app opens with the first FruitPunch talk loaded + paused and
+    // the full talk playlist to click through.
+    appId: "videos",
+    position: { x: 340, y: 150 },
+    size: { width: 500, height: 400 },
+  },
+  {
+    // Maps opens on the "based in Amsterdam" view.
+    appId: "maps",
+    position: { x: 720, y: 430 },
+    size: { width: 480, height: 360 },
   },
   {
     appId: "contacts",
-    position: { x: 840, y: 360 },
-    size: { width: 540, height: 400 },
+    position: { x: 910, y: 400 },
+    size: { width: 490, height: 360 },
+  },
+  {
+    appId: "ipod",
+    initialData: { openRecentlyOnSpotify: true },
+    position: { x: 1120, y: 70 },
+    size: { width: 290, height: 460 },
   },
   {
     appId: "textedit",
     initialData: { path: "/Documents/read_me_first.md" },
     title: "read_me_first.md",
-    position: { x: 60, y: 52 },
-    size: { width: 440, height: 480 },
-  },
-  {
-    appId: "ipod",
-    initialData: { openRecentlyOnSpotify: true },
-    position: { x: 1080, y: 70 },
-    size: { width: 300, height: 470 },
+    position: { x: 56, y: 56 },
+    size: { width: 420, height: 470 },
   },
 ];
