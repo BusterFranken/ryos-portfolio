@@ -12,10 +12,6 @@ import { useTranslation } from "react-i18next";
 import { getTranslatedAppName, AppId } from "@/utils/i18n";
 import { useAppStore } from "@/stores/useAppStore";
 
-const APP_DOC_NAMES: Partial<Record<AppId, string>> = {
-  pc: "virtual-pc",
-};
-
 interface AboutDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -46,8 +42,10 @@ export function AboutDialog({
   const displayName = appId ? getTranslatedAppName(appId) : metadata.name;
 
   const handleViewDocs = () => {
-    const docName = appId ? (APP_DOC_NAMES[appId] || appId) : "";
-    launchApp("internet-explorer", { url: `os.ryo.lu/docs/${docName}`, year: "current" });
+    launchApp("internet-explorer", {
+      url: "https://www.busterfranken.com",
+      year: "current",
+    });
     onOpenChange(false);
   };
 
