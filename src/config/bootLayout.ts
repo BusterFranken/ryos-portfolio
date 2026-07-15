@@ -33,8 +33,9 @@ export const bootLayout: BootEntry[] = [
   },
   {
     appId: "internet-explorer",
+    // The FruitPunch AI project board (all the AI-for-… challenges).
     initialData: { url: "https://www.busterfranken.com/projects.html" },
-    title: "Projects — busterfranken.com",
+    title: "FruitPunch AI — Projects",
     position: { x: 800, y: 96 },
     size: { width: 560, height: 540 },
   },
