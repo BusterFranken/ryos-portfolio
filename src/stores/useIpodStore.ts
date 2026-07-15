@@ -843,7 +843,7 @@ function resolveMigratedRomanization(
   return romanization;
 }
 
-const CURRENT_IPOD_STORE_VERSION = 40; // Default fullscreen/Karaoke lyrics style is Gold Glow
+const CURRENT_IPOD_STORE_VERSION = 41; // Portfolio: force always-on backlight (no sleep dimming)
 
 // Helper function to get unplayed track IDs from history
 function getUnplayedTrackIds(
@@ -2512,13 +2512,9 @@ export const useIpodStore = create<IpodState>()(
           loopAll: state.loopAll,
           loopCurrent: state.loopCurrent,
           isShuffled: state.isShuffled,
-          backlightTimeout:
-            state.backlightTimeout === "2s" ||
-            state.backlightTimeout === "10s" ||
-            state.backlightTimeout === "always-on" ||
-            state.backlightTimeout === "off"
-              ? state.backlightTimeout
-              : "2s",
+          // Portfolio: always-on screen for every visitor (no sleep dimming),
+          // overriding any previously-persisted timeout on this migration.
+          backlightTimeout: "always-on",
           theme: state.theme,
           uiVariant:
             state.uiVariant === "modern" || state.uiVariant === "classic"
