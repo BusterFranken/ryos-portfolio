@@ -38,7 +38,9 @@ export function useContactsAppController({
   const shouldEditOnNextSelectionRef = useRef(false);
   const skipNextMultivalueSyncRef = useRef(false);
   const [showGroupSidebar, setShowGroupSidebar] = useState(true);
-  const [isCardOnlyView, setIsCardOnlyView] = useState(false);
+  // Default to the single-card view — there's just one contact (the owner),
+  // so the list panel is redundant. Users can still toggle it from the toolbar.
+  const [isCardOnlyView, setIsCardOnlyView] = useState(true);
 
   useResizeObserverWithRef(containerRef, (entry) => {
     setContainerWidth(entry.contentRect.width);
