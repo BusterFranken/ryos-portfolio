@@ -28,7 +28,9 @@ export const projectConfig: Partial<Record<AppId, ProjectConfig>> = {
     mode: "live",
     url: "https://busterfranken.github.io/kafka-form/",
   },
-  eigenvector: { mode: "live", url: "https://eigenvector.pro/" },
+  // #about lands on the "WHO" section (Buster's photo + bio). The site serves
+  // that anchor in its initial HTML, so the iframe scrolls there on load.
+  eigenvector: { mode: "live", url: "https://eigenvector.pro/#about" },
   mpoftheweek: { mode: "live", url: "https://mpoftheweek.com" },
   "dnd-cv": {
     mode: "live",
