@@ -234,3 +234,27 @@ describe("goEngine — bot", () => {
     expect(bot(s)).toBe("pass");
   });
 });
+
+describe("goEngine — full game flow", () => {
+  // Drives the exact composition the useGoGame hook uses to sequence a human
+  // move and the computer's reply (applyMove / bot / pass), here as bot-vs-bot
+  // self-play, to prove a game reaches a scored finish and both colours play.
+  test("self-play reaches a scored finish with both colours placed", () => {
+    let s = createInitialState();
+    let sawBlack = false;
+    let sawWhite = false;
+    for (let turn = 0; turn < 600 && s.status === "playing"; turn++) {
+      const move = bot(s);
+      const next = move === "pass" ? pass(s) : applyMove(s, move);
+      expect(next).not.toBeNull();
+      s = next as GameState;
+      sawBlack ||= s.board.includes("black");
+      sawWhite ||= s.board.includes("white");
+    }
+    expect(s.status).toBe("finished");
+    expect(s.result).not.toBeNull();
+    expect(["black", "white"]).toContain(s.result!.winner);
+    expect(sawBlack).toBe(true);
+    expect(sawWhite).toBe(true);
+  });
+});
