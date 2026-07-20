@@ -75,10 +75,11 @@ that script names each test file individually, so a new file is not picked up au
   for no user-visible benefit.
 - Any change to `twitter:card` type or to the preview image artwork.
 
-## Deferred: custom domain `portfolio.busterfranken.com`
+## Custom domain `portfolio.busterfranken.com` — DONE (2026-07-20)
 
-The domain is not yet pointed at Vercel, so this spec ships the `ryos-portfolio.vercel.app`
-URLs. Once DNS is live, the swap is a find-and-replace of the origin in the two `index.html`
+DNS is live (Namecheap CNAME `portfolio` -> `cname.vercel-dns.com`, resolving via
+`90522deb97e08464.vercel-dns-017.com`; verified HTTP 200). The metadata URLs now use
+this origin. The steps below are kept as a record of what was done. Once DNS is live, the swap is a find-and-replace of the origin in the two `index.html`
 URL tags (`og:url`, and the two image tags); the regression test asserts the origin is
 consistent, so a partial swap fails the suite.
 

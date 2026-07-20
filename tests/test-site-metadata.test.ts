@@ -15,7 +15,7 @@ const viteConfigFlat = viteConfig.replace(/:\s*\n\s*/g, ": ");
 const SITE_NAME = "busterOS";
 const SITE_DESCRIPTION =
   "A retro macOS desktop where every window is one of my projects.";
-const SITE_ORIGIN = "https://ryos-portfolio.vercel.app";
+const SITE_ORIGIN = "https://portfolio.busterfranken.com";
 
 /**
  * Every <meta> tag as { key, content }, where key is its name= or property=.
