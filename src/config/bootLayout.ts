@@ -65,9 +65,13 @@ export const bootLayout: BootEntry[] = [
   {
     // Opens scrolled to the "WHO" section (Buster's photo + bio) via the
     // #about anchor in projectConfig. Buster's namesake current project.
+    // Width matters here: eigenvector.pro collapses `.about__inner` from
+    // `280px 1fr` to a single column at `@media(max-width:768px)`, which drops
+    // the bio underneath the headshot. The iframe viewport has to stay above
+    // that breakpoint, so keep this comfortably over 768 + window chrome.
     appId: "eigenvector",
     position: { x: 430, y: 110 },
-    size: { width: 760, height: 580 },
+    size: { width: 800, height: 580 },
   },
   {
     appId: "contacts",

@@ -53,6 +53,15 @@ describe("bootLayout (curated-chaos first run)", () => {
     }
   });
 
+  test("opens eigenvector wide enough to keep its two-column WHO section", () => {
+    // eigenvector.pro collapses `.about__inner` from `280px 1fr` to one column
+    // at `@media(max-width:768px)`, pushing the bio below the headshot. The
+    // window has to leave the iframe more than 768px of viewport after chrome.
+    const ev = bootLayout.find((e) => e.appId === "eigenvector");
+    expect(ev).toBeDefined();
+    expect(ev!.size.width).toBeGreaterThan(768 + 16);
+  });
+
   test("opens the README note in textedit", () => {
     const te = bootLayout.find((e) => e.appId === "textedit");
     expect(te).toBeDefined();
