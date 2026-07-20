@@ -29,9 +29,9 @@ and all preview assets are served from this project's own origin.
 | `description` | `A retro macOS desktop where every window is one of my projects.` |
 | `og:description` | same as `description` |
 | `twitter:description` | same as `description` |
-| `og:url` | `https://ryos-portfolio.vercel.app/` |
-| `og:image` | `https://ryos-portfolio.vercel.app/icons/mac-512.png` |
-| `twitter:image` | `https://ryos-portfolio.vercel.app/icons/mac-512.png` |
+| `og:url` | `https://portfolio.busterfranken.com/` |
+| `og:image` | `https://portfolio.busterfranken.com/icons/mac-512.png` |
+| `twitter:image` | `https://portfolio.busterfranken.com/icons/mac-512.png` |
 
 All three descriptions must be byte-identical.
 
@@ -79,11 +79,10 @@ that script names each test file individually, so a new file is not picked up au
 
 DNS is live (Namecheap CNAME `portfolio` -> `cname.vercel-dns.com`, resolving via
 `90522deb97e08464.vercel-dns-017.com`; verified HTTP 200). The metadata URLs now use
-this origin. The steps below are kept as a record of what was done. Once DNS is live, the swap is a find-and-replace of the origin in the two `index.html`
-URL tags (`og:url`, and the two image tags); the regression test asserts the origin is
-consistent, so a partial swap fails the suite.
+this origin, and the regression test asserts the origin is consistent, so a future
+partial swap fails the suite.
 
-Setup steps for when Buster is ready:
+Steps taken, kept as a record (the `.vercel.app` URL still serves the site too):
 
 1. **Vercel** → the project → Settings → Domains → *Add* → `portfolio.busterfranken.com`.
 2. Vercel shows the record to create. For a subdomain this is a **CNAME**:
